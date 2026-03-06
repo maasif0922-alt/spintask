@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Pool | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="pool.html" class="active"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2 style="font-size: 1.8rem;">Community Pool</h2>
+                    <p style="color: var(--text-muted);">Join a pool with 10 users and win the $50 USDT payout!</p>
+                </div>
+            </header>
+
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 30px;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Active Pool #412</h3>
+                    <div style="margin-top: 30px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Progress</span>
+                            <span style="color: var(--primary-neon);">7 / 10 Users</span>
+                        </div>
+                        <div
+                            style="height: 12px; background: var(--secondary-blue); border-radius: 10px; overflow: hidden;">
+                            <div
+                                style="width: 70%; height: 100%; background: var(--primary-neon); box-shadow: 0 0 10px var(--primary-neon-glow);">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px;">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Join this pool for <b>$5 USDT</b>. Once
+                            the pool reaches 10 users, one user will be randomly selected to receive <b>$50 USDT</b>
+                            instantly!</p>
+                        <button class="btn btn-primary" style="margin-top: 20px; width: 100%;" onclick="joinPool()">Join
+                            Pool Now ($5)</button>
+                    </div>
+                </div>
+
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Current Queue</h3>
+                    <div style="margin-top: 20px;">
+                        <div
+                            style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                            <div
+                                style="width: 30px; height: 30px; background: var(--accent-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                1</div>
+                            <span style="font-size: 0.9rem;">crypto_king...</span>
+                            <span style="margin-left: auto; color: var(--primary-neon);">READY</span>
+                        </div>
+                        <div
+                            style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                            <div
+                                style="width: 30px; height: 30px; background: var(--bg-card); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                2</div>
+                            <span style="font-size: 0.9rem;">usdt_hunter...</span>
+                        </div>
+                        <div
+                            style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 10px;">
+                            <div
+                                style="width: 30px; height: 30px; background: var(--bg-card); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">
+                                3</div>
+                            <span style="font-size: 0.9rem;">spin_master...</span>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 20px; text-align: center;">Wait
+                        in queue for the next payout cycle.</p>
+                </div>
+            </div>
+
+            <div class="glass" style="margin-top: 40px; padding: 30px; border-radius: 20px;">
+                <h3>Recent Payouts</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Pool ID</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>whale_88</td>
+                            <td>#411</td>
+                            <td>$50.00</td>
+                            <td>2026-03-05</td>
+                            <td><span style="color: var(--primary-neon);">PAID</span></td>
+                        </tr>
+                        <tr>
+                            <td>spintask_fan</td>
+                            <td>#410</td>
+                            <td>$50.00</td>
+                            <td>2026-03-04</td>
+                            <td><span style="color: var(--primary-neon);">PAID</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        // Set dynamic user data
+        const user = Auth.getCurrentUser();
+        // User identification simplified since sidebar profile is removed
+    </script>
+    <script>
+        function joinPool() {
+            alert('Insufficient balance. Please deposit USDT first.');
+            window.location.href = 'deposit.html';
+        }
+    </script>
+</body>
+
+</html>

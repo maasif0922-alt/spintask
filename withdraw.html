@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html" class="active"><span>💸</span> Withdraw</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2 style="font-size: 1.8rem;">Withdraw Funds</h2>
+                    <p style="color: var(--text-muted);">Minimum withdrawal: $<span id="pub-min-with">20</span> USDT
+                        (TRC20)</p>
+                </div>
+                <div class="glass" style="padding: 10px 20px; border-radius: 10px;">
+                    <span style="color: var(--primary-neon);">Withdrawable:</span>
+                    <span class="user-balance-value" style="font-weight: 700;">$0.00 USDT</span>
+                </div>
+            </header>
+
+            <div style="max-width: 600px; margin: 30px auto;">
+                <div class="glass" style="padding: 40px; border-radius: 20px;">
+                    <form id="withdraw-form">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Amount
+                                (USDT)</label>
+                            <input type="number" step="0.01" min="1" id="with-amount" required
+                                placeholder="Enter Amount"
+                                style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none;">
+                        </div>
+                        <div style="margin-bottom: 30px;">
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">USDT TRC20
+                                Address</label>
+                            <input type="text" id="with-address" required placeholder="Enter your wallet address"
+                                style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none;">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Withdrawal
+                            Request</button>
+                    </form>
+
+                    <div
+                        style="margin-top: 30px; padding: 20px; background: rgba(255, 77, 77, 0.05); border-radius: 10px; border-left: 4px solid #ff4d4d;">
+                        <p style="font-size: 0.85rem; color: var(--text-muted);"><b>Note:</b> Withdrawal requests are
+                            reviewed by our team and processed within 24-48 hours. Fees may apply depending on network
+                            congestion.</p>
+                    </div>
+                </div>
+
+                <div class="glass" style="margin-top: 40px; padding: 30px; border-radius: 20px;">
+                    <h3>Withdrawal History</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Amount</th>
+                                <th>Address</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-withdraw-history">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        let minWithdraw = 20;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const minWithSettings = Admin.getSetting('minWithdraw');
+            if (minWithSettings) {
+                minWithdraw = parseFloat(minWithSettings);
+                document.getElementById('pub-min-with').innerText = minWithdraw;
+                document.getElementById('with-amount').min = minWithdraw;
+                document.getElementById('with-amount').placeholder = `Min ${minWithdraw.toFixed(2)}`;
+            }
+            renderWithdrawHistory();
+        });
+
+        function renderWithdrawHistory() {
+            const currentUser = Auth.getCurrentUser();
+            if (!currentUser) return;
+            const txs = Admin.getTransactions('withdraw').filter(t => t.userId === currentUser.id);
+            const tbody = document.getElementById('user-withdraw-history');
+            tbody.innerHTML = '';
+
+            if (txs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No withdrawal history</td></tr>`;
+                return;
+            }
+
+            txs.forEach(t => {
+                let statusColor = t.status === 'approved' ? 'var(--primary-neon)' : (t.status === 'rejected' ? '#ff4d4d' : '#ffcc00');
+                tbody.innerHTML += `
+                    <tr>
+                        <td>$${t.amount.toFixed(2)}</td>
+                        <td style="font-family: monospace; font-size: 0.8rem;">${t.address.substring(0, 15)}...</td>
+                        <td>${new Date(t.date).toLocaleDateString()}</td>
+                        <td style="color: ${statusColor}; text-transform: capitalize;">${t.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        document.getElementById('withdraw-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = parseFloat(document.getElementById('with-amount').value);
+            const address = document.getElementById('with-address').value;
+            const user = Auth.getCurrentUser();
+
+            if (amount < minWithdraw) {
+                alert(`The minimum withdrawal amount is $${minWithdraw} USDT.`);
+                return;
+            }
+
+            // Check if user has sufficient, non-pending balance
+            // We need to calculate how much is already pending so they don't double spend
+            const pendingCurrent = Admin.getTransactions('withdraw')
+                .filter(t => t.userId === user.id && t.status === 'pending')
+                .reduce((sum, t) => sum + t.amount, 0);
+
+            const availableBalance = user.balance - pendingCurrent;
+
+            if (user && availableBalance >= amount) {
+                Admin.requestTransaction(user.id, 'withdraw', amount, address);
+                alert('Withdrawal request submitted! It is now pending Admin approval.');
+                renderWithdrawHistory();
+                e.target.reset(); // clear form
+            } else {
+                alert(`Insufficient available balance. You have $${availableBalance.toFixed(2)} available ($${pendingCurrent.toFixed(2)} currently locked in pending withdrawals).`);
+            }
+        });
+    </script>
+</body>
+
+</html>

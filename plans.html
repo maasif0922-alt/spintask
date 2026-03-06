@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Plans | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html" class="active"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2 style="font-size: 1.8rem;">Investment Plans</h2>
+                    <p style="color: var(--text-muted);">Choose a plan to boost your daily earnings passively.</p>
+                </div>
+            </header>
+
+            <div class="dash-grid" style="margin-top: 30px;">
+                <!-- Starter Plan -->
+                <div class="glass"
+                    style="padding: 40px; border-radius: 20px; border-top: 5px solid var(--text-muted); text-align: center;">
+                    <h3 style="margin-bottom: 20px;">Starter Plan</h3>
+                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">$1.00</div>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">Investment Amount</p>
+
+                    <ul style="text-align: left; margin-bottom: 30px; display: inline-block;">
+                        <li style="margin-bottom: 10px;">✅ Daily Profit: <b>$0.05</b></li>
+                        <li style="margin-bottom: 10px;">✅ Duration: <b>30 Days</b></li>
+                        <li style="margin-bottom: 10px;">✅ Total Return: <b>$1.50</b></li>
+                        <li style="margin-bottom: 10px;">✅ 24/7 Support</li>
+                    </ul>
+
+                    <button class="btn btn-outline" style="width: 100%;" onclick="buyPlan('Starter', 1)">Activate
+                        Plan</button>
+                </div>
+
+                <!-- Basic Plan -->
+                <div class="glass"
+                    style="padding: 40px; border-radius: 20px; border-top: 5px solid var(--accent-blue); text-align: center; transform: scale(1.05); border: 1px solid var(--accent-blue);">
+                    <div
+                        style="background: var(--accent-blue); color: #fff; display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 20px;">
+                        MOST POPULAR</div>
+                    <h3 style="margin-bottom: 20px;">Basic Plan</h3>
+                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">$5.00</div>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">Investment Amount</p>
+
+                    <ul style="text-align: left; margin-bottom: 30px; display: inline-block;">
+                        <li style="margin-bottom: 10px;">✅ Daily Profit: <b>$0.35</b></li>
+                        <li style="margin-bottom: 10px;">✅ Duration: <b>30 Days</b></li>
+                        <li style="margin-bottom: 10px;">✅ Total Return: <b>$10.50</b></li>
+                        <li style="margin-bottom: 10px;">✅ High Priority Tasks</li>
+                    </ul>
+
+                    <button class="btn btn-primary" style="width: 100%;" onclick="buyPlan('Basic', 5)">Activate
+                        Plan</button>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="glass"
+                    style="padding: 40px; border-radius: 20px; border-top: 5px solid var(--primary-neon); text-align: center;">
+                    <h3 style="margin-bottom: 20px;">Pro Plan</h3>
+                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">$10.00</div>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">Investment Amount</p>
+
+                    <ul style="text-align: left; margin-bottom: 30px; display: inline-block;">
+                        <li style="margin-bottom: 10px;">✅ Daily Profit: <b>$0.80</b></li>
+                        <li style="margin-bottom: 10px;">✅ Duration: <b>30 Days</b></li>
+                        <li style="margin-bottom: 10px;">✅ Total Return: <b>$24.00</b></li>
+                        <li style="margin-bottom: 10px;">✅ Instant Payouts</li>
+                    </ul>
+
+                    <button class="btn btn-outline"
+                        style="width: 100%; border-color: var(--primary-neon); color: var(--primary-neon);"
+                        onclick="buyPlan('Pro', 10)">Activate Plan</button>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div class="glass" style="margin-top: 50px; padding: 30px; border-radius: 20px;">
+                <h3>Active Investments</h3>
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    You have no active investment plans.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        function buyPlan(name, price) {
+            if (confirm(`Do you want to activate the ${name} Plan for $${price} USDT?`)) {
+                alert('Insufficient balance. Please deposit USDT first.');
+                window.location.href = 'deposit.html';
+            }
+        }
+    </script>
+</body>
+
+</html>

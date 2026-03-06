@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Privacy | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header class="glass">
+        <div class="container container-nav">
+            <nav>
+                <a href="index.html" class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                        </circle>
+                    </svg>
+                    SpinTask<span>.</span>
+                </a>
+            </nav>
+    </header>
+
+    <main class="container" style="padding: 80px 20px;">
+        <div style="max-width: 900px; margin: 0 auto;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 40px; color: var(--primary-neon);">Terms of Service & Privacy
+                Policy</h1>
+
+            <section class="glass" style="padding: 40px; border-radius: 20px; margin-bottom: 40px;">
+                <h2>Terms of Service</h2>
+                <div id="pub-terms" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 20px;">
+                    <p style="margin-bottom: 15px;">1. <b>Eligibility:</b> You must be at least 18 years old to use this
+                        platform.</p>
+                    <p style="margin-bottom: 15px;">2. <b>Accounts:</b> Each user is permitted only one account.
+                        Multiple accounts will lead to permanent suspension.</p>
+                    <p style="margin-bottom: 15px;">3. <b>Earnings:</b> Rewards are granted based on verified completion
+                        of tasks. Fraudulent activity will result in forfeiture of balance.</p>
+                    <p style="margin-bottom: 15px;">4. <b>Risk Disclosure:</b> Investment plans carry inherent risks.
+                        Only participate with funds you can afford to lose.</p>
+                </div>
+            </section>
+
+            <section class="glass" style="padding: 40px; border-radius: 20px;">
+                <h2>Privacy Policy</h2>
+                <div id="pub-privacy" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 20px;">
+                    <p style="margin-bottom: 15px;">We value your privacy. Your email address and financial data (wallet
+                        addresses) are encrypted and never shared with third parties.</p>
+                    <p style="margin-bottom: 15px;"><b>Cookies:</b> We use cookies to maintain your session and provide
+                        a personalized experience.</p>
+                    <p style="margin-bottom: 15px;"><b>Data Security:</b> We employ industry-standard protocols to
+                        protect your information from unauthorized access.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="glass">
+        <div class="container" style="text-align: center; padding: 40px;">
+            <a href="index.html" style="color: var(--primary-neon);">Back to Home</a>
+        </div>
+    </footer>
+
+    <script src="js/admin.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const content = Admin.getObjDb(Admin.DB_CONTENT);
+            if (content.termsText) {
+                // Formatting newlines as actual HTML paragraphs/breaks if necessary
+                document.getElementById('pub-terms').innerHTML = content.termsText.replace(/\n/g, '<br><br>');
+            }
+            if (content.privacyText) {
+                document.getElementById('pub-privacy').innerHTML = content.privacyText.replace(/\n/g, '<br><br>');
+            }
+        });
+    </script>
+</body>
+
+</html>

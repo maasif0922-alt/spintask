@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-sidebar {
+            background: #000;
+            border-right: 2px solid var(--primary-neon);
+        }
+
+        .admin-nav a.active {
+            background: var(--primary-neon);
+            color: var(--bg-dark);
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Admin Sidebar -->
+        <aside class="sidebar admin-sidebar">
+            <div class="sidebar-logo">
+                <span style="color: var(--primary-neon);">ADMIN</span> PANEL
+            </div>
+            <nav class="sidebar-nav">
+                <ul id="admin-menu">
+                    <li><a href="#" class="active" onclick="switchTab('dashboard')">📊 Statistics</a></li>
+                    <li><a href="#" onclick="switchTab('users')">👥 Users</a></li>
+                    <li><a href="#" onclick="switchTab('deposits')">💰 Deposits</a></li>
+                    <li><a href="#" onclick="switchTab('withdrawals')">💸 Withdrawals</a></li>
+                    <li><a href="#" onclick="switchTab('settings')">⚙️ Settings</a></li>
+                    <li><a href="#" onclick="switchTab('content')">📝 Content</a></li>
+                    <li><a href="#" onclick="switchTab('tasks')">📋 Tasks</a></li>
+                    <li><a href="#" onclick="switchTab('luckydraw')">🎉 Lucky Draw</a></li>
+                    <li><a href="#" onclick="switchTab('notifications')">🔔 Notifications</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+                <a href="dashboard.html"
+                    style="color: var(--primary-neon); font-size: 0.9rem; display: block; margin-top: 10px; padding: 0 15px;">Back
+                    to User Dashboard</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 style="font-size: 1.8rem;">System Overview</h2>
+                <div class="btn btn-primary">Refresh Data</div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="sec-dashboard" class="admin-section active-section">
+                <div class="dash-grid">
+                    <div class="dash-card glass" style="border-bottom: 4px solid var(--primary-neon);">
+                        <h4>Total Registered Users</h4>
+                        <div id="admin-total-users" class="value">0</div>
+                    </div>
+                    <div class="dash-card glass" style="border-bottom: 4px solid var(--accent-blue);">
+                        <h4>Total Deposits</h4>
+                        <div id="admin-total-deposits" class="value">$0.00</div>
+                    </div>
+                    <div class="dash-card glass" style="border-bottom: 4px solid #ff4d4d;">
+                        <h4>Pending Withdrawals</h4>
+                        <div id="admin-pending-withdrawals" class="value">0</div>
+                    </div>
+                    <div class="dash-card glass" style="border-bottom: 4px solid #ffcc00;">
+                        <h4>Total Earnings Dispensed</h4>
+                        <div id="admin-total-dispensed" class="value">$0.00</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="sec-users" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>User Management</h3>
+                        <input type="text" id="user-search" placeholder="Search by name or email..."
+                            oninput="renderUsers()"
+                            style="padding: 8px 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; width: 250px;">
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Balance (USDT)</th>
+                                <th>Total Earnings</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Deposits Section -->
+            <section id="sec-deposits" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Deposit Requests</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Amount (USDT)</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deposit-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Withdrawals Section -->
+            <section id="sec-withdrawals" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Withdrawal Requests</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Amount (USDT)</th>
+                                <th>Wallet Address</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdraw-table-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Content Section -->
+            <section id="sec-content" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Website Content Management</h3>
+                    <form id="admin-content-form">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Home Page - Hero Heading</label>
+                            <input type="text" id="content-hero"
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Home Page - Hero Subheading</label>
+                            <textarea id="content-sub" rows="2"
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">About Page Text</label>
+                            <textarea id="content-about" rows="4"
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Terms & Conditions</label>
+                            <textarea id="content-terms" rows="4"
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Privacy Policy</label>
+                            <textarea id="content-privacy" rows="4"
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Contact Page Text</label>
+                            <textarea id="content-contact" rows="4"
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Publish Content</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Tasks Section -->
+            <section id="sec-tasks" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Active Tasks</h3>
+                        <button class="btn btn-primary" onclick="promptCreateTask()">+ New Task</button>
+                    </div>
+                    <ul id="admin-tasks-list" style="color: var(--text-muted); font-size: 0.9rem;">
+                        <!-- Tasks populated via DB -->
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Lucky Draw Section -->
+            <section id="sec-luckydraw" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Manage Lucky Draws</h3>
+                        <button class="btn btn-primary" onclick="showCreateDrawForm()">+ Create New Draw</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Prize</th>
+                                <th>Price</th>
+                                <th>Tickets (Sold/Total)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-draws-table">
+                            <!-- Populated via renderAdminDraws() -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Create Draw Form (Hidden by default) -->
+                <div id="create-draw-form" class="glass" style="padding: 30px; border-radius: 20px; display: none;">
+                    <h3>Create New Lucky Draw</h3>
+                    <form id="admin-draw-form" style="margin-top: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;">Draw Title</label>
+                                <input type="text" id="draw-title" required
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;">Prize Name</label>
+                                <input type="text" id="draw-prize" required
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;">Ticket Price (USDT)</label>
+                                <input type="number" id="draw-price" step="0.01" required
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px;">Total Tickets</label>
+                                <input type="number" id="draw-tickets" required
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Prize Image URL</label>
+                            <input type="url" id="draw-image"
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px;">Draw Date</label>
+                            <input type="datetime-local" id="draw-date" required
+                                style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-primary">Create Draw</button>
+                            <button type="button" class="btn btn-outline" onclick="hideCreateDrawForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="sec-notifications" class="admin-section" style="display: none;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <!-- Broadcast Form -->
+                    <div class="glass" style="padding: 30px; border-radius: 20px;">
+                        <h3>Send Broadcast Message</h3>
+                        <form id="admin-broadcast-form" style="margin-top: 20px;">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px;">Target Audience</label>
+                                <select id="broadcast-target"
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                                    <option value="all">All Users</option>
+                                    <option value="active">Active Only</option>
+                                    <option value="depositors">Depositors Only</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px;">Subject</label>
+                                <input type="text" id="broadcast-subject" required
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px;">Message Content</label>
+                                <textarea id="broadcast-message" rows="5" required
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Push Broadcast</button>
+                        </form>
+                    </div>
+
+                    <!-- Announcement Bar Settings -->
+                    <div class="glass" style="padding: 30px; border-radius: 20px;">
+                        <h3>Announcement Banner</h3>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">This text appears
+                            at the top of every page for users.</p>
+                        <form id="admin-announcement-form">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 5px;">Banner Text</label>
+                                <textarea id="announcement-text" rows="3" required
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                            </div>
+                            <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="announcement-enabled" style="width: 20px; height: 20px;">
+                                <label for="announcement-enabled">Enable Banner</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Banner</button>
+                        </form>
+
+                        <hr style="margin: 30px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+
+                        <h3>Simulated Alerts</h3>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                            <button class="btn btn-outline" style="font-size: 0.8rem;"
+                                onclick="alert('Email Broadcast Simulation: Messages queued for SMTP delivery.')">📧
+                                Send Email Blast</button>
+                            <button class="btn btn-outline" style="font-size: 0.8rem;"
+                                onclick="alert('Telegram Bot Alert: Broadcast sent to official channel group.')">📲 Push
+                                to Telegram Bot</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="sec-settings" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Global Platform Settings</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Update core variables
+                        used across the site.</p>
+
+                    <form id="admin-settings-form">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                            <div>
+                                <label style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Site Name</label>
+                                <input type="text" id="set-sitename"
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Support
+                                    Email</label>
+                                <input type="email" id="set-email"
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <label
+                                style="display: block; font-size: 0.9rem; margin-bottom: 5px; color: var(--primary-neon);">USDT
+                                TRC20 Deposit Address</label>
+                            <input type="text" id="set-wallet" required
+                                style="width: 100%; padding: 10px; background: rgba(57,255,20,0.05); border: 1px solid var(--primary-neon); border-radius: 8px; color: #fff; font-family: monospace;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                            <div>
+                                <label style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Min Deposit
+                                    (USDT)</label>
+                                <input type="number" id="set-mindep"
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Min Withdrawal
+                                    (USDT)</label>
+                                <input type="number" id="set-minwith"
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px;">
+                            <div>
+                                <label style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Referral Lvl 1
+                                    Comm (%)</label>
+                                <input type="number" id="set-refl1" max="100" min="0"
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 0.9rem; margin-bottom: 5px;">Referral Lvl 2
+                                    Comm (%)</label>
+                                <input type="number" id="set-refl2" max="100" min="0"
+                                    style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        // Tab Switcher
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.admin-section').forEach(sec => sec.style.display = 'none');
+            // Remove active class from menu
+            document.querySelectorAll('#admin-menu a').forEach(a => a.classList.remove('active'));
+
+            // Show target section
+            const targetSec = document.getElementById('sec-' + tabId);
+            if (targetSec) targetSec.style.display = 'block';
+
+            // Highlight link
+            event.currentTarget.classList.add('active');
+        }
+
+        // Render Users Table
+        function renderUsers() {
+            const tbody = document.getElementById('user-table-body');
+            const searchQ = document.getElementById('user-search') ? document.getElementById('user-search').value.toLowerCase() : '';
+            let users = Auth.getUsers();
+
+            if (searchQ) {
+                users = users.filter(u => u.name.toLowerCase().includes(searchQ) || u.email.toLowerCase().includes(searchQ));
+            }
+
+            if (tbody) {
+                tbody.innerHTML = '';
+                users.forEach(u => {
+                    const tr = document.createElement('tr');
+                    const statusColor = u.suspended ? '#ff4d4d' : 'var(--primary-neon)';
+                    const statusText = u.suspended ? 'Suspended' : 'Active';
+
+                    tr.innerHTML = `
+                        <td>${u.name} <span style="font-size:0.7rem; color:var(--text-muted); display:block;">${u.id}</span></td>
+                        <td>${u.email}</td>
+                        <td>$${(u.balance || 0).toFixed(2)}</td>
+                        <td>$${(u.earnings || 0).toFixed(2)}</td>
+                        <td style="color: ${statusColor}; font-weight: 600;">${statusText}</td>
+                        <td style="display: flex; gap: 5px;">
+                            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.7rem; border-color: ${u.suspended ? 'var(--primary-neon)' : '#ff4d4d'}; color: ${u.suspended ? 'var(--primary-neon)' : '#ff4d4d'};" onclick="toggleUserStatus('${u.id}', ${!u.suspended})">${u.suspended ? 'Activate' : 'Suspend'}</button>
+                            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.7rem;" onclick="editUserBalance('${u.id}', ${u.balance || 0})">Edit Bal</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Toggle User Status
+        function toggleUserStatus(userId, suspend) {
+            Admin.suspendUser(userId, suspend);
+            renderUsers();
+        }
+
+        // Edit User Balance
+        function editUserBalance(userId, currentBalance) {
+            const newBal = prompt(`Enter new balance (USDT) for User ID ${userId}:`, currentBalance);
+            if (newBal !== null && !isNaN(newBal)) {
+                Admin.updateUserBalance(userId, parseFloat(newBal));
+                renderUsers();
+                // refresh stats
+                location.reload();
+            }
+        }
+
+        // Render Deposits Table
+        function renderDeposits() {
+            const tbody = document.getElementById('deposit-table-body');
+            const txs = Admin.getTransactions('deposit').filter(t => t.status === 'pending');
+            if (tbody) {
+                tbody.innerHTML = '';
+                txs.forEach(t => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${t.userId}</td>
+                        <td>$${t.amount.toFixed(2)}</td>
+                        <td>${new Date(t.date).toLocaleDateString()}</td>
+                        <td style="color: #ffcc00;">Pending</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 4px 10px; font-size: 0.7rem;" onclick="resolveTx('${t.id}', 'approved')">Approve</button>
+                            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.7rem; border-color: #ff4d4d; color: #ff4d4d;" onclick="resolveTx('${t.id}', 'rejected')">Reject</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Render Withdrawals Table
+        function renderWithdrawals() {
+            const tbody = document.getElementById('withdraw-table-body');
+            const txs = Admin.getTransactions('withdraw').filter(t => t.status === 'pending');
+            if (tbody) {
+                tbody.innerHTML = '';
+                txs.forEach(t => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${t.userId}</td>
+                        <td>$${t.amount.toFixed(2)}</td>
+                        <td style="font-family: monospace; font-size: 0.8rem;">${t.address}</td>
+                        <td>${new Date(t.date).toLocaleDateString()}</td>
+                        <td style="color: #ffcc00;">Pending</td>
+                        <td>
+                            <button class="btn btn-primary" style="padding: 4px 10px; font-size: 0.7rem;" onclick="resolveTx('${t.id}', 'approved')">Approve</button>
+                            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 0.7rem; border-color: #ff4d4d; color: #ff4d4d;" onclick="resolveTx('${t.id}', 'rejected')">Reject</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Resolve Transaction
+        function resolveTx(txId, status) {
+            if (confirm(`Are you sure you want to ${status} this transaction?`)) {
+                Admin.resolveTransaction(txId, status);
+                renderDeposits();
+                renderWithdrawals();
+                // Refresh dashboard stats if viewing them
+                location.reload();
+            }
+        }
+
+        // Render Tasks
+        function renderTasks() {
+            const list = document.getElementById('admin-tasks-list');
+            const tasks = Admin.getDb(Admin.DB_TASKS);
+            if (list) {
+                list.innerHTML = '';
+                tasks.forEach(t => {
+                    const li = document.createElement('li');
+                    li.style.marginBottom = '10px';
+                    li.style.display = 'flex';
+                    li.style.justifyContent = 'space-between';
+                    li.innerHTML = `
+                        <span>${t.title} - $${t.reward.toFixed(2)} (${t.duration}s) <span style="color: ${t.active ? 'var(--primary-neon)' : '#ff4d4d'};">(${t.active ? 'Active' : 'Inactive'})</span></span>
+                        <div style="display: flex; gap: 10px;">
+                            <span style="color: #ff4d4d; cursor: pointer;" onclick="deleteTask('${t.id}')">Delete</span>
+                        </div>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+        }
+
+        function promptCreateTask() {
+            const title = prompt("Task Title:", "New Task");
+            if (!title) return;
+            const desc = prompt("Task Description:", "Complete this task to earn...");
+            const reward = prompt("Reward (USDT):", "0.10");
+            const duration = prompt("Duration (Seconds):", "15");
+
+            if (title && reward && duration) {
+                Admin.createTask(title, desc, reward, duration);
+                renderTasks();
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm("Are you sure you want to delete this task?")) {
+                Admin.deleteTask(taskId);
+                renderTasks();
+            }
+        }
+
+        // --- Lucky Draw Admin Logic ---
+        function renderAdminDraws() {
+            const tbody = document.getElementById('admin-draws-table');
+            const draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
+            if (tbody) {
+                tbody.innerHTML = '';
+                draws.forEach(d => {
+                    const tr = document.createElement('tr');
+                    const sold = d.totalTickets - d.remainingTickets;
+                    let actionHtml = '';
+                    if (d.status === 'active') {
+                        actionHtml = `<button class="btn btn-primary" style="padding: 4px 10px; font-size: 0.7rem;" onclick="processRunDraw('${d.id}')">Run Draw</button>`;
+                    } else {
+                        actionHtml = `<span style="color: var(--primary-neon);">Winner: ${d.winner?.name || 'N/A'} (#${d.winner?.ticketNumber || '?'})</span>`;
+                    }
+
+                    tr.innerHTML = `
+                        <td>${d.prize}</td>
+                        <td>$${d.price}</td>
+                        <td>${sold} / ${d.totalTickets}</td>
+                        <td style="color: ${d.status === 'active' ? '#ffcc00' : 'var(--primary-neon)'}">${d.status.toUpperCase()}</td>
+                        <td>${actionHtml}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        function showCreateDrawForm() {
+            document.getElementById('create-draw-form').style.display = 'block';
+        }
+
+        function hideCreateDrawForm() {
+            document.getElementById('create-draw-form').style.display = 'none';
+        }
+
+        function processRunDraw(drawId) {
+            if (confirm("Are you sure you want to run this draw and select a winner randomly?")) {
+                const res = Admin.runDraw(drawId);
+                if (res.success) {
+                    alert(`Winner Selected: ${res.winner.name} (Ticket #${res.winner.ticketNumber})`);
+                    renderAdminDraws();
+                } else {
+                    alert(res.message);
+                }
+            }
+        }
+
+        // Initialize Admin Draw Form Submission
+        function initDrawForm() {
+            const form = document.getElementById('admin-draw-form');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const title = document.getElementById('draw-title').value;
+                    const prize = document.getElementById('draw-prize').value;
+                    const price = document.getElementById('draw-price').value;
+                    const tickets = document.getElementById('draw-tickets').value;
+                    const image = document.getElementById('draw-image').value;
+                    const date = document.getElementById('draw-date').value;
+
+                    Admin.createLuckyDraw(title, prize, image, price, tickets, date);
+                    alert("Lucky Draw Created Successfully!");
+                    form.reset();
+                    hideCreateDrawForm();
+                    renderAdminDraws();
+                });
+            }
+        }
+
+        // --- Notification Admin Logic ---
+        function initNotificationForms() {
+            const broadcastForm = document.getElementById('admin-broadcast-form');
+            if (broadcastForm) {
+                broadcastForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const target = document.getElementById('broadcast-target').value;
+                    const subject = document.getElementById('broadcast-subject').value;
+                    const message = document.getElementById('broadcast-message').value;
+
+                    const res = Admin.sendBroadcast(target, subject, message);
+                    alert(`Broadcast sent to ${res.count} users!`);
+                    broadcastForm.reset();
+                });
+            }
+
+            const announcementForm = document.getElementById('admin-announcement-form');
+            if (announcementForm) {
+                // Pre-fill
+                const current = Admin.getAnnouncement();
+                document.getElementById('announcement-text').value = current.text;
+                document.getElementById('announcement-enabled').checked = current.enabled;
+
+                announcementForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const text = document.getElementById('announcement-text').value;
+                    const enabled = document.getElementById('announcement-enabled').checked;
+
+                    Admin.updateAnnouncement(text, enabled);
+                    alert("Announcement bar updated successfully!");
+                });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate Stats
+            const users = Auth.getUsers();
+            const txs = Admin.getTransactions('all');
+
+            document.getElementById('admin-total-users').innerText = users.length;
+
+            let totalDep = 0;
+            let totalWith = 0;
+            let pendingWith = 0;
+            let totalDispensed = 0;
+
+            txs.forEach(t => {
+                if (t.type === 'deposit' && t.status === 'approved') totalDep += t.amount;
+                if (t.type === 'withdraw' && t.status === 'pending') pendingWith++;
+            });
+
+            users.forEach(u => {
+                totalDispensed += u.earnings || 0;
+            });
+
+            document.getElementById('admin-total-deposits').innerText = `$${totalDep.toFixed(2)}`;
+            document.getElementById('admin-pending-withdrawals').innerText = pendingWith;
+            document.getElementById('admin-total-dispensed').innerText = `$${totalDispensed.toFixed(2)}`;
+
+            // Populate Settings form
+            document.getElementById('set-sitename').value = Admin.getSetting('siteName');
+            document.getElementById('set-email').value = Admin.getSetting('supportEmail');
+            document.getElementById('set-wallet').value = Admin.getSetting('depositAddress');
+            document.getElementById('set-mindep').value = Admin.getSetting('minDeposit');
+            document.getElementById('set-minwith').value = Admin.getSetting('minWithdraw');
+            document.getElementById('set-refl1').value = Admin.getSetting('refLvl1') || 10;
+            document.getElementById('set-refl2').value = Admin.getSetting('refLvl2') || 5;
+
+            // Handle Settings Save
+            document.getElementById('admin-settings-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                Admin.updateSetting('siteName', document.getElementById('set-sitename').value);
+                Admin.updateSetting('supportEmail', document.getElementById('set-email').value);
+                Admin.updateSetting('depositAddress', document.getElementById('set-wallet').value);
+                Admin.updateSetting('minDeposit', parseFloat(document.getElementById('set-mindep').value));
+                Admin.updateSetting('minWithdraw', parseFloat(document.getElementById('set-minwith').value));
+                Admin.updateSetting('refLvl1', parseFloat(document.getElementById('set-refl1').value));
+                Admin.updateSetting('refLvl2', parseFloat(document.getElementById('set-refl2').value));
+                alert('Settings Saved Successfully!');
+            });
+
+            // Populate Content Form
+            const content = Admin.getObjDb(Admin.DB_CONTENT);
+            document.getElementById('content-hero').value = content.homeHero || '';
+            document.getElementById('content-sub').value = content.homeSub || '';
+            document.getElementById('content-about').value = content.aboutText || '';
+            document.getElementById('content-terms').value = content.termsText || '';
+            document.getElementById('content-privacy').value = content.privacyText || '';
+            document.getElementById('content-contact').value = content.contactText || '';
+
+            // Handle Content Save
+            document.getElementById('admin-content-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newContent = {
+                    homeHero: document.getElementById('content-hero').value,
+                    homeSub: document.getElementById('content-sub').value,
+                    aboutText: document.getElementById('content-about').value,
+                    termsText: document.getElementById('content-terms').value,
+                    privacyText: document.getElementById('content-privacy').value,
+                    contactText: document.getElementById('content-contact').value
+                };
+                Admin.saveDb(Admin.DB_CONTENT, newContent);
+                Admin.logAction('Admin updated website content');
+                alert('Content successfully updated!');
+            });
+
+            // Initial Renders
+            renderUsers();
+            renderDeposits();
+            renderWithdrawals();
+            renderTasks();
+            renderAdminDraws();
+            initDrawForm();
+            initNotificationForms();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 style="font-size: 1.8rem;">Support Center</h2>
+            </header>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+                <div class="glass" style="padding: 40px; border-radius: 20px;">
+                    <h3>Submit a Ticket</h3>
+                    <form style="margin-top: 25px;">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Subject</label>
+                            <input type="text" required placeholder="How can we help?"
+                                style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Message</label>
+                            <textarea rows="5" required placeholder="Describe your issue in detail..."
+                                style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; resize: none;"></textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" style="width: 100%;"
+                            onclick="alert('Ticket submitted! Our team will respond within 24 hours.')">Send
+                            Message</button>
+                    </form>
+                </div>
+
+                <div class="glass" style="padding: 40px; border-radius: 20px;">
+                    <h3>Common Questions</h3>
+                    <div style="margin-top: 25px;">
+                        <div
+                            style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <h4 style="color: var(--primary-neon);">How long do withdrawals take?</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Withdrawals are
+                                typically processed within 24-48 hours after approval.</p>
+                        </div>
+                        <div
+                            style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <h4 style="color: var(--primary-neon);">Minimum deposit amount?</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">The minimum deposit
+                                is $1 USDT (TRC20).</p>
+                        </div>
+                        <div
+                            style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <h4 style="color: var(--primary-neon);">How to earn more?</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">Upgrade your
+                                investment plan or invite friends to earn referral commissions.</p>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Still need help?</p>
+                        <a href="#" style="color: var(--accent-blue); font-weight: 600;">Join Telegram Community</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+</body>
+
+</html>

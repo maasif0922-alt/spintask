@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html" class="active"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2 style="font-size: 1.8rem;">Deposit USDT</h2>
+                    <p style="color: var(--text-muted);">Minimum deposit: $<span id="pub-min-dep">10</span> USDT (TRC20)
+                    </p>
+                </div>
+            </header>
+
+            <div style="max-width: 800px; margin: 30px auto;">
+                <div class="glass" style="padding: 40px; border-radius: 20px; text-align: center;">
+                    <div
+                        style="background: #fff; padding: 20px; display: inline-block; border-radius: 15px; margin-bottom: 20px;">
+                        <!-- QR Code Mock -->
+                        <div
+                            style="width: 200px; height: 200px; background: #000; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold;">
+                            USDT TRC20 QR</div>
+                    </div>
+
+                    <h3 style="margin-bottom: 10px;">Deposit Address</h3>
+                    <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px;">Send only USDT TRC20
+                        to this address. Other coins may be lost.</p>
+
+                    <div
+                        style="display: flex; gap: 10px; background: var(--secondary-blue); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                        <code id="pub-wallet-address"
+                            style="color: var(--primary-neon); font-size: 1rem; flex-grow: 1;">TRC20_WALLET_ADDRESS_MOCK_123456789</code>
+                        <button onclick="copyAddr()"
+                            style="background: none; border: none; color: #fff; cursor: pointer;">📋</button>
+                    </div>
+
+                    <div
+                        style="margin-top: 40px; text-align: left; padding: 20px; background: rgba(57, 255, 20, 0.05); border-radius: 10px; border-left: 4px solid var(--primary-neon);">
+                        <p style="font-size: 0.9rem;"><b>Confirmation:</b> Deposits are typically confirmed within 5-10
+                            minutes. Once confirmed, your balance will update automatically.</p>
+                    </div>
+                </div>
+
+                <div class="glass" style="margin-top: 40px; padding: 30px; border-radius: 20px;">
+                    <h3>Deposit History</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>TXID</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-deposit-history">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        let currentWallet = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const minDepSettings = Admin.getSetting('minDeposit');
+            currentWallet = Admin.getSetting('depositAddress');
+
+            if (minDepSettings) document.getElementById('pub-min-dep').innerText = minDepSettings;
+            if (currentWallet) document.getElementById('pub-wallet-address').innerText = currentWallet;
+
+            renderDepositHistory();
+        });
+
+        function renderDepositHistory() {
+            const currentUser = Auth.getCurrentUser();
+            if (!currentUser) return;
+            const txs = Admin.getTransactions('deposit').filter(t => t.userId === currentUser.id);
+            const tbody = document.getElementById('user-deposit-history');
+            tbody.innerHTML = '';
+
+            if (txs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No deposits found</td></tr>`;
+                return;
+            }
+
+            txs.forEach(t => {
+                let statusColor = t.status === 'approved' ? 'var(--primary-neon)' : (t.status === 'rejected' ? '#ff4d4d' : '#ffcc00');
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${t.id}</td>
+                        <td>$${t.amount.toFixed(2)}</td>
+                        <td>${new Date(t.date).toLocaleDateString()}</td>
+                        <td style="color: ${statusColor}; text-transform: capitalize;">${t.status}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function copyAddr() {
+            navigator.clipboard.writeText(currentWallet);
+
+            // Trigger a simulated deposit request automatically for demonstration purposes
+            const amountStr = prompt("Simulation: Enter amount you transferred to test the deposit request process:", "50");
+            if (amountStr) {
+                const amount = parseFloat(amountStr);
+                const currentUser = Auth.getCurrentUser();
+                if (currentUser && amount > 0) {
+                    Admin.requestTransaction(currentUser.id, 'deposit', amount, currentWallet);
+                    alert(`Simulated deposit request of $${amount} created! Waiting for Admin approval.`);
+                    renderDepositHistory();
+                }
+            } else {
+                alert("Address copied to clipboard!");
+            }
+        }
+    </script>
+</body>
+
+</html>

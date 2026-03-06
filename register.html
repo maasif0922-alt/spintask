@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+    <!-- Back Button -->
+    <a href="index.html" class="glass"
+        style="position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 10px; display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 0.9rem; z-index: 10; transition: background 0.3s ease;">
+        <span style="font-size: 1.2rem;">←</span> Back to Home
+    </a>
+
+    <div class="container"
+        style="display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 0;">
+        <div class="glass" style="width: 100%; max-width: 450px; padding: 40px; border-radius: 20px;">
+
+            <div id="error-msg"
+                style="background: #ff4d4d; color: #fff; padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; display: none;">
+            </div>
+            <div id="success-msg"
+                style="background: var(--primary-neon); color: var(--bg-dark); padding: 10px 20px; border-radius: 8px; margin-bottom: 20px; display: none; font-weight: 600;">
+            </div>
+
+            <div style="text-align: center; margin-bottom: 30px;">
+                <a href="index.html" class="logo" style="justify-content: center; margin-bottom: 10px;">
+                    <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                        <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                    </svg>
+                    SpinTask<span>.</span>
+                </a>
+                <h2 style="font-size: 1.5rem;">Create Your Account</h2>
+                <p style="color: var(--text-muted);">Start earning USDT with simple tasks</p>
+            </div>
+
+            <form id="register-form">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Full
+                        Name</label>
+                    <input type="text" id="name" required placeholder="John Doe"
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label
+                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Email
+                        Address</label>
+                    <input type="email" id="email" required placeholder="name@example.com"
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label
+                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Password</label>
+                    <input type="password" id="password" required placeholder="Min 6 characters" minlength="6"
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label
+                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Confirm
+                        Password</label>
+                    <input type="password" id="confirm-password" required placeholder="Re-enter password"
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
+                </div>
+
+                <div style="margin-bottom: 25px; display: flex; align-items: flex-start; gap: 10px;">
+                    <input type="checkbox" required style="margin-top: 4px;">
+                    <p style="font-size: 0.8rem; color: var(--text-muted);">I agree to the <a href="terms.html"
+                            style="color: var(--primary-neon);">Terms of Service</a> and <a href="terms.html"
+                            style="color: var(--primary-neon);">Privacy Policy</a>.</p>
+                </div>
+
+                <button type="submit" id="reg-btn" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-muted);">
+                Already have an account? <a href="login.html" style="color: var(--primary-neon);">Login here</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPass = document.getElementById('confirm-password').value;
+            const errorMsg = document.getElementById('error-msg');
+            const successMsg = document.getElementById('success-msg');
+            const regBtn = document.getElementById('reg-btn');
+
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            if (password !== confirmPass) {
+                errorMsg.innerText = 'Passwords do not match.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            regBtn.disabled = true;
+            regBtn.innerText = 'Creating Account...';
+
+            try {
+                // Delay for UX
+                await new Promise(r => setTimeout(r, 800));
+
+                await Auth.register(name, email, password);
+
+                successMsg.innerText = 'Registration successful! Redirecting to login...';
+                successMsg.style.display = 'block';
+
+                setTimeout(() => window.location.href = 'login.html', 2000);
+            } catch (err) {
+                errorMsg.innerText = err.message;
+                errorMsg.style.display = 'block';
+                regBtn.disabled = false;
+                regBtn.innerText = 'Create Account';
+            }
+        });
+    </script>
+</body>
+
+</html>

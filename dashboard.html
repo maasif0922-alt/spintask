@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html" class="active"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2 style="font-size: 1.8rem;">Welcome, User! 👋</h2>
+                    <p style="color: var(--text-muted);">Here's what's happening today.</p>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <div class="glass"
+                        style="padding: 10px 20px; border-radius: 10px; display: flex; align-items: center; gap: 10px;">
+                        <span style="color: var(--primary-neon);">USDT</span>
+                        <span class="user-balance-value" style="font-weight: 700;">$0.00</span>
+                    </div>
+                    <a href="spin.html" class="btn btn-primary">Daily Spin</a>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="dash-grid">
+                <div class="dash-card glass">
+                    <h4>Account Balance</h4>
+                    <div class="value user-balance-value">0.00 USDT</div>
+                    <div class="trend">+0% from last week</div>
+                </div>
+                <div class="dash-card glass">
+                    <h4>Total Earnings</h4>
+                    <div id="user-total-earnings" class="value">0.00 USDT</div>
+                    <div class="trend">Lifetime rewards</div>
+                </div>
+                <div class="dash-card glass">
+                    <h4>Today's Earnings</h4>
+                    <div id="user-today-earnings" class="value">0.00 USDT</div>
+                    <div class="trend">0 tasks completed</div>
+                </div>
+                <div class="dash-card glass">
+                    <h4>Referral Earnings</h4>
+                    <div id="user-referral-earnings" class="value">0.00 USDT</div>
+                    <div class="trend">0 Active referrals</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Analytics & Activity -->
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Earnings Overview</h3>
+                        <select
+                            style="background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 5px; border-radius: 5px;">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                        </select>
+                    </div>
+                    <!-- Mock Chart -->
+                    <div class="chart-container">
+                        <div class="chart-bar" style="height: 30%;"></div>
+                        <div class="chart-bar" style="height: 50%;"></div>
+                        <div class="chart-bar" style="height: 40%;"></div>
+                        <div class="chart-bar" style="height: 80%;"></div>
+                        <div class="chart-bar" style="height: 60%;"></div>
+                        <div class="chart-bar" style="height: 90%;"></div>
+                        <div class="chart-bar" style="height: 45%;"></div>
+                    </div>
+                </div>
+
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Recent Tasks</h3>
+                    <div style="margin-top: 20px;">
+                        <div
+                            style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <div style="background: rgba(57, 255, 20, 0.1); padding: 10px; border-radius: 10px;">🎡
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <div style="font-size: 0.9rem; font-weight: 600;">Daily Spin</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">2 hours ago</div>
+                            </div>
+                            <div style="color: var(--primary-neon);">+0.01</div>
+                        </div>
+                        <div
+                            style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <div style="background: rgba(77, 124, 255, 0.1); padding: 10px; border-radius: 10px;">🌐
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <div style="font-size: 0.9rem; font-weight: 600;">Visit Website</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">5 hours ago</div>
+                            </div>
+                            <div style="color: var(--primary-neon);">+0.05</div>
+                        </div>
+                    </div>
+                    <a href="tasks.html"
+                        style="display: block; text-align: center; color: var(--primary-neon); font-size: 0.9rem; margin-top: 10px;">View
+                        All Tasks</a>
+                </div>
+            </div>
+
+            <!-- Active Plans & Info -->
+            <div style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="glass"
+                    style="padding: 30px; border-radius: 20px; border-left: 4px solid var(--primary-neon);">
+                    <h4>Your Active Plan</h4>
+                    <p style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">Free Tier</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Upgrade to earn up to $0.80
+                        daily profit.</p>
+                    <a href="plans.html" class="btn btn-primary"
+                        style="margin-top: 20px; padding: 8px 20px; font-size: 0.9rem;">Upgrade Now</a>
+                </div>
+                <div class="glass"
+                    style="padding: 30px; border-radius: 20px; border-left: 4px solid var(--accent-blue);">
+                    <h4>Referral Program</h4>
+                    <p style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">Level 1: 10% | Level 2: 5%</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Earn commissions on your
+                        friend's earnings.</p>
+                    <a href="referral.html" class="btn btn-outline"
+                        style="margin-top: 20px; padding: 8px 20px; font-size: 0.9rem; border-color: var(--accent-blue); color: var(--accent-blue);">Invite
+                        Friends</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        // Set dynamic user data
+        const user = Auth.getCurrentUser();
+        if (user) {
+            if (document.getElementById('welcome-msg')) {
+                document.getElementById('welcome-msg').innerText = `Welcome back, ${user.name.split(' ')[0]}! 👋`;
+            }
+
+            // Populate additional stats
+            const totalEarningsEl = document.getElementById('user-total-earnings');
+            if (totalEarningsEl) totalEarningsEl.innerText = `${user.earnings.toFixed(2)} USDT`;
+        }
+    </script>
+</body>
+
+</html>

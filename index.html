@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpinTask | Spin, Complete Tasks, Earn USDT</title>
+    <meta name="description"
+        content="Earn USDT online by completing simple tasks, spinning the daily wheel, and joining community pools.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Crypto Ticker -->
+    <div class="market-ticker">
+        <div id="ticker-content" class="ticker-content">
+            <!-- Populated by market.js -->
+            <span class="ticker-item">Loading live market data...</span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="glass">
+        <div class="container container-nav">
+            <nav>
+                <a href="/" class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                        <circle cx="20" cy="20" r="12" stroke="#39ff14" stroke-width="1" stroke-dasharray="4 4" />
+                        <path d="M20 8V12M20 28V32M8 20H12M28 20H32" stroke="#39ff14" stroke-width="2"
+                            stroke-linecap="round" />
+                        <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                    </svg>
+                    SpinTask<span>.</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="tasks.html">Tasks</a></li>
+                    <li><a href="support.html">Support</a></li>
+                </ul>
+                <div class="auth-btns">
+                    <a href="login.html" class="btn btn-outline">Login</a>
+                    <a href="register.html" class="btn btn-primary" style="margin-left: 10px;">Start Earning</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="app-root">
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1 id="pub-hero-head">Earn USDT Online with<br>Simple Tasks and Spins</h1>
+                <p id="pub-hero-sub">The most trusted micro-task platform. Complete simple actions, spin the daily
+                    wheel, and withdraw
+                    your earnings directly to your Binance wallet.</p>
+                <div class="hero-btns">
+                    <a href="register.html" class="btn btn-primary">Start Earning Now</a>
+                    <a href="login.html" class="btn btn-outline">Member Login</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trending Market Section -->
+        <section class="market-section">
+            <div class="container">
+                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="margin: 0;">Trending Crypto Market</h2>
+                    <a href="market.html" class="btn btn-outline" style="font-size: 0.8rem;">View Full Market</a>
+                </div>
+                <div id="trending-market-container" class="trending-grid">
+                    <!-- Populated by market.js -->
+                    <div class="market-card glass">Loading market data...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Why Choose SpinTask?</h2>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card glass glass-hover">
+                        <div class="feature-icon">🎡</div>
+                        <h3>Daily Spin Rewards</h3>
+                        <p>Spin the wheel once every 24 hours to win USDT bonuses and extra tasks.</p>
+                    </div>
+                    <div class="feature-card glass glass-hover">
+                        <div class="feature-icon">📋</div>
+                        <h3>Micro Tasks</h3>
+                        <p>Complete simple tasks like visiting websites or social media actions for instant USDT.</p>
+                    </div>
+                    <div class="feature-card glass glass-hover">
+                        <div class="feature-icon">👥</div>
+                        <h3>Referral Earnings</h3>
+                        <p>Invite friends and earn up to 10% commission on their lifetime earnings.</p>
+                    </div>
+                    <div class="feature-card glass glass-hover">
+                        <div class="feature-icon">🌊</div>
+                        <h3>Community Pool</h3>
+                        <p>Join investment pools with other users for massive weekly payouts.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats glass">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <h3 id="stat-users">12,450+</h3>
+                        <p>Total Users</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="stat-paid">$45,200+</h3>
+                        <p>Total USDT Paid</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="stat-tasks">1,200+</h3>
+                        <p>Active Tasks</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3 id="stat-uptime">99.9%</h3>
+                        <p>System Uptime</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">SpinTask<span>.</span></div>
+                    <p style="margin-top: 15px; color: var(--text-muted);">The ultimate crypto-earning platform for
+                        micro-tasks and community rewards.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="support.html">Support</a></li>
+                        <li><a href="terms.html">Terms & Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="#">Telegram</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Discord</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 SpinTask. All rights reserved. Payments processed via USDT (TRC20).
+            </div>
+        </div>
+    </footer>
+
+    <!-- JS -->
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/market.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const content = Admin.getObjDb(Admin.DB_CONTENT);
+            if (content.homeHero) document.getElementById('pub-hero-head').innerHTML = content.homeHero.replace(/\n/g, '<br>');
+            if (content.homeSub) document.getElementById('pub-hero-sub').innerText = content.homeSub;
+        });
+    </script>
+</body>
+
+</html>

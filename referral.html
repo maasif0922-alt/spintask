@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referrals | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="referral.html" class="active"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h2 style="font-size: 1.8rem;">Referral Program</h2>
+                    <p style="color: var(--text-muted);">Invite your friends and earn commissions on their activities.
+                    </p>
+                </div>
+            </header>
+
+            <div class="glass" style="padding: 40px; border-radius: 20px; text-align: center; margin-bottom: 40px;">
+                <h3 style="margin-bottom: 20px;">Your Referral Link</h3>
+                <div style="display: flex; gap: 10px; max-width: 600px; margin: 0 auto;">
+                    <input type="text" id="ref-link" value="https://spintask.com/register?ref=user123" readonly
+                        style="flex-grow: 1; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--primary-neon);">
+                    <button class="btn btn-primary" onclick="copyRef()">Copy</button>
+                </div>
+                <div style="display: flex; justify-content: center; gap: 40px; margin-top: 40px;">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">10%</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;">Level 1</div>
+                    </div>
+                    <div style="width: 1px; background: rgba(255,255,255,0.1);"></div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 700;">5%</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;">Level 2</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-grid">
+                <div class="dash-card glass">
+                    <h4>Total Referrals</h4>
+                    <div class="value">0</div>
+                </div>
+                <div class="dash-card glass">
+                    <h4>Active Referrals</h4>
+                    <div class="value">0</div>
+                </div>
+                <div class="dash-card glass">
+                    <h4>Total Commission</h4>
+                    <div id="referral-earnings" class="value">0.00 USDT</div>
+                </div>
+            </div>
+
+            <div class="glass" style="padding: 30px; border-radius: 20px;">
+                <h3>My Referrals</h3>
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    You haven't referred anyone yet.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/notifications.js"></script>
+    <script>
+        function copyRef() {
+            const copyText = document.getElementById("ref-link");
+            copyText.select();
+            document.execCommand("copy");
+            alert("Copied: " + copyText.value);
+        }
+    </script>
+</body>
+
+</html>
