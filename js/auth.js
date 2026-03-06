@@ -20,7 +20,6 @@ const Auth = {
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         } else {
-            // Insecure fallback for local file:/// environments where Web Crypto API is disabled
             let hash = 0;
             for (let i = 0; i < password.length; i++) {
                 const char = password.charCodeAt(i);
@@ -56,20 +55,28 @@ const Auth = {
             password: hashedPassword,
             balance: 0,
             earnings: 0,
+            verified: false,
+            verificationDate: null,
+            registeredAt: new Date().toISOString(),
             referralCode: 'REF' + Math.random().toString(36).substring(2, 7).toUpperCase(),
             createdAt: new Date().toISOString()
         };
 
         users.push(newUser);
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
-        return { success: true };
+
+        // Fire admin alert for new registration
+        if (typeof Admin !== 'undefined') {
+            Admin.addAdminAlert('registration', `New user registered: ${name} (${email})`);
+        }
+
+        return { success: true, user: newUser };
     },
 
     /**
      * Login a user
      */
     async login(email, password, rememberMe = false) {
-        // Rate Limiting Check
         this.checkRateLimit(email);
 
         const users = this.getUsers();
@@ -86,10 +93,8 @@ const Auth = {
             throw new Error('Invalid email or password.');
         }
 
-        // Clear attempts on success
         this.clearAttempts(email);
 
-        // Create Session
         const sessionData = {
             userId: user.id,
             email: user.email,
@@ -134,6 +139,36 @@ const Auth = {
     },
 
     /**
+     * Verify Account — deducts $1 and marks user as verified
+     */
+    verifyAccount() {
+        const currentUser = this.getCurrentUser();
+        if (!currentUser) return { success: false, message: 'Not logged in.' };
+        if (currentUser.verified) return { success: false, message: 'Account already verified.' };
+        if ((currentUser.balance || 0) < 1) return { success: false, message: 'Insufficient balance. You need at least $1.00 USDT to verify.' };
+
+        const users = this.getUsers();
+        const idx = users.findIndex(u => u.id === currentUser.id);
+        if (idx === -1) return { success: false, message: 'User not found.' };
+
+        users[idx].balance = parseFloat((users[idx].balance - 1).toFixed(2));
+        users[idx].verified = true;
+        users[idx].verificationDate = new Date().toISOString();
+        localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+
+        // Fire admin alert
+        if (typeof Admin !== 'undefined') {
+            Admin.addAdminAlert('verification', `User verified account: ${currentUser.name} (${currentUser.email})`);
+        }
+
+        window.dispatchEvent(new CustomEvent('auth:balanceUpdated', {
+            detail: { balance: users[idx].balance }
+        }));
+
+        return { success: true };
+    },
+
+    /**
      * Update user balance in DB
      */
     updateBalance(amount) {
@@ -147,7 +182,6 @@ const Auth = {
         users[userIndex].balance = parseFloat((users[userIndex].balance + amount).toFixed(2));
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
 
-        // Dispatch custom event for UI updates
         window.dispatchEvent(new CustomEvent('auth:balanceUpdated', {
             detail: { balance: users[userIndex].balance }
         }));
@@ -166,9 +200,95 @@ const Auth = {
         const userIndex = users.findIndex(u => u.id === currentUser.id);
         if (userIndex === -1) return;
 
-        users[userIndex].earnings = parseFloat((users[userIndex].earnings + amount).toFixed(3));
+        users[userIndex].earnings = parseFloat(((users[userIndex].earnings || 0) + amount).toFixed(3));
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
         return users[userIndex].earnings;
+    },
+
+    // ─── User-to-User Transfer Logic ──────────────────────────────────────
+
+    /**
+     * Transfer points (USD) to another user via email
+     */
+    transferPoints(senderId, receiverEmail, amountPoints, note = '') {
+        try {
+            // Check if transfers are globally enabled
+            if (typeof Admin !== 'undefined' && Admin.getSetting('allowTransfers') === 'false') {
+                return { success: false, message: 'User transfers are currently disabled by the administrator.' };
+            }
+
+            const amount = parseFloat(amountPoints);
+            if (isNaN(amount) || amount < 1) {
+                return { success: false, message: 'Minimum transfer amount is 1 Point.' };
+            }
+
+            const users = this.getUsers();
+
+            const senderIndex = users.findIndex(u => u.id === senderId);
+            if (senderIndex === -1) return { success: false, message: 'Sender not found.' };
+
+            const sender = users[senderIndex];
+
+            if (!sender.verified) {
+                return { success: false, message: 'You must verify your email/account to send points.' };
+            }
+            if ((sender.balance || 0) < amount) {
+                return { success: false, message: 'Insufficient balance.' };
+            }
+            if (sender.email.toLowerCase() === receiverEmail.toLowerCase()) {
+                return { success: false, message: 'Cannot transfer points to yourself.' };
+            }
+
+            const receiverIndex = users.findIndex(u => u.email.toLowerCase() === receiverEmail.toLowerCase());
+            if (receiverIndex === -1) {
+                return { success: false, message: 'Receiver account not found in SpinTask system.' };
+            }
+
+            const receiver = users[receiverIndex];
+            if (!receiver.verified) {
+                return { success: false, message: 'The receiving account must be verified before they can accept transfers.' };
+            }
+
+            // Execute Transfer
+            users[senderIndex].balance = parseFloat((users[senderIndex].balance - amount).toFixed(2));
+            users[receiverIndex].balance = parseFloat(((users[receiverIndex].balance || 0) + amount).toFixed(2));
+
+            localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+
+            // Record Global Transaction
+            const transferRecord = {
+                senderId: sender.id,
+                senderName: sender.name,
+                receiverId: receiver.id,
+                receiverName: receiver.name,
+                receiverEmail: receiver.email,
+                amount: amount,
+                note: note
+            };
+
+            if (typeof Admin !== 'undefined') {
+                Admin.addTransferRecord(transferRecord);
+            }
+
+            // Sync sender's UI if they are logged in currently
+            const currentUser = this.getCurrentUser();
+            if (currentUser && currentUser.id === sender.id) {
+                window.dispatchEvent(new CustomEvent('auth:balanceUpdated', {
+                    detail: { balance: users[senderIndex].balance }
+                }));
+            }
+
+            return { success: true, message: `Successfully sent ${amount} Points to ${receiver.name}.` };
+        } catch (e) {
+            console.error(e);
+            return { success: false, message: 'System error during transfer processing.' };
+        }
+    },
+
+    getUserTransfers(userId) {
+        if (typeof Admin === 'undefined') return [];
+        const allTransfers = Admin.getAllTransfers();
+        return allTransfers.filter(t => t.senderId === userId || t.receiverId === userId);
     },
 
     /**
@@ -178,29 +298,23 @@ const Auth = {
         const currentUser = this.getCurrentUser();
         const path = window.location.pathname;
 
-        const isUserAuthPage = path.includes('login.html') || path.includes('register.html');
         const isAdminAuthPage = path.includes('admin-login.html');
+        // Make sure 'admin-login.html' doesn't falsely trigger as a user auth page
+        const isUserAuthPage = (path.includes('login.html') && !isAdminAuthPage) || path.includes('register.html');
         const isAdminDashboard = path.includes('admin-dashboard.html') || path.includes('admin.html');
-
-        // For local testing on some systems, path might not include .html or could be different, 
-        // but for this implementation we assume standard filename matching.
 
         if (!currentUser) {
             if (isAdminDashboard) {
                 window.location.href = 'admin-login.html';
             } else if (!isUserAuthPage && !isAdminAuthPage) {
-                // If trying to access a protected user page while not logged in
-                // Standard landing pages are handled by isLandingPage check in DOMContentLoaded
                 window.location.href = 'login.html';
             }
         } else {
-            // Logged in
-            if (isUserAuthPage) {
-                window.location.href = 'dashboard.html';
-            } else if (isAdminAuthPage) {
+            if (isAdminAuthPage) {
                 window.location.href = 'admin-dashboard.html';
+            } else if (isUserAuthPage) {
+                window.location.href = 'dashboard.html';
             } else if (isAdminDashboard && currentUser.role !== 'admin') {
-                // Block non-admins from admin panel
                 window.location.href = 'dashboard.html';
             }
         }
@@ -212,7 +326,6 @@ const Auth = {
     recordAttempt(email) {
         let attempts = JSON.parse(localStorage.getItem(this.ATTEMPTS_KEY) || '{}');
         if (!attempts[email]) attempts[email] = { count: 0, lastTry: 0 };
-
         attempts[email].count++;
         attempts[email].lastTry = Date.now();
         localStorage.setItem(this.ATTEMPTS_KEY, JSON.stringify(attempts));
@@ -221,14 +334,12 @@ const Auth = {
     checkRateLimit(email) {
         let attempts = JSON.parse(localStorage.getItem(this.ATTEMPTS_KEY) || '{}');
         const attempt = attempts[email];
-
         if (attempt && attempt.count >= this.MAX_ATTEMPTS) {
             const waitTime = this.LOCKOUT_TIME - (Date.now() - attempt.lastTry);
             if (waitTime > 0) {
                 const minutes = Math.ceil(waitTime / 60000);
                 throw new Error(`Too many login attempts. Please try again in ${minutes} minutes.`);
             } else {
-                // Lockout expired
                 this.clearAttempts(email);
             }
         }
@@ -243,31 +354,6 @@ const Auth = {
 
 // Auto-run guard and UI population on load
 document.addEventListener('DOMContentLoaded', async () => {
-    // Generate a demo and admin account for easy testing
-    let users = Auth.getUsers();
-    if (users.length === 0) {
-        try {
-            await Auth.register('Demo User', 'demo@spintask.com', '123456');
-            console.log('Demo account auto-created: demo@spintask.com / 123456');
-
-            await Auth.register('Admin Manager', 'admin@spintask.com', 'admin123');
-            console.log('Admin account auto-created: admin@spintask.com / admin123');
-
-            // Give Admin a nice balance and role indicator
-            let freshUsers = Auth.getUsers();
-            let adminIndex = freshUsers.findIndex(u => u.email === 'admin@spintask.com');
-            if (adminIndex !== -1) {
-                freshUsers[adminIndex].balance = 5000;
-                freshUsers[adminIndex].earnings = 12000;
-                // Add a mock role to distinguish the admin
-                freshUsers[adminIndex].role = 'admin';
-                localStorage.setItem(Auth.DB_KEY, JSON.stringify(freshUsers));
-            }
-        } catch (e) {
-            console.warn('Could not create demo/admin accounts:', e);
-        }
-    }
-
     const isAuthPage = window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html');
     const isLandingPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('about.html') || window.location.pathname.endsWith('support.html') || window.location.pathname.endsWith('terms.html');
 
@@ -288,7 +374,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (welcomeMsg) welcomeMsg.innerText = `Welcome back, ${user.name.split(' ')[0]}! 👋`;
 
         if (balanceDisplays.length > 0) {
-            balanceDisplays.forEach(el => el.innerText = `$${user.balance.toFixed(2)} USDT`);
+            balanceDisplays.forEach(el => el.innerText = `$${(user.balance || 0).toFixed(2)} USDT`);
         }
     }
 });
@@ -298,4 +384,3 @@ window.addEventListener('auth:balanceUpdated', (e) => {
     const balanceDisplays = document.querySelectorAll('.user-balance-value');
     balanceDisplays.forEach(el => el.innerText = `$${e.detail.balance.toFixed(2)} USDT`);
 });
-

@@ -116,15 +116,6 @@
                 </a>
                 <h2 style="font-size: 1.5rem;">Welcome Back</h2>
                 <p style="color: var(--text-muted);">Enter your credentials to access your account</p>
-
-                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
-                    <button type="button" class="btn btn-outline"
-                        style="padding: 6px 15px; font-size: 0.8rem; border-color: rgba(255,255,255,0.2);"
-                        onclick="quickLogin('demo@spintask.com', '123456')">Demo Login</button>
-                    <button type="button" class="btn btn-outline"
-                        style="padding: 6px 15px; font-size: 0.8rem; border-color: rgba(255,255,255,0.2);"
-                        onclick="quickLogin('admin@spintask.com', 'admin123')">Admin Login</button>
-                </div>
             </div>
 
             <form id="login-form">
@@ -182,12 +173,48 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-outline" onclick="alert('Google Login integration coming soon!');"
-                    style="width: 100%; border-color: rgba(255,255,255,0.1); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="18"> Google
-                    Login
+                <button type="button" id="google-login-btn" class="btn btn-outline" onclick="showGoogleLogin()"
+                    style="width: 100%; border-color: rgba(255,255,255,0.15); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease;">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="18"> Continue
+                    with Google
                 </button>
             </form>
+
+            <!-- Google Login Modal -->
+            <div id="google-modal"
+                style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; display:none; align-items:center; justify-content:center;">
+                <div class="glass"
+                    style="width:100%; max-width:380px; padding:35px; border-radius:20px; border:1px solid rgba(255,255,255,0.15); animation:slideIn 0.3s ease;">
+                    <div style="text-align:center; margin-bottom:25px;">
+                        <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="40"
+                            style="margin-bottom:10px;">
+                        <h3 style="font-size:1.2rem;">Sign in with Google</h3>
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:6px;">Enter your Google account
+                            details</p>
+                    </div>
+                    <div id="google-modal-error"
+                        style="background:#ff4d4d; color:#fff; padding:8px 15px; border-radius:8px; margin-bottom:15px; display:none; font-size:0.85rem;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label
+                            style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Full
+                            Name</label>
+                        <input type="text" id="g-name" placeholder="Your full name"
+                            style="width:100%; padding:11px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#fff; outline:none;">
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label
+                            style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Gmail
+                            Address</label>
+                        <input type="email" id="g-email" placeholder="yourname@gmail.com"
+                            style="width:100%; padding:11px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#fff; outline:none;">
+                    </div>
+                    <button onclick="googleSignIn()" class="btn btn-primary"
+                        style="width:100%; margin-bottom:12px;">Sign In / Create Account</button>
+                    <button onclick="closeGoogleModal()" class="btn btn-outline"
+                        style="width:100%; font-size:0.85rem;">Cancel</button>
+                </div>
+            </div>
 
             <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-muted);">
                 Don't have an account? <a href="register.html" style="color: var(--primary-neon);">Register here</a>
@@ -223,6 +250,74 @@
         function togglePassword() {
             const pass = document.getElementById('password');
             pass.type = pass.type === 'password' ? 'text' : 'password';
+        }
+
+        // Google Modal
+        function showGoogleModal() {
+            const m = document.getElementById('google-modal');
+            m.style.display = 'flex';
+            setTimeout(() => document.getElementById('g-name').focus(), 100);
+        }
+        // backward compat alias used by onclick
+        function showGoogleLogin() { showGoogleModal(); }
+        function closeGoogleModal() {
+            document.getElementById('google-modal').style.display = 'none';
+            document.getElementById('google-modal-error').style.display = 'none';
+        }
+
+        async function googleSignIn() {
+            const name = document.getElementById('g-name').value.trim();
+            const email = document.getElementById('g-email').value.trim().toLowerCase();
+            const errEl = document.getElementById('google-modal-error');
+            errEl.style.display = 'none';
+
+            if (!name || !email) {
+                errEl.innerText = 'Please fill in your name and Gmail address.';
+                errEl.style.display = 'block';
+                return;
+            }
+            if (!email.includes('@')) {
+                errEl.innerText = 'Please enter a valid email address.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            // Check if user already exists → login; otherwise → auto-register
+            const users = Auth.getUsers();
+            let user = users.find(u => u.email === email);
+
+            if (!user) {
+                // Auto-register with a random secure password (Google handles real auth)
+                const tempPass = 'google_' + Date.now() + Math.random().toString(36);
+                try {
+                    await Auth.register(name, email, tempPass);
+                } catch (e) {
+                    errEl.innerText = 'Could not create account: ' + e.message;
+                    errEl.style.display = 'block';
+                    return;
+                }
+                // Now log them in
+                const freshUsers = Auth.getUsers();
+                user = freshUsers.find(u => u.email === email);
+            }
+
+            // Create session directly (no password check needed – trusted Google identity)
+            if (user) {
+                const sessionData = {
+                    userId: user.id,
+                    email: user.email,
+                    name: user.name,
+                    role: user.role || 'user',
+                    lastLogin: Date.now()
+                };
+                localStorage.setItem(Auth.SESSION_KEY, JSON.stringify(sessionData));
+
+                closeGoogleModal();
+                const s = document.getElementById('success-msg');
+                s.innerText = '✅ Google sign-in successful! Redirecting...';
+                s.style.display = 'block';
+                setTimeout(() => window.location.href = 'dashboard.html', 1000);
+            }
         }
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {

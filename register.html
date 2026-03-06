@@ -77,8 +77,59 @@
                 <button type="submit" id="reg-btn" class="btn btn-primary" style="width: 100%;">Create Account</button>
             </form>
 
-            <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-muted);">
+            <div
+                style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); position: relative;">
+                <span style="background: var(--bg-dark); padding: 0 10px; position: relative; z-index: 1;">OR CONTINUE
+                    WITH</span>
+                <div
+                    style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1);">
+                </div>
+            </div>
+
+            <button type="button" onclick="showGoogleModal()" class="btn btn-outline"
+                style="width: 100%; margin-top: 15px; border-color: rgba(255,255,255,0.15); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease;">
+                <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="18"> Continue with
+                Google
+            </button>
+
+            <div style="text-align: center; margin-top: 25px; font-size: 0.9rem; color: var(--text-muted);">
                 Already have an account? <a href="login.html" style="color: var(--primary-neon);">Login here</a>
+            </div>
+
+            <!-- Google Modal -->
+            <div id="google-modal"
+                style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+                <div class="glass"
+                    style="width:100%; max-width:380px; padding:35px; border-radius:20px; border:1px solid rgba(255,255,255,0.15);">
+                    <div style="text-align:center; margin-bottom:25px;">
+                        <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="40"
+                            style="margin-bottom:10px;">
+                        <h3 style="font-size:1.2rem;">Sign up with Google</h3>
+                        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:6px;">Enter your Google account
+                            details</p>
+                    </div>
+                    <div id="google-modal-error"
+                        style="background:#ff4d4d; color:#fff; padding:8px 15px; border-radius:8px; margin-bottom:15px; display:none; font-size:0.85rem;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label
+                            style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Full
+                            Name</label>
+                        <input type="text" id="g-name" placeholder="Your full name"
+                            style="width:100%; padding:11px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#fff; outline:none;">
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <label
+                            style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Gmail
+                            Address</label>
+                        <input type="email" id="g-email" placeholder="yourname@gmail.com"
+                            style="width:100%; padding:11px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#fff; outline:none;">
+                    </div>
+                    <button onclick="googleSignIn()" class="btn btn-primary"
+                        style="width:100%; margin-bottom:12px;">Create Account &amp; Sign In</button>
+                    <button onclick="closeGoogleModal()" class="btn btn-outline"
+                        style="width:100%; font-size:0.85rem;">Cancel</button>
+                </div>
             </div>
         </div>
     </div>

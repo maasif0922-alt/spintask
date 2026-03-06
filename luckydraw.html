@@ -12,6 +12,7 @@
 <body class="dashboard-body">
 
     <header class="top-header">
+        <button class="mobile-menu-btn" id="mob-menu-btn" aria-label="Open sidebar">☰</button>
         <a href="dashboard.html" class="header-logo">
             <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
@@ -21,9 +22,11 @@
         </a>
     </header>
 
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar glass">
+        <aside class="sidebar glass" id="main-sidebar">
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
@@ -86,6 +89,30 @@
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/notifications.js"></script>
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <ul>
+            <li><a href="dashboard.html"><span class="bn-icon">🏠</span>Home</a></li>
+            <li><a href="tasks.html"><span class="bn-icon">📋</span>Tasks</a></li>
+            <li><a href="spin.html"><span class="bn-icon">🎡</span>Spin</a></li>
+            <li><a href="withdraw.html"><span class="bn-icon">💸</span>Withdraw</a></li>
+            <li><a href="#" id="more-btn"><span class="bn-icon">⋯</span>More</a></li>
+        </ul>
+    </nav>
+    <div class="mobile-more-sheet" id="more-sheet">
+        <div class="more-sheet-handle"></div>
+        <ul>
+            <li><a href="luckydraw.html" class="active"><span>🎉</span> Lucky Draw</a></li>
+            <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+            <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+            <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+            <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+            <li><a href="profile.html"><span>👤</span> Profile</a></li>
+            <li><a href="#" onclick="Auth.logout(); return false;" style="color:#ff4d4d;"><span>🚪</span> Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar-overlay" id="more-overlay" style="z-index:1065;"></div>
+    <script src="js/mobile.js"></script>
     <script>
         // Set dynamic user data
         const user = Auth.getCurrentUser();

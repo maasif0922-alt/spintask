@@ -47,9 +47,28 @@
                     <a href="login.html" class="btn btn-outline">Login</a>
                     <a href="register.html" class="btn btn-primary">Start Earning</a>
                 </div>
+                <!-- Hamburger for Mobile -->
+                <button class="hamburger-btn" id="hamburger-btn" aria-label="Open menu">
+                    <span></span><span></span><span></span>
+                </button>
             </nav>
         </div>
     </header>
+
+    <!-- Mobile Drawer Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <!-- Mobile Drawer -->
+    <nav class="mobile-drawer" id="mobile-drawer">
+        <a href="index.html">🏠 Home</a>
+        <a href="about.html">ℹ️ About</a>
+        <a href="market.html">📈 Live Market</a>
+        <a href="support.html">💬 Support</a>
+        <div class="drawer-auth">
+            <a href="login.html" class="btn btn-outline">Login</a>
+            <a href="register.html" class="btn btn-primary">Start Earning</a>
+        </div>
+    </nav>
 
     <!-- Main Content -->
     <main id="app-root">
@@ -364,6 +383,31 @@
             fetchHomeMarket();
             setInterval(fetchHomeMarket, 60000);
         });
+    </script>
+    <!-- Mobile Drawer JS -->
+    <script>
+        (function () {
+            const btn = document.getElementById('hamburger-btn');
+            const drawer = document.getElementById('mobile-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            if (!btn || !drawer || !overlay) return;
+            function openDrawer() {
+                btn.classList.add('open');
+                drawer.classList.add('open');
+                overlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+            function closeDrawer() {
+                btn.classList.remove('open');
+                drawer.classList.remove('open');
+                overlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+            btn.addEventListener('click', function () {
+                drawer.classList.contains('open') ? closeDrawer() : openDrawer();
+            });
+            overlay.addEventListener('click', closeDrawer);
+        })();
     </script>
 </body>
 

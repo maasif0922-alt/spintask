@@ -16,6 +16,9 @@ const Admin = {
     DB_SIGNAL: 'spintask_signal_button',
     DB_COMMUNITY_LINKS: 'spintask_community_links',
     DB_SOCIAL_MEDIA: 'spintask_social_media',
+    DB_ADMIN_ALERTS: 'spintask_admin_alerts',
+    DB_SPIN_SETTINGS: 'spintask_spin_settings',
+    DB_TRANSFERS: 'spintask_transfers',
 
     // Default Settings Initialization
     init() {
@@ -24,10 +27,12 @@ const Admin = {
                 siteName: 'SpinTask',
                 supportEmail: 'support@spintask.com',
                 depositAddress: 'TRC20_DEFAULT_ADDRESS_HERE',
+                btcAddress: 'BTC_DEFAULT_ADDRESS_HERE',
                 minDeposit: 10,
                 minWithdraw: 20,
                 refLvl1: 10,
-                refLvl2: 5
+                refLvl2: 5,
+                allowTransfers: true
             };
             localStorage.setItem(this.DB_SETTINGS, JSON.stringify(defaultSettings));
         }
@@ -44,8 +49,8 @@ const Admin = {
 
         if (!localStorage.getItem(this.DB_TASKS)) {
             const defaultTasks = [
-                { id: 't1', title: 'Visit Website', reward: 0.05, type: 'visit', active: true },
-                { id: 't2', title: 'Watch Video', reward: 0.10, type: 'video', active: true }
+                { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true },
+                { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true }
             ];
             localStorage.setItem(this.DB_TASKS, JSON.stringify(defaultTasks));
         }
@@ -117,12 +122,16 @@ const Admin = {
             localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify([]));
         }
 
+        if (!localStorage.getItem(this.DB_ADMIN_ALERTS)) {
+            localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify([]));
+        }
+
         if (!localStorage.getItem(this.DB_COMMUNITY_LINKS)) {
             const defaultCommunity = {
                 telegramLink: 'https://t.me/your_group',
                 whatsappGroupLink: 'https://chat.whatsapp.com/your_group',
                 whatsappCommunityLink: 'https://chat.whatsapp.com/your_community',
-                activeLink: 'telegram' // 'telegram' | 'whatsappGroup' | 'whatsappCommunity'
+                activeLink: 'telegram'
             };
             localStorage.setItem(this.DB_COMMUNITY_LINKS, JSON.stringify(defaultCommunity));
         }
@@ -137,6 +146,23 @@ const Admin = {
                 youtube: { url: 'https://youtube.com/@your_channel', enabled: true }
             };
             localStorage.setItem(this.DB_SOCIAL_MEDIA, JSON.stringify(defaultSocial));
+        }
+
+        if (!localStorage.getItem(this.DB_SPIN_SETTINGS)) {
+            const defaultSpinSettings = {
+                enabled: true,
+                segments: [
+                    { label: '$0.01', value: 0.01, type: 'cash' },
+                    { label: '$0.02', value: 0.02, type: 'cash' },
+                    { label: '$0.05', value: 0.05, type: 'cash' },
+                    { label: '$0.10', value: 0.10, type: 'cash' },
+                    { label: 'Try Again', value: 0, type: 'none' },
+                    { label: '$0.01', value: 0.01, type: 'cash' },
+                    { label: 'Bonus', value: 0, type: 'bonus' },
+                    { label: '$0.02', value: 0.02, type: 'cash' }
+                ]
+            };
+            localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
         }
     },
 
@@ -161,12 +187,51 @@ const Admin = {
             time: new Date().toISOString(),
             desc: actionDesc
         });
-        // Keep only last 50 logs to save space
         if (logs.length > 50) logs.shift();
         this.saveDb(this.DB_LOGS, logs);
     },
 
-    // Get specific settings
+    // ─── Admin Alert System ───────────────────────────────────────────────
+
+    /**
+     * Add a system event alert for the admin notification feed
+     * @param {string} type - 'registration' | 'verification' | 'task' | 'deposit' | 'withdrawal'
+     * @param {string} message - Human-readable description
+     */
+    addAdminAlert(type, message) {
+        const alerts = this.getDb(this.DB_ADMIN_ALERTS);
+        alerts.unshift({
+            id: 'al_' + Date.now(),
+            type,
+            message,
+            time: new Date().toISOString(),
+            read: false
+        });
+        // Keep last 100 alerts
+        if (alerts.length > 100) alerts.pop();
+        this.saveDb(this.DB_ADMIN_ALERTS, alerts);
+    },
+
+    getAdminAlerts() {
+        return this.getDb(this.DB_ADMIN_ALERTS);
+    },
+
+    getUnreadAdminAlertCount() {
+        return this.getAdminAlerts().filter(a => !a.read).length;
+    },
+
+    markAllAdminAlertsRead() {
+        const alerts = this.getDb(this.DB_ADMIN_ALERTS);
+        alerts.forEach(a => a.read = true);
+        this.saveDb(this.DB_ADMIN_ALERTS, alerts);
+    },
+
+    clearAdminAlerts() {
+        this.saveDb(this.DB_ADMIN_ALERTS, []);
+    },
+
+    // ─── Settings ────────────────────────────────────────────────────────
+
     getSetting(key) {
         return this.getObjDb(this.DB_SETTINGS)[key] || '';
     },
@@ -178,7 +243,36 @@ const Admin = {
         this.logAction(`Updated setting: ${key}`);
     },
 
-    // Users Management Wrapper
+    // ─── Transfers ────────────────────────────────────────────────────────
+
+    getAllTransfers() {
+        return this.getDb(this.DB_TRANSFERS) || [];
+    },
+
+    addTransferRecord(transferData) {
+        const transfers = this.getAllTransfers();
+        transfers.unshift({
+            id: 'trf_' + Date.now() + Math.random().toString(36).substr(2, 5),
+            date: new Date().toISOString(),
+            ...transferData
+        });
+        if (transfers.length > 500) transfers.length = 500; // Keep last 500 globally
+        this.saveDb(this.DB_TRANSFERS, transfers);
+    },
+
+    // ─── Spin Settings ────────────────────────────────────────────────────
+
+    getSpinSettings() {
+        return this.getObjDb(this.DB_SPIN_SETTINGS);
+    },
+
+    saveSpinSettings(data) {
+        this.saveDb(this.DB_SPIN_SETTINGS, data);
+        this.logAction('Admin updated spin wheel settings');
+    },
+
+    // ─── Users Management ─────────────────────────────────────────────────
+
     getAllUsers() {
         return JSON.parse(localStorage.getItem('spintask_users') || '[]');
     },
@@ -213,19 +307,67 @@ const Admin = {
         }
     },
 
-    // Tasks Management Wrapper
-    createTask(title, desc, reward, duration) {
+    /**
+     * Export all user records as a CSV string
+     */
+    exportUsersCSV() {
+        const users = this.getAllUsers();
+        const headers = ['Username', 'Email', 'Registration Date', 'Balance (USDT)', 'Total Earnings (USDT)', 'Verified', 'Status'];
+        const rows = users.map(u => [
+            `"${u.name || ''}"`,
+            `"${u.email || ''}"`,
+            `"${u.registeredAt ? new Date(u.registeredAt).toLocaleDateString() : (u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A')}"`,
+            (u.balance || 0).toFixed(2),
+            (u.earnings || 0).toFixed(2),
+            u.verified ? 'Yes' : 'No',
+            u.suspended ? 'Suspended' : 'Active'
+        ]);
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `spintask_users_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.logAction('Admin exported user records as CSV');
+    },
+
+    // ─── Tasks Management ─────────────────────────────────────────────────
+
+    createTask(title, desc, reward, type, active = true) {
         const tasks = this.getDb(this.DB_TASKS);
         tasks.push({
             id: 't_' + Date.now(),
             title: title || 'New Task',
             desc: desc || '',
             reward: parseFloat(reward) || 0.01,
-            duration: parseInt(duration) || 10,
-            active: true
+            type: type || 'visit',
+            active: active
         });
         this.saveDb(this.DB_TASKS, tasks);
         this.logAction(`Admin created new task: ${title}`);
+    },
+
+    updateTask(taskId, updates) {
+        const tasks = this.getDb(this.DB_TASKS);
+        const index = tasks.findIndex(t => t.id === taskId);
+        if (index !== -1) {
+            tasks[index] = { ...tasks[index], ...updates };
+            this.saveDb(this.DB_TASKS, tasks);
+            this.logAction(`Admin updated task: ${taskId}`);
+        }
+    },
+
+    toggleTaskStatus(taskId) {
+        const tasks = this.getDb(this.DB_TASKS);
+        const index = tasks.findIndex(t => t.id === taskId);
+        if (index !== -1) {
+            tasks[index].active = !tasks[index].active;
+            this.saveDb(this.DB_TASKS, tasks);
+            this.logAction(`Admin toggled task status: ${taskId} → ${tasks[index].active ? 'active' : 'inactive'}`);
+        }
     },
 
     deleteTask(taskId) {
@@ -235,37 +377,44 @@ const Admin = {
         this.logAction(`Admin deleted task ID: ${taskId}`);
     },
 
-    // Transactions
-    getTransactions(type = 'all') { // type: 'deposit', 'withdraw', 'all'
+    // ─── Transactions ─────────────────────────────────────────────────────
+
+    getTransactions(type = 'all') {
         const txs = this.getDb(this.DB_TRANSACTIONS);
         if (type === 'all') return txs;
         return txs.filter(t => t.type === type);
     },
 
-    // Creating mock transaction (for users depositing)
-    requestTransaction(userId, type, amount, address) {
+    requestTransaction(userId, type, amount, address, proof = null) {
         const txs = this.getDb(this.DB_TRANSACTIONS);
         const tx = {
             id: 'tx_' + Date.now(),
             userId,
             type,
             amount: parseFloat(amount),
-            address,
+            address, // Can be used for withdrawal address or deposit tx/wallet info
+            proof,   // { txId, screenshotData }
             status: 'pending',
             date: new Date().toISOString()
         };
         txs.push(tx);
         this.saveDb(this.DB_TRANSACTIONS, txs);
+
+        // Fire admin alert
+        const users = this.getAllUsers();
+        const user = users.find(u => u.id === userId);
+        const userName = user ? user.name : userId;
+        this.addAdminAlert(type, `${type === 'deposit' ? '💰 Deposit' : '💸 Withdrawal'} request: ${userName} — $${parseFloat(amount).toFixed(2)} USDT`);
+
         return tx;
     },
 
-    resolveTransaction(txId, newStatus) { // 'approved' or 'rejected'
+    resolveTransaction(txId, newStatus) {
         const txs = this.getDb(this.DB_TRANSACTIONS);
         const index = txs.findIndex(t => t.id === txId);
         if (index !== -1 && txs[index].status === 'pending') {
             txs[index].status = newStatus;
 
-            // Apply balance changes
             if (newStatus === 'approved') {
                 const users = this.getAllUsers();
                 const uIndex = users.findIndex(u => u.id === txs[index].userId);
@@ -284,7 +433,8 @@ const Admin = {
         }
     },
 
-    // Lucky Draw Methods
+    // ─── Lucky Draw ───────────────────────────────────────────────────────
+
     buyTicket(drawId, userId) {
         const draws = this.getDb(this.DB_LUCKYDRAWS);
         const tickets = this.getDb(this.DB_TICKETS);
@@ -302,11 +452,9 @@ const Admin = {
         if (draw.remainingTickets <= 0) return { success: false, message: 'No tickets remaining' };
         if (user.balance < draw.price) return { success: false, message: 'Insufficient balance' };
 
-        // Deduct balance
         user.balance -= draw.price;
         draw.remainingTickets -= 1;
 
-        // Create ticket
         const ticketNumber = 1000 + (draw.totalTickets - draw.remainingTickets);
         const ticket = {
             id: 'tkt_' + Date.now(),
@@ -321,7 +469,6 @@ const Admin = {
 
         tickets.push(ticket);
 
-        // Save
         this.saveDb(this.DB_LUCKYDRAWS, draws);
         this.saveDb(this.DB_TICKETS, tickets);
         localStorage.setItem('spintask_users', JSON.stringify(users));
@@ -388,7 +535,8 @@ const Admin = {
         this.logAction(`Admin created new lucky draw: ${title}`);
     },
 
-    // Notification Hub Logic
+    // ─── Broadcast / Notifications ────────────────────────────────────────
+
     sendBroadcast(target, subject, message) {
         const notifications = this.getDb(this.DB_NOTIFICATIONS);
         const users = this.getAllUsers();
@@ -397,7 +545,6 @@ const Admin = {
         if (target === 'all') {
             targetUserIds = users.filter(u => u.role !== 'admin').map(u => u.id);
         } else if (target === 'active') {
-            // Logic for active could be last login date, but for now we'll treat all as active unless suspended
             targetUserIds = users.filter(u => u.role !== 'admin' && !u.suspended).map(u => u.id);
         } else if (target === 'depositors') {
             const txs = this.getTransactions('deposit').filter(t => t.status === 'approved');
@@ -412,7 +559,7 @@ const Admin = {
             message,
             date: new Date().toISOString(),
             targetUserIds: targetUserIds,
-            readBy: [] // Track which users have read it
+            readBy: []
         };
 
         notifications.push(newNotification);
@@ -447,22 +594,165 @@ const Admin = {
         }
     },
 
-    // Community Links
+    // ─── Community Links ─────────────────────────────────────────────────
+
     getCommunityLinks() {
         return this.getObjDb(this.DB_COMMUNITY_LINKS);
     },
+
     saveCommunityLinks(data) {
         this.saveDb(this.DB_COMMUNITY_LINKS, data);
         this.logAction('Admin updated community links');
     },
 
-    // Social Media
+    // ─── Social Media ─────────────────────────────────────────────────────
+
     getSocialMedia() {
         return this.getObjDb(this.DB_SOCIAL_MEDIA);
     },
+
     saveSocialMedia(data) {
         this.saveDb(this.DB_SOCIAL_MEDIA, data);
         this.logAction('Admin updated social media links');
+    },
+
+    // ─── Analytics Dashboard Helpers ──────────────────────────────────────────
+
+    getDashboardAnalytics(timeRange = 'today') {
+        const users = Auth.getUsers() || [];
+        const txs = this.getDb(this.DB_TRANSACTIONS) || [];
+
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const startOfWeek = new Date(now); startOfWeek.setDate(now.getDate() - now.getDay()); startOfWeek.setHours(0, 0, 0, 0);
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        const filterDate = (dateStr) => {
+            if (timeRange === 'all') return true;
+            const d = new Date(dateStr);
+            if (timeRange === 'today') return d >= startOfDay;
+            if (timeRange === 'week') return d >= startOfWeek;
+            if (timeRange === 'month') return d >= startOfMonth;
+            return true;
+        };
+
+        // Date-filtered metrics
+        let deposits = 0, withdrawals = 0, registrations = 0, refEarnings = 0;
+
+        txs.filter(t => filterDate(t.date)).forEach(t => {
+            if (t.type === 'deposit' && t.status === 'approved') deposits += t.amount || 0;
+            if (t.type === 'withdraw' && t.status === 'approved') withdrawals += t.amount || 0;
+        });
+
+        users.filter(u => filterDate(u.registeredAt || u.createdAt)).forEach(u => {
+            registrations++;
+        });
+
+        // Profit (Deposits - Withdrawals)
+        const profit = deposits - withdrawals;
+
+        // All Time Totals (for profit/overall)
+        let allTimeDep = 0, allTimeWith = 0;
+        txs.forEach(t => {
+            if (t.type === 'deposit' && t.status === 'approved') allTimeDep += t.amount || 0;
+            if (t.type === 'withdraw' && t.status === 'approved') allTimeWith += t.amount || 0;
+        });
+        const allTimeProfit = allTimeDep - allTimeWith;
+
+        // "This Month" profit specifically for that card
+        let monthDep = 0, monthWith = 0;
+        txs.filter(t => new Date(t.date) >= startOfMonth).forEach(t => {
+            if (t.type === 'deposit' && t.status === 'approved') monthDep += t.amount || 0;
+            if (t.type === 'withdraw' && t.status === 'approved') monthWith += t.amount || 0;
+        });
+        const monthProfit = monthDep - monthWith;
+
+        // Summary items (pending)
+        let pendingDep = 0, pendingWith = 0;
+        txs.filter(t => t.status === 'pending').forEach(t => {
+            if (t.type === 'deposit') pendingDep++;
+            if (t.type === 'withdraw') pendingWith++;
+        });
+
+        // User Activity
+        // Active users = users with balance > 0 or earnings > 0
+        const activeUsersCount = users.filter(u => (u.balance > 0 || u.earnings > 0)).length;
+        // Simulated online users based on a base and random flux, capped at active users or total
+        const baseOnline = Math.max(1, Math.floor(users.length * 0.15));
+        const onlineUsers = Math.min(users.length, baseOnline + Math.floor(Math.random() * 5));
+
+        // Leaderboards Calculation
+        // Calculate total deposits / earnings per user within the timeframe
+        let userStats = {};
+        users.forEach(u => {
+            userStats[u.id] = { id: u.id, name: u.name, totalDep: 0, earnings: u.earnings || 0, refs: u.referralCount || 0 };
+        });
+
+        txs.filter(t => filterDate(t.date) && t.status === 'approved' && t.type === 'deposit').forEach(t => {
+            if (userStats[t.userId]) userStats[t.userId].totalDep += t.amount;
+        });
+
+        const usersArr = Object.values(userStats);
+
+        // Sorting for leaderboards
+        const topEarner = [...usersArr].sort((a, b) => b.earnings - a.earnings).slice(0, 5);
+        const topInvestor = [...usersArr].sort((a, b) => b.totalDep - a.totalDep).slice(0, 5);
+        const topReferrer = [...usersArr].sort((a, b) => b.refs - a.refs).slice(0, 5);
+
+        return {
+            filtered: { deposits, withdrawals, registrations, profit, refEarnings },
+            profit: { today: profit, month: monthProfit, allTime: allTimeProfit },
+            summary: { totalDep: allTimeDep, totalWith: allTimeWith, pendingDep, pendingWith },
+            users: { online: onlineUsers, active: activeUsersCount, total: users.length },
+            leaderboards: { topEarner, topInvestor, topReferrer }
+        };
+    },
+
+    getChartData() {
+        const txs = this.getDb(this.DB_TRANSACTIONS) || [];
+        const users = Auth.getUsers() || [];
+
+        // Create an array for the last 7 days
+        const labels = [];
+        const deposits = [];
+        const withdrawals = [];
+        const newUsers = [];
+
+        const now = new Date();
+
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+            const dateStr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+            labels.push(dateStr);
+
+            // Map transactions to this exact day
+            const startOfDay = new Date(d);
+            const endOfDay = new Date(d);
+            endOfDay.setDate(endOfDay.getDate() + 1);
+
+            let dayDep = 0;
+            let dayWith = 0;
+
+            txs.filter(t => t.status === 'approved').forEach(t => {
+                const txD = new Date(t.date);
+                if (txD >= startOfDay && txD < endOfDay) {
+                    if (t.type === 'deposit') dayDep += t.amount;
+                    if (t.type === 'withdraw') dayWith += t.amount;
+                }
+            });
+
+            let dayUsers = 0;
+            users.forEach(u => {
+                const ud = new Date(u.registeredAt || u.createdAt);
+                if (ud >= startOfDay && ud < endOfDay) dayUsers++;
+            });
+
+            deposits.push(dayDep);
+            withdrawals.push(dayWith);
+            newUsers.push(dayUsers);
+        }
+
+        return { labels, deposits, withdrawals, newUsers };
     }
 };
 

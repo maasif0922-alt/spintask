@@ -8,27 +8,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .wheel-segment {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            clip-path: polygon(50% 50%, 50% 0, 100% 0, 100% 50%);
-            /* Simplified segment for CSS demo */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform-origin: 50% 50%;
-        }
-
         #notif-bell-container {
             position: absolute !important;
             right: 20px;
             top: 20px;
-            margin-right: 0 !important;
         }
 
         .top-bar {
             position: relative;
+        }
+
+        /* Verification Lock Screen */
+        .spin-locked {
+            text-align: center;
+            padding: 60px 30px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .lock-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .spin-locked h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .spin-locked p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        /* Countdown Timer */
+        .countdown-box {
+            background: rgba(57, 255, 20, 0.06);
+            border: 1px solid rgba(57, 255, 20, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 350px;
+            margin: 20px auto 0;
+        }
+
+        .countdown-box p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .countdown-timer {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-neon);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
@@ -36,6 +72,7 @@
 <body class="dashboard-body">
 
     <header class="top-header">
+        <button class="mobile-menu-btn" id="mob-menu-btn" aria-label="Open sidebar">☰</button>
         <a href="dashboard.html" class="header-logo">
             <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
@@ -45,9 +82,11 @@
         </a>
     </header>
 
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <div class="dashboard-container">
-        <!-- Sidebar and other nav similar to tasks.html -->
-        <aside class="sidebar glass">
+        <aside class="sidebar glass" id="main-sidebar">
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
@@ -68,43 +107,8 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <header class="top-bar"
-                style="justify-content: center; text-align: center; flex-direction: column; padding: 40px 20px;">
-                <h2 style="font-size: 2rem; margin-bottom: 10px;">Daily Reward Wheel</h2>
-                <p style="color: var(--text-muted); font-size: 1.1rem;">Spin once every 24 hours to win USDT prizes!</p>
-            </header>
-
-            <div style="text-align: center; padding-top: 20px;">
-                <div class="wheel-container">
-                    <div class="wheel-pointer"></div>
-                    <canvas id="wheel-canvas" width="350" height="350"></canvas>
-                </div>
-
-                <div style="margin-top: 50px;">
-                    <button id="spin-btn" class="btn btn-primary" style="padding: 15px 60px; font-size: 1.2rem;">SPIN
-                        NOW</button>
-                    <div id="spin-result" class="glass"
-                        style="display: none; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 15px; border: 1px solid var(--primary-neon);">
-                        <h3 style="color: var(--primary-neon); margin-bottom: 15px;">Congratulations! 🎉</h3>
-                        <p id="result-message" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
-                        <a href="luckydraw.html" class="btn btn-primary" style="width: 100%;">Enter Lucky Draw</a>
-                    </div>
-                    <p id="spin-status" style="margin-top: 20px; color: var(--text-muted);">Available spins: 1</p>
-                </div>
-
-                <div class="glass" style="max-width: 600px; margin: 40px auto 0; padding: 20px; border-radius: 15px;">
-                    <h3>Possible Rewards:</h3>
-                    <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 15px;">
-                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.01</span>
-                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.02</span>
-                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.05</span>
-                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.10</span>
-                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">Extra Task</span>
-                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">Bonus Link</span>
-                    </div>
-                </div>
-            </div>
+        <main class="main-content" id="spin-main">
+            <!-- Populated dynamically based on verification status -->
         </main>
     </div>
 
@@ -112,92 +116,256 @@
     <script src="js/admin.js"></script>
     <script src="js/app.js"></script>
     <script src="js/notifications.js"></script>
+
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <ul>
+            <li><a href="dashboard.html"><span class="bn-icon">🏠</span>Home</a></li>
+            <li><a href="tasks.html"><span class="bn-icon">📋</span>Tasks</a></li>
+            <li><a href="spin.html" class="active"><span class="bn-icon">🎡</span>Spin</a></li>
+            <li><a href="withdraw.html"><span class="bn-icon">💸</span>Withdraw</a></li>
+            <li><a href="#" id="more-btn"><span class="bn-icon">⋯</span>More</a></li>
+        </ul>
+    </nav>
+    <div class="mobile-more-sheet" id="more-sheet">
+        <div class="more-sheet-handle"></div>
+        <ul>
+            <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+            <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+            <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+            <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+            <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+            <li><a href="profile.html"><span>👤</span> Profile</a></li>
+            <li><a href="#" onclick="Auth.logout(); return false;" style="color:#ff4d4d;"><span>🚪</span> Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar-overlay" id="more-overlay" style="z-index:1065;"></div>
+    <script src="js/mobile.js"></script>
     <script>
-        // Set dynamic user data
-        const user = Auth.getCurrentUser();
-        // User identification simplified since sidebar profile is removed
-    </script>
-    <script>
-        const canvas = document.getElementById('wheel-canvas');
-        const ctx = canvas.getContext('2d');
-        const spinBtn = document.getElementById('spin-btn');
-        const statusText = document.getElementById('spin-status');
+        const SPIN_KEY_PREFIX = 'spintask_last_spin_';
 
-        const rewards = ["$0.01", "$0.02", "$0.05", "$0.10", "Extra Task", "$0.01", "Bonus", "$0.02"];
-        const colors = ["#0a0b1e", "#161b33", "#0a0b1e", "#161b33", "#0a0b1e", "#161b33", "#0a0b1e", "#161b33"];
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
 
-        let startAngle = 0;
-        const arc = Math.PI / (rewards.length / 2);
+            const main = document.getElementById('spin-main');
 
-        function drawWheel() {
-            rewards.forEach((reward, i) => {
-                const angle = startAngle + i * arc;
-                ctx.fillStyle = colors[i];
+            // ─── VERIFICATION GATE ─────────────────────────────────────────────
+            if (!user.verified) {
+                main.innerHTML = `
+                    <header class="top-bar" style="justify-content: center; text-align: center; flex-direction: column; padding: 40px 20px;">
+                        <h2 style="font-size: 2rem; margin-bottom: 10px;">Daily Reward Wheel</h2>
+                        <p style="color: var(--text-muted);">Spin once every 24 hours to win USDT prizes!</p>
+                    </header>
+                    <div class="spin-locked glass" style="border-radius: 20px; margin: 20px auto;">
+                        <span class="lock-icon">🔒</span>
+                        <h2>Spin Wheel Locked</h2>
+                        <p>The Daily Spin Wheel is exclusive to <strong>Verified Accounts</strong>.<br>
+                        Verify your account for just <strong>$1.00 USDT</strong> to unlock 1 free daily spin forever.</p>
+                        <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                            <a href="dashboard.html" class="btn btn-primary" style="padding: 12px 30px;">
+                                ✅ Verify Account — $1
+                            </a>
+                            <a href="deposit.html" class="btn btn-outline" style="padding: 12px 30px;">
+                                💰 Deposit First
+                            </a>
+                        </div>
+                        <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                            After verifying, come back here to claim your free daily spin!
+                        </p>
+                    </div>
+                `;
+                return;
+            }
+
+            // ─── SPIN SETTINGS ─────────────────────────────────────────────────
+            const spinSettings = Admin.getSpinSettings();
+            const rewards = spinSettings.segments || [
+                { label: '$0.01', value: 0.01, type: 'cash' },
+                { label: '$0.02', value: 0.02, type: 'cash' },
+                { label: '$0.05', value: 0.05, type: 'cash' },
+                { label: '$0.10', value: 0.10, type: 'cash' },
+                { label: 'Try Again', value: 0, type: 'none' },
+                { label: '$0.01', value: 0.01, type: 'cash' },
+                { label: 'Bonus', value: 0, type: 'bonus' },
+                { label: '$0.02', value: 0.02, type: 'cash' }
+            ];
+
+            // ─── DAILY SPIN KEY ────────────────────────────────────────────────
+            const spinKey = SPIN_KEY_PREFIX + user.id;
+            const lastSpinDate = localStorage.getItem(spinKey);
+            const todayStr = new Date().toDateString();
+            const alreadySpun = lastSpinDate === todayStr;
+
+            // ─── BUILD SPIN UI ─────────────────────────────────────────────────
+            main.innerHTML = `
+                <header class="top-bar" style="justify-content: center; text-align: center; flex-direction: column; padding: 40px 20px;">
+                    <h2 style="font-size: 2rem; margin-bottom: 10px;">Daily Reward Wheel</h2>
+                    <p style="color: var(--text-muted); font-size: 1.1rem;">
+                        <span class="verified-badge" style="display:inline-flex; align-items:center; gap:5px; background:rgba(57,255,20,0.1); border:1px solid rgba(57,255,20,0.3); color:var(--primary-neon); padding:4px 12px; border-radius:15px; font-size:0.8rem; font-weight:600;">✅ Verified — 1 Free Daily Spin</span>
+                    </p>
+                </header>
+
+                <div style="text-align: center; padding-top: 20px;">
+                    <div class="wheel-container">
+                        <div class="wheel-pointer"></div>
+                        <canvas id="wheel-canvas" width="350" height="350"></canvas>
+                    </div>
+
+                    <div style="margin-top: 50px;" id="spin-controls">
+                        ${alreadySpun ? `
+                        <div class="countdown-box">
+                            <p>🎡 You've already spun today. Come back tomorrow!</p>
+                            <div class="countdown-timer" id="countdown-display">--:--:--</div>
+                            <p style="font-size: 0.75rem; margin-top: 8px;">Time until next spin</p>
+                        </div>
+                        ` : `
+                        <button id="spin-btn" class="btn btn-primary" style="padding: 15px 60px; font-size: 1.2rem;">SPIN NOW</button>
+                        `}
+                        <div id="spin-result" class="glass" style="display: none; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 15px; border: 1px solid var(--primary-neon);">
+                            <h3 style="color: var(--primary-neon); margin-bottom: 15px;">Congratulations! 🎉</h3>
+                            <p id="result-message" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
+                            <a href="luckydraw.html" class="btn btn-primary" style="width: 100%;">Enter Lucky Draw</a>
+                        </div>
+                        <p id="spin-status" style="margin-top: 20px; color: var(--text-muted);">
+                            ${alreadySpun ? '' : 'Available spins: 1'}
+                        </p>
+                    </div>
+
+                    <div class="glass" style="max-width: 600px; margin: 40px auto 0; padding: 20px; border-radius: 15px;">
+                        <h3>Possible Rewards:</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 15px;" id="rewards-list">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Populate reward chips
+            const uniqueLabels = [...new Set(rewards.map(r => r.label))];
+            const rewardsList = document.getElementById('rewards-list');
+            if (rewardsList) {
+                uniqueLabels.forEach(label => {
+                    const span = document.createElement('span');
+                    span.className = 'glass';
+                    span.style.cssText = 'padding: 5px 15px; border-radius: 20px;';
+                    span.textContent = label;
+                    rewardsList.appendChild(span);
+                });
+            }
+
+            // ─── DRAW WHEEL ────────────────────────────────────────────────────
+            const canvas = document.getElementById('wheel-canvas');
+            const ctx = canvas.getContext('2d');
+            const colors = rewards.map((_, i) => i % 2 === 0 ? '#0a0b1e' : '#161b33');
+            let startAngle = 0;
+            const arc = Math.PI / (rewards.length / 2);
+
+            function drawWheel() {
+                rewards.forEach((reward, i) => {
+                    const angle = startAngle + i * arc;
+                    ctx.fillStyle = colors[i];
+                    ctx.beginPath();
+                    ctx.arc(175, 175, 165, angle, angle + arc, false);
+                    ctx.lineTo(175, 175);
+                    ctx.fill();
+
+                    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                    ctx.stroke();
+
+                    ctx.save();
+                    ctx.fillStyle = i % 2 === 0 ? '#39ff14' : '#ffffff';
+                    ctx.translate(175 + Math.cos(angle + arc / 2) * 125, 175 + Math.sin(angle + arc / 2) * 125);
+                    ctx.rotate(angle + arc / 2 + Math.PI / 2);
+                    ctx.font = 'bold 12px Inter';
+                    ctx.fillText(reward.label, -ctx.measureText(reward.label).width / 2, 0);
+                    ctx.restore();
+                });
+
+                ctx.fillStyle = '#39ff14';
                 ctx.beginPath();
-                ctx.arc(175, 175, 165, angle, angle + arc, false);
-                ctx.lineTo(175, 175);
+                ctx.arc(175, 175, 12, 0, 2 * Math.PI);
                 ctx.fill();
-
-                ctx.strokeStyle = "rgba(255,255,255,0.1)";
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
                 ctx.stroke();
+            }
 
-                ctx.save();
-                ctx.fillStyle = i % 2 === 0 ? "#39ff14" : "#ffffff";
-                ctx.translate(175 + Math.cos(angle + arc / 2) * 125, 175 + Math.sin(angle + arc / 2) * 125);
-                ctx.rotate(angle + arc / 2 + Math.PI / 2);
-                ctx.font = "bold 12px Inter";
-                ctx.fillText(reward, -ctx.measureText(reward).width / 2, 0);
-                ctx.restore();
-            });
+            drawWheel();
 
-            // Center circle
-            ctx.fillStyle = "#39ff14";
-            ctx.beginPath();
-            ctx.arc(175, 175, 12, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.strokeStyle = "#fff";
-            ctx.lineWidth = 2;
-            ctx.stroke();
-        }
+            // ─── COUNTDOWN TIMER ────────────────────────────────────────────────
+            if (alreadySpun) {
+                function updateCountdown() {
+                    const now = new Date();
+                    const midnight = new Date(now);
+                    midnight.setHours(24, 0, 0, 0);
+                    const diff = midnight - now;
 
-        let isSpinning = false;
-        spinBtn.addEventListener('click', () => {
-            if (isSpinning) return;
-            isSpinning = true;
-            spinBtn.disabled = true;
+                    const h = Math.floor(diff / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    const s = Math.floor((diff % 60000) / 1000);
 
-            const spinAngle = Math.random() * 10 + 20; // Random rotation
-            let currentRotation = 0;
-
-            const animation = setInterval(() => {
-                currentRotation += 0.2;
-                startAngle += currentRotation;
-                drawWheel();
-
-                if (currentRotation >= spinAngle) {
-                    clearInterval(animation);
-                    isSpinning = false;
-                    statusText.innerText = "Available spins: 0";
-
-                    const index = Math.floor((((startAngle % (2 * Math.PI)) / (2 * Math.PI)) * rewards.length));
-                    const result = rewards[(rewards.length - 1) - index];
-
-                    // Parse numeric amount if possible
-                    if (result.startsWith('$')) {
-                        const amount = parseFloat(result.substring(1));
-                        Auth.updateBalance(amount);
-                        Auth.updateEarnings(amount);
-                    }
-
-                    // Show result container instead of just alert
-                    document.getElementById('result-message').innerText = "You won " + result;
-                    document.getElementById('spin-result').style.display = 'block';
-                    document.getElementById('spin-btn').style.display = 'none';
+                    const el = document.getElementById('countdown-display');
+                    if (el) el.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
                 }
-            }, 30);
-        });
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+                return;
+            }
 
-        drawWheel();
+            // ─── SPIN LOGIC ─────────────────────────────────────────────────────
+            const spinBtn = document.getElementById('spin-btn');
+            const statusText = document.getElementById('spin-status');
+            let isSpinning = false;
+
+            if (spinBtn) {
+                spinBtn.addEventListener('click', () => {
+                    if (isSpinning) return;
+                    isSpinning = true;
+                    spinBtn.disabled = true;
+
+                    const spinAngle = Math.random() * 10 + 20;
+                    let currentRotation = 0;
+
+                    const animation = setInterval(() => {
+                        currentRotation += 0.2;
+                        startAngle += currentRotation;
+                        drawWheel();
+
+                        if (currentRotation >= spinAngle) {
+                            clearInterval(animation);
+                            isSpinning = false;
+
+                            // Record spin
+                            localStorage.setItem(spinKey, todayStr);
+
+                            if (statusText) statusText.innerText = 'Available spins: 0';
+
+                            const index = Math.floor((((startAngle % (2 * Math.PI)) / (2 * Math.PI)) * rewards.length));
+                            const result = rewards[(rewards.length - 1 - index + rewards.length) % rewards.length];
+
+                            // Apply reward
+                            if (result.type === 'cash' && result.value > 0) {
+                                Auth.updateBalance(result.value);
+                                Auth.updateEarnings(result.value);
+                            }
+
+                            // Fire admin alert for task completion
+                            if (typeof Admin !== 'undefined') {
+                                Admin.addAdminAlert('task', `${user.name} spun the wheel and won: ${result.label}`);
+                            }
+
+                            const resultMsg = document.getElementById('result-message');
+                            if (resultMsg) resultMsg.innerText = `You won ${result.label}!`;
+                            const resultBox = document.getElementById('spin-result');
+                            if (resultBox) resultBox.style.display = 'block';
+                            if (spinBtn) spinBtn.style.display = 'none';
+                        }
+                    }, 30);
+                });
+            }
+        });
     </script>
 </body>
 

@@ -97,8 +97,18 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Social Media Links (Dynamic) -->
+            <div class="glass" style="padding: 30px; border-radius: 20px; margin-top: 30px;">
+                <h3 style="margin-bottom: 20px;">📱 Connect With Us</h3>
+                <div id="social-links-container"
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px;">
+                    <!-- Populated dynamically from admin social media settings -->
+                </div>
+            </div>
         </main>
     </div>
+
 
     <div id="notification-area"></div>
 
@@ -108,14 +118,45 @@
     <script src="js/notifications.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Dynamic contact text
             const content = Admin.getObjDb(Admin.DB_CONTENT);
             if (content.contactText) {
                 const supportTitle = document.querySelector('.main-content header h2');
-                const supportDesc = document.createElement('p');
-                supportDesc.style.color = 'var(--text-muted)';
-                supportDesc.style.marginTop = '10px';
-                supportDesc.innerText = content.contactText;
-                supportTitle.parentElement.appendChild(supportDesc);
+                if (supportTitle) {
+                    const supportDesc = document.createElement('p');
+                    supportDesc.style.color = 'var(--text-muted)';
+                    supportDesc.style.marginTop = '10px';
+                    supportDesc.innerText = content.contactText;
+                    supportTitle.parentElement.appendChild(supportDesc);
+                }
+            }
+
+            // Dynamic social media links
+            const sm = Admin.getSocialMedia();
+            const PLATFORM_META = {
+                facebook: { icon: '📘', label: 'Facebook' },
+                telegram: { icon: '✈️', label: 'Telegram' },
+                whatsapp: { icon: '💬', label: 'WhatsApp' },
+                tiktok: { icon: '🎵', label: 'TikTok' },
+                instagram: { icon: '📷', label: 'Instagram' },
+                youtube: { icon: '📺', label: 'YouTube' }
+            };
+            const socialContainer = document.getElementById('social-links-container');
+            if (socialContainer) {
+                let html = '';
+                Object.keys(PLATFORM_META).forEach(platform => {
+                    const data = sm[platform];
+                    if (data && data.enabled && data.url) {
+                        const meta = PLATFORM_META[platform];
+                        html += `
+                            <a href="${data.url}" target="_blank" rel="noopener" style="display:flex; flex-direction:column; align-items:center; gap:10px; padding:20px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:14px; text-decoration:none; color:#fff; transition:transform 0.2s, background 0.2s;" onmouseover="this.style.background='rgba(57,255,20,0.08)'; this.style.transform='translateY(-4px)';" onmouseout="this.style.background='rgba(255,255,255,0.04)'; this.style.transform='none';">
+                                <span style="font-size:2rem;">${meta.icon}</span>
+                                <span style="font-size:0.85rem; color:var(--text-muted);">${meta.label}</span>
+                            </a>
+                        `;
+                    }
+                });
+                socialContainer.innerHTML = html || '<p style="color:var(--text-muted); text-align:center; padding:20px;">No social links configured yet.</p>';
             }
         });
     </script>
