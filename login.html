@@ -216,7 +216,7 @@
         function quickLogin(email, password) {
             document.getElementById('email').value = email;
             document.getElementById('password').value = password;
-            document.getElementById('captcha-input').value = captchaCode; // auto-fill captcha for quick login
+            document.getElementById('captcha-input').value = captchaCode;
             document.getElementById('login-btn').click();
         }
 
@@ -254,9 +254,7 @@
             loginBtn.disabled = true;
 
             try {
-                // Artifical delay for UX
                 await new Promise(r => setTimeout(r, 1000));
-
                 await Auth.login(email, password, rememberMe);
 
                 successMsg.innerText = 'Login successful! Redirecting...';
@@ -268,7 +266,6 @@
             } catch (err) {
                 errorMsg.innerText = err.message;
                 errorMsg.style.display = 'block';
-                // Reset loading
                 btnText.style.display = 'block';
                 btnLoader.style.display = 'none';
                 loginBtn.disabled = false;

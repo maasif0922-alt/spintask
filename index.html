@@ -40,12 +40,12 @@
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="about.html">About</a></li>
-                    <li><a href="tasks.html">Tasks</a></li>
+                    <li><a href="market.html" style="color: var(--primary-neon);">📈 Live Market</a></li>
                     <li><a href="support.html">Support</a></li>
                 </ul>
                 <div class="auth-btns">
                     <a href="login.html" class="btn btn-outline">Login</a>
-                    <a href="register.html" class="btn btn-primary" style="margin-left: 10px;">Start Earning</a>
+                    <a href="register.html" class="btn btn-primary">Start Earning</a>
                 </div>
             </nav>
         </div>
@@ -68,13 +68,74 @@
             </div>
         </section>
 
-        <!-- Trending Market Section -->
+        <!-- VIP Signal Hub Section -->
+        <section class="vip-signal-section">
+            <div class="container">
+                <div class="vip-signal-wrapper">
+                    <div class="vip-signal-glow"></div>
+                    <a id="vip-signal-btn" href="#" target="_blank" rel="noopener" class="vip-signal-btn">
+                        <span class="vip-signal-icon">🚀</span>
+                        <span class="vip-signal-text">
+                            <strong>VIP Signal Hub</strong>
+                        </span>
+                        <span class="vip-badge">JOIN FREE</span>
+                    </a>
+                    <p class="vip-signal-sub">Join our official signal community and never miss profitable updates.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Crypto Market Section -->
         <section class="market-section">
             <div class="container">
-                <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
-                    <h2 style="margin: 0;">Trending Crypto Market</h2>
-                    <a href="market.html" class="btn btn-outline" style="font-size: 0.8rem;">View Full Market</a>
+                <div class="section-title"
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h2 style="margin: 0;">📈 Live Crypto Market</h2>
+                        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 5px;">Real-time prices via
+                            CoinGecko · Auto-refreshes every 60s</p>
+                    </div>
+                    <a href="market.html" class="btn btn-outline" style="font-size: 0.8rem;">View Full Market →</a>
                 </div>
+
+                <!-- Quick Stats Bar -->
+                <div id="quick-stats-bar" style="display: flex; gap: 15px; margin: 20px 0; flex-wrap: wrap;">
+                    <div class="glass"
+                        style="padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;">
+                        <span style="font-size: 1.4rem;">₿</span>
+                        <div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">BITCOIN</div>
+                            <div id="btc-quick" style="font-weight: 700; font-size: 1rem;">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="glass"
+                        style="padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;">
+                        <span style="font-size: 1.4rem;">Ξ</span>
+                        <div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">ETHEREUM</div>
+                            <div id="eth-quick" style="font-weight: 700; font-size: 1rem;">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="glass"
+                        style="padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;">
+                        <span style="font-size: 1.4rem;">◎</span>
+                        <div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">SOLANA</div>
+                            <div id="sol-quick" style="font-weight: 700; font-size: 1rem;">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="glass"
+                        style="padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; flex: 1; min-width: 140px;">
+                        <span style="font-size: 1.4rem;">💎</span>
+                        <div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted);">USDT</div>
+                            <div id="usdt-quick" style="font-weight: 700; font-size: 1rem; color: var(--primary-neon);">
+                                $1.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Coin Grid -->
                 <div id="trending-market-container" class="trending-grid">
                     <!-- Populated by market.js -->
                     <div class="market-card glass">Loading market data...</div>
@@ -139,6 +200,20 @@
 
     </main>
 
+    <!-- Support & Community Social Media Section -->
+    <section class="social-community-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>👫 Support &amp; Community</h2>
+                <p style="color:var(--text-muted); font-size:0.9rem; margin-top:5px;">Connect with us on your favourite
+                    platform</p>
+            </div>
+            <div id="social-btns-grid" class="social-btns-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="glass">
         <div class="container">
@@ -182,6 +257,112 @@
             const content = Admin.getObjDb(Admin.DB_CONTENT);
             if (content.homeHero) document.getElementById('pub-hero-head').innerHTML = content.homeHero.replace(/\n/g, '<br>');
             if (content.homeSub) document.getElementById('pub-hero-sub').innerText = content.homeSub;
+
+            // --- VIP Signal Hub Button ---
+            const cl = Admin.getCommunityLinks();
+            const vipBtn = document.getElementById('vip-signal-btn');
+            if (vipBtn && cl) {
+                let targetUrl = cl.telegramLink || '#';
+                if (cl.activeLink === 'whatsappGroup') targetUrl = cl.whatsappGroupLink || '#';
+                else if (cl.activeLink === 'whatsappCommunity') targetUrl = cl.whatsappCommunityLink || '#';
+                vipBtn.href = targetUrl && targetUrl !== '#' ? targetUrl : '#';
+                if (!targetUrl || targetUrl === '#') vipBtn.removeAttribute('target');
+            }
+
+            // --- Social Media Buttons ---
+            const sm = Admin.getSocialMedia();
+            const socialGrid = document.getElementById('social-btns-grid');
+            if (socialGrid && sm) {
+                const platforms = [
+                    { key: 'facebook', label: 'Facebook', icon: '📘', color: '#1877f2', bg: 'rgba(24,119,242,0.12)' },
+                    { key: 'telegram', label: 'Telegram', icon: '✈️', color: '#2ca5e0', bg: 'rgba(44,165,224,0.12)' },
+                    { key: 'whatsapp', label: 'WhatsApp', icon: '💬', color: '#25d366', bg: 'rgba(37,211,102,0.12)' },
+                    { key: 'tiktok', label: 'TikTok', icon: '🎵', color: '#fe2c55', bg: 'rgba(254,44,85,0.12)' },
+                    { key: 'instagram', label: 'Instagram', icon: '📸', color: '#e4405f', bg: 'rgba(228,64,95,0.12)' },
+                    { key: 'youtube', label: 'YouTube', icon: '▶️', color: '#ff0000', bg: 'rgba(255,0,0,0.12)' }
+                ];
+                socialGrid.innerHTML = '';
+                platforms.forEach(p => {
+                    const data = sm[p.key];
+                    if (!data || data.enabled === false) return;
+                    const a = document.createElement('a');
+                    a.href = data.url || '#';
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.className = 'social-btn';
+                    a.style.cssText = `--btn-color:${p.color}; --btn-bg:${p.bg};`;
+                    a.innerHTML = `<span class="social-btn-icon">${p.icon}</span><span class="social-btn-label">${p.label}</span>`;
+                    socialGrid.appendChild(a);
+                });
+                if (!socialGrid.children.length) {
+                    socialGrid.innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">No social links configured yet.</p>';
+                }
+            }
+
+            // Fetch and render quick stats + ticker
+            async function fetchHomeMarket() {
+                try {
+                    const coins = ['bitcoin', 'ethereum', 'solana', 'tether', 'binancecoin', 'ripple', 'cardano', 'dogecoin'];
+                    const res = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${coins.join(',')}&order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h`);
+                    const data = await res.json();
+
+                    // Quick stat boxes
+                    const btc = data.find(c => c.id === 'bitcoin');
+                    const eth = data.find(c => c.id === 'ethereum');
+                    const sol = data.find(c => c.id === 'solana');
+                    if (btc) {
+                        const ch = btc.price_change_percentage_24h || 0;
+                        document.getElementById('btc-quick').innerHTML = `$${btc.current_price.toLocaleString()} <span style="font-size:0.75rem;color:${ch >= 0 ? '#39ff14' : '#ff4d4d'}">${ch >= 0 ? '▲' : '▼'}${Math.abs(ch).toFixed(2)}%</span>`;
+                    }
+                    if (eth) {
+                        const ch = eth.price_change_percentage_24h || 0;
+                        document.getElementById('eth-quick').innerHTML = `$${eth.current_price.toLocaleString()} <span style="font-size:0.75rem;color:${ch >= 0 ? '#39ff14' : '#ff4d4d'}">${ch >= 0 ? '▲' : '▼'}${Math.abs(ch).toFixed(2)}%</span>`;
+                    }
+                    if (sol) {
+                        const ch = sol.price_change_percentage_24h || 0;
+                        document.getElementById('sol-quick').innerHTML = `$${sol.current_price.toLocaleString()} <span style="font-size:0.75rem;color:${ch >= 0 ? '#39ff14' : '#ff4d4d'}">${ch >= 0 ? '▲' : '▼'}${Math.abs(ch).toFixed(2)}%</span>`;
+                    }
+
+                    // Update Ticker
+                    const tickerEl = document.getElementById('ticker-content');
+                    if (tickerEl) {
+                        let html = '';
+                        const doubled = [...data, ...data];
+                        doubled.forEach(c => {
+                            const ch = c.price_change_percentage_24h || 0;
+                            const color = ch >= 0 ? '#39ff14' : '#ff4d4d';
+                            html += `<span class="ticker-item">${c.symbol.toUpperCase()}: <strong>$${c.current_price.toLocaleString()}</strong> <span style="color:${color}">${ch >= 0 ? '▲' : '▼'}${Math.abs(ch).toFixed(2)}%</span></span>`;
+                        });
+                        tickerEl.innerHTML = html;
+                    }
+
+                    // Coin grid (market-card style)
+                    const grid = document.getElementById('trending-market-container');
+                    if (grid) {
+                        grid.innerHTML = '';
+                        data.forEach(c => {
+                            const ch = c.price_change_percentage_24h || 0;
+                            const chClass = ch >= 0 ? 'up' : 'down';
+                            const chSign = ch >= 0 ? '+' : '';
+                            const card = document.createElement('div');
+                            card.className = 'market-card glass glass-hover';
+                            card.innerHTML = `
+                                <img src="${c.image}" alt="${c.name}" class="coin-icon">
+                                <div class="coin-name">${c.name} <span style="font-size:0.7rem;color:var(--text-muted);">${c.symbol.toUpperCase()}</span></div>
+                                <div class="coin-price">$${c.current_price.toLocaleString()}</div>
+                                <div class="price-change ${chClass}">${chSign}${ch.toFixed(2)}%</div>
+                                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">MCap: $${(c.market_cap / 1e9).toFixed(1)}B</div>
+                            `;
+                            grid.appendChild(card);
+                        });
+                    }
+                } catch (e) {
+                    console.warn('Market API error:', e);
+                }
+            }
+
+            fetchHomeMarket();
+            setInterval(fetchHomeMarket, 60000);
         });
     </script>
 </body>

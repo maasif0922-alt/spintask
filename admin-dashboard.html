@@ -17,20 +17,75 @@
             background: var(--primary-neon);
             color: var(--bg-dark);
         }
+
+        /* Toggle Switch for Social Media Manager */
+        .sm-toggle {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .sm-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .sm-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            transition: .3s;
+        }
+
+        .sm-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: #aaa;
+            border-radius: 50%;
+            transition: .3s;
+        }
+
+        .sm-toggle input:checked+.sm-slider {
+            background: var(--primary-neon);
+        }
+
+        .sm-toggle input:checked+.sm-slider:before {
+            transform: translateX(22px);
+            background: #000;
+        }
     </style>
 </head>
 
 <body class="dashboard-body">
 
+    <header class="top-header">
+        <a href="dashboard.html" class="header-logo">
+            <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                <circle cx="20" cy="20" r="4" fill="#39ff14" />
+            </svg>
+            SpinTask<span>.</span> <span style="font-size: 0.9rem; margin-left: 10px; opacity: 0.7;">ADMIN</span>
+        </a>
+    </header>
+
     <div class="dashboard-container">
         <!-- Admin Sidebar -->
         <aside class="sidebar admin-sidebar">
-            <div class="sidebar-logo">
-                <span style="color: var(--primary-neon);">ADMIN</span> PANEL
-            </div>
             <nav class="sidebar-nav">
                 <ul id="admin-menu">
-                    <li><a href="#" class="active" onclick="switchTab('dashboard')">📊 Statistics</a></li>
+                    <li><a href="#" onclick="switchTab('dashboard')">📊 Statistics</a></li>
                     <li><a href="#" onclick="switchTab('users')">👥 Users</a></li>
                     <li><a href="#" onclick="switchTab('deposits')">💰 Deposits</a></li>
                     <li><a href="#" onclick="switchTab('withdrawals')">💸 Withdrawals</a></li>
@@ -39,6 +94,8 @@
                     <li><a href="#" onclick="switchTab('tasks')">📋 Tasks</a></li>
                     <li><a href="#" onclick="switchTab('luckydraw')">🎉 Lucky Draw</a></li>
                     <li><a href="#" onclick="switchTab('notifications')">🔔 Notifications</a></li>
+                    <li><a href="#" onclick="switchTab('communitylinks')">🚀 Community Links</a></li>
+                    <li><a href="#" onclick="switchTab('socialmedia')">📱 Social Media</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -397,8 +454,153 @@
                     </form>
                 </div>
             </section>
+
+            <!-- Community Links Control Section -->
+            <section id="sec-communitylinks" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                    <h3>🚀 Community Links Control</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Set the links for the
+                        VIP Signal Hub button on the home page. Choose which platform opens when a user clicks it.</p>
+                    <form id="community-links-form">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display:block; margin-bottom:6px; color: #2ca5e0;">📱 Telegram Group
+                                Link</label>
+                            <input type="url" id="cl-telegram" placeholder="https://t.me/your_group"
+                                style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display:block; margin-bottom:6px; color: #25d366;">💬 WhatsApp Group
+                                Link</label>
+                            <input type="url" id="cl-whatsapp-group" placeholder="https://chat.whatsapp.com/your_group"
+                                style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display:block; margin-bottom:6px; color: #128c7e;">🌐 WhatsApp Community
+                                Link</label>
+                            <input type="url" id="cl-whatsapp-community"
+                                placeholder="https://chat.whatsapp.com/your_community"
+                                style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff;">
+                        </div>
+                        <div style="margin-bottom: 25px;">
+                            <label
+                                style="display:block; margin-bottom:8px; color: var(--primary-neon); font-weight:600;">⭐
+                                Active Link (VIP Signal Hub Button Opens This)</label>
+                            <select id="cl-active-link"
+                                style="width:100%; padding:12px; background:rgba(57,255,20,0.05); border:1px solid var(--primary-neon); border-radius:8px; color:#fff; font-size:1rem;">
+                                <option value="telegram">📱 Telegram Group</option>
+                                <option value="whatsappGroup">💬 WhatsApp Group</option>
+                                <option value="whatsappCommunity">🌐 WhatsApp Community</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">💾 Save Community Links</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Social Media Manager Section -->
+            <section id="sec-socialmedia" class="admin-section" style="display: none;">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>📱 Social Media Manager</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px;">Manage social media
+                        links shown in the Support &amp; Community section on the home page. Disable any platform to
+                        hide it.</p>
+                    <form id="social-media-form">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:25px;">
+                            <!-- Facebook -->
+                            <div class="glass"
+                                style="padding:20px; border-radius:15px; border:1px solid rgba(24,119,242,0.3);">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                    <span style="font-size:1.5rem;">📘</span>
+                                    <strong style="color:#1877f2;">Facebook</strong>
+                                    <label class="sm-toggle" style="margin-left:auto;">
+                                        <input type="checkbox" id="sm-facebook-enabled">
+                                        <span class="sm-slider"></span>
+                                    </label>
+                                </div>
+                                <input type="url" id="sm-facebook-url" placeholder="https://facebook.com/your_page"
+                                    style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; box-sizing:border-box;">
+                            </div>
+                            <!-- Telegram -->
+                            <div class="glass"
+                                style="padding:20px; border-radius:15px; border:1px solid rgba(44,165,224,0.3);">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                    <span style="font-size:1.5rem;">✈️</span>
+                                    <strong style="color:#2ca5e0;">Telegram</strong>
+                                    <label class="sm-toggle" style="margin-left:auto;">
+                                        <input type="checkbox" id="sm-telegram-enabled">
+                                        <span class="sm-slider"></span>
+                                    </label>
+                                </div>
+                                <input type="url" id="sm-telegram-url" placeholder="https://t.me/your_channel"
+                                    style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; box-sizing:border-box;">
+                            </div>
+                            <!-- WhatsApp -->
+                            <div class="glass"
+                                style="padding:20px; border-radius:15px; border:1px solid rgba(37,211,102,0.3);">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                    <span style="font-size:1.5rem;">💬</span>
+                                    <strong style="color:#25d366;">WhatsApp</strong>
+                                    <label class="sm-toggle" style="margin-left:auto;">
+                                        <input type="checkbox" id="sm-whatsapp-enabled">
+                                        <span class="sm-slider"></span>
+                                    </label>
+                                </div>
+                                <input type="url" id="sm-whatsapp-url"
+                                    placeholder="https://chat.whatsapp.com/your_group"
+                                    style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; box-sizing:border-box;">
+                            </div>
+                            <!-- TikTok -->
+                            <div class="glass"
+                                style="padding:20px; border-radius:15px; border:1px solid rgba(254,44,85,0.3);">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                    <span style="font-size:1.5rem;">🎵</span>
+                                    <strong style="color:#fe2c55;">TikTok</strong>
+                                    <label class="sm-toggle" style="margin-left:auto;">
+                                        <input type="checkbox" id="sm-tiktok-enabled">
+                                        <span class="sm-slider"></span>
+                                    </label>
+                                </div>
+                                <input type="url" id="sm-tiktok-url" placeholder="https://tiktok.com/@your_page"
+                                    style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; box-sizing:border-box;">
+                            </div>
+                            <!-- Instagram -->
+                            <div class="glass"
+                                style="padding:20px; border-radius:15px; border:1px solid rgba(228,64,95,0.3);">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                    <span style="font-size:1.5rem;">📸</span>
+                                    <strong style="color:#e4405f;">Instagram</strong>
+                                    <label class="sm-toggle" style="margin-left:auto;">
+                                        <input type="checkbox" id="sm-instagram-enabled">
+                                        <span class="sm-slider"></span>
+                                    </label>
+                                </div>
+                                <input type="url" id="sm-instagram-url" placeholder="https://instagram.com/your_page"
+                                    style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; box-sizing:border-box;">
+                            </div>
+                            <!-- YouTube -->
+                            <div class="glass"
+                                style="padding:20px; border-radius:15px; border:1px solid rgba(255,0,0,0.3);">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                                    <span style="font-size:1.5rem;">▶️</span>
+                                    <strong style="color:#ff0000;">YouTube</strong>
+                                    <label class="sm-toggle" style="margin-left:auto;">
+                                        <input type="checkbox" id="sm-youtube-enabled">
+                                        <span class="sm-slider"></span>
+                                    </label>
+                                </div>
+                                <input type="url" id="sm-youtube-url" placeholder="https://youtube.com/@your_channel"
+                                    style="width:100%; padding:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#fff; box-sizing:border-box;">
+                            </div>
+                        </div>
+                        <div style="margin-top:30px;">
+                            <button type="submit" class="btn btn-primary">💾 Save Social Media Links</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
         </main>
     </div>
+
 
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
@@ -742,6 +944,47 @@
                 Admin.saveDb(Admin.DB_CONTENT, newContent);
                 Admin.logAction('Admin updated website content');
                 alert('Content successfully updated!');
+            });
+
+            // Init Community Links Form
+            const cl = Admin.getCommunityLinks();
+            document.getElementById('cl-telegram').value = cl.telegramLink || '';
+            document.getElementById('cl-whatsapp-group').value = cl.whatsappGroupLink || '';
+            document.getElementById('cl-whatsapp-community').value = cl.whatsappCommunityLink || '';
+            const clActiveEl = document.getElementById('cl-active-link');
+            if (clActiveEl) clActiveEl.value = cl.activeLink || 'telegram';
+            document.getElementById('community-links-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                Admin.saveCommunityLinks({
+                    telegramLink: document.getElementById('cl-telegram').value,
+                    whatsappGroupLink: document.getElementById('cl-whatsapp-group').value,
+                    whatsappCommunityLink: document.getElementById('cl-whatsapp-community').value,
+                    activeLink: document.getElementById('cl-active-link').value
+                });
+                alert('✅ Community Links saved successfully!');
+            });
+
+            // Init Social Media Manager Form
+            const sm = Admin.getSocialMedia();
+            const platforms = ['facebook', 'telegram', 'whatsapp', 'tiktok', 'instagram', 'youtube'];
+            platforms.forEach(p => {
+                const smData = sm[p] || {};
+                const urlEl = document.getElementById(`sm-${p}-url`);
+                const enEl = document.getElementById(`sm-${p}-enabled`);
+                if (urlEl) urlEl.value = smData.url || '';
+                if (enEl) enEl.checked = smData.enabled !== false;
+            });
+            document.getElementById('social-media-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const newSm = {};
+                platforms.forEach(p => {
+                    newSm[p] = {
+                        url: document.getElementById(`sm-${p}-url`).value,
+                        enabled: document.getElementById(`sm-${p}-enabled`).checked
+                    };
+                });
+                Admin.saveSocialMedia(newSm);
+                alert('✅ Social Media links saved successfully!');
             });
 
             // Initial Renders

@@ -19,26 +19,41 @@
             justify-content: center;
             transform-origin: 50% 50%;
         }
+
+        #notif-bell-container {
+            position: absolute !important;
+            right: 20px;
+            top: 20px;
+            margin-right: 0 !important;
+        }
+
+        .top-bar {
+            position: relative;
+        }
     </style>
 </head>
 
 <body class="dashboard-body">
 
+    <header class="top-header">
+        <a href="dashboard.html" class="header-logo">
+            <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                <circle cx="20" cy="20" r="4" fill="#39ff14" />
+            </svg>
+            SpinTask<span>.</span>
+        </a>
+    </header>
+
     <div class="dashboard-container">
         <!-- Sidebar and other nav similar to tasks.html -->
         <aside class="sidebar glass">
-            <div class="sidebar-logo">
-                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
-                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
-                </svg>
-                SpinTask<span>.</span>
-            </div>
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
                     <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
                     <li><a href="spin.html" class="active"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
                     <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
                     <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
                     <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
@@ -53,43 +68,43 @@
         </aside>
 
         <!-- Main Content -->
-        <header class="top-bar">
-            <div>
-                <h2 style="font-size: 1.8rem;">Daily Reward Wheel</h2>
-                <p style="color: var(--text-muted);">Spin once every 24 hours to win USDT prizes!</p>
-            </div>
-        </header>
+        <main class="main-content">
+            <header class="top-bar"
+                style="justify-content: center; text-align: center; flex-direction: column; padding: 40px 20px;">
+                <h2 style="font-size: 2rem; margin-bottom: 10px;">Daily Reward Wheel</h2>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Spin once every 24 hours to win USDT prizes!</p>
+            </header>
 
-        <div style="text-align: center; padding-top: 50px;">
-            <div class="wheel-container">
-                <div class="wheel-pointer"></div>
-                <canvas id="wheel-canvas" width="400" height="400"></canvas>
-            </div>
-
-            <div style="margin-top: 50px;">
-                <button id="spin-btn" class="btn btn-primary" style="padding: 15px 60px; font-size: 1.2rem;">SPIN
-                    NOW</button>
-                <div id="spin-result" class="glass"
-                    style="display: none; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 15px; border: 1px solid var(--primary-neon);">
-                    <h3 style="color: var(--primary-neon); margin-bottom: 15px;">Congratulations! 🎉</h3>
-                    <p id="result-message" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
-                    <a href="luckydraw.html" class="btn btn-primary" style="width: 100%;">Enter Lucky Draw</a>
+            <div style="text-align: center; padding-top: 20px;">
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <canvas id="wheel-canvas" width="350" height="350"></canvas>
                 </div>
-                <p id="spin-status" style="margin-top: 20px; color: var(--text-muted);">Available spins: 1</p>
-            </div>
 
-            <div class="glass" style="max-width: 600px; margin: 40px auto 0; padding: 20px; border-radius: 15px;">
-                <h3>Possible Rewards:</h3>
-                <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 15px;">
-                    <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.01</span>
-                    <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.02</span>
-                    <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.05</span>
-                    <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.10</span>
-                    <span class="glass" style="padding: 5px 15px; border-radius: 20px;">Extra Task</span>
-                    <span class="glass" style="padding: 5px 15px; border-radius: 20px;">Bonus Link</span>
+                <div style="margin-top: 50px;">
+                    <button id="spin-btn" class="btn btn-primary" style="padding: 15px 60px; font-size: 1.2rem;">SPIN
+                        NOW</button>
+                    <div id="spin-result" class="glass"
+                        style="display: none; max-width: 400px; margin: 20px auto; padding: 20px; border-radius: 15px; border: 1px solid var(--primary-neon);">
+                        <h3 style="color: var(--primary-neon); margin-bottom: 15px;">Congratulations! 🎉</h3>
+                        <p id="result-message" style="font-size: 1.2rem; margin-bottom: 20px;"></p>
+                        <a href="luckydraw.html" class="btn btn-primary" style="width: 100%;">Enter Lucky Draw</a>
+                    </div>
+                    <p id="spin-status" style="margin-top: 20px; color: var(--text-muted);">Available spins: 1</p>
+                </div>
+
+                <div class="glass" style="max-width: 600px; margin: 40px auto 0; padding: 20px; border-radius: 15px;">
+                    <h3>Possible Rewards:</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 15px;">
+                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.01</span>
+                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.02</span>
+                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.05</span>
+                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">$0.10</span>
+                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">Extra Task</span>
+                        <span class="glass" style="padding: 5px 15px; border-radius: 20px;">Bonus Link</span>
+                    </div>
                 </div>
             </div>
-        </div>
         </main>
     </div>
 
@@ -119,8 +134,8 @@
                 const angle = startAngle + i * arc;
                 ctx.fillStyle = colors[i];
                 ctx.beginPath();
-                ctx.arc(200, 200, 190, angle, angle + arc, false);
-                ctx.lineTo(200, 200);
+                ctx.arc(175, 175, 165, angle, angle + arc, false);
+                ctx.lineTo(175, 175);
                 ctx.fill();
 
                 ctx.strokeStyle = "rgba(255,255,255,0.1)";
@@ -128,9 +143,9 @@
 
                 ctx.save();
                 ctx.fillStyle = i % 2 === 0 ? "#39ff14" : "#ffffff";
-                ctx.translate(200 + Math.cos(angle + arc / 2) * 140, 200 + Math.sin(angle + arc / 2) * 140);
+                ctx.translate(175 + Math.cos(angle + arc / 2) * 125, 175 + Math.sin(angle + arc / 2) * 125);
                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
-                ctx.font = "bold 14px Inter";
+                ctx.font = "bold 12px Inter";
                 ctx.fillText(reward, -ctx.measureText(reward).width / 2, 0);
                 ctx.restore();
             });
@@ -138,7 +153,7 @@
             // Center circle
             ctx.fillStyle = "#39ff14";
             ctx.beginPath();
-            ctx.arc(200, 200, 15, 0, 2 * Math.PI);
+            ctx.arc(175, 175, 12, 0, 2 * Math.PI);
             ctx.fill();
             ctx.strokeStyle = "#fff";
             ctx.lineWidth = 2;

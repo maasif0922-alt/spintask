@@ -13,6 +13,9 @@ const Admin = {
     DB_TICKETS: 'spintask_tickets',
     DB_NOTIFICATIONS: 'spintask_notifications',
     DB_ANNOUNCEMENTS: 'spintask_announcements',
+    DB_SIGNAL: 'spintask_signal_button',
+    DB_COMMUNITY_LINKS: 'spintask_community_links',
+    DB_SOCIAL_MEDIA: 'spintask_social_media',
 
     // Default Settings Initialization
     init() {
@@ -27,6 +30,16 @@ const Admin = {
                 refLvl2: 5
             };
             localStorage.setItem(this.DB_SETTINGS, JSON.stringify(defaultSettings));
+        }
+
+        if (!localStorage.getItem(this.DB_SIGNAL)) {
+            const defaultSignal = {
+                enabled: true,
+                telegramUrl: 'https://t.me/your_signal_group',
+                buttonText: '📡 Free Crypto & Forex Signals',
+                subText: 'Join Telegram — Get FREE Daily Signals!'
+            };
+            localStorage.setItem(this.DB_SIGNAL, JSON.stringify(defaultSignal));
         }
 
         if (!localStorage.getItem(this.DB_TASKS)) {
@@ -102,6 +115,28 @@ const Admin = {
 
         if (!localStorage.getItem(this.DB_NOTIFICATIONS)) {
             localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify([]));
+        }
+
+        if (!localStorage.getItem(this.DB_COMMUNITY_LINKS)) {
+            const defaultCommunity = {
+                telegramLink: 'https://t.me/your_group',
+                whatsappGroupLink: 'https://chat.whatsapp.com/your_group',
+                whatsappCommunityLink: 'https://chat.whatsapp.com/your_community',
+                activeLink: 'telegram' // 'telegram' | 'whatsappGroup' | 'whatsappCommunity'
+            };
+            localStorage.setItem(this.DB_COMMUNITY_LINKS, JSON.stringify(defaultCommunity));
+        }
+
+        if (!localStorage.getItem(this.DB_SOCIAL_MEDIA)) {
+            const defaultSocial = {
+                facebook: { url: 'https://facebook.com/', enabled: true },
+                telegram: { url: 'https://t.me/your_channel', enabled: true },
+                whatsapp: { url: 'https://chat.whatsapp.com/your_group', enabled: true },
+                tiktok: { url: 'https://tiktok.com/@your_page', enabled: true },
+                instagram: { url: 'https://instagram.com/your_page', enabled: true },
+                youtube: { url: 'https://youtube.com/@your_channel', enabled: true }
+            };
+            localStorage.setItem(this.DB_SOCIAL_MEDIA, JSON.stringify(defaultSocial));
         }
     },
 
@@ -410,6 +445,24 @@ const Admin = {
                 this.saveDb(this.DB_NOTIFICATIONS, notes);
             }
         }
+    },
+
+    // Community Links
+    getCommunityLinks() {
+        return this.getObjDb(this.DB_COMMUNITY_LINKS);
+    },
+    saveCommunityLinks(data) {
+        this.saveDb(this.DB_COMMUNITY_LINKS, data);
+        this.logAction('Admin updated community links');
+    },
+
+    // Social Media
+    getSocialMedia() {
+        return this.getObjDb(this.DB_SOCIAL_MEDIA);
+    },
+    saveSocialMedia(data) {
+        this.saveDb(this.DB_SOCIAL_MEDIA, data);
+        this.logAction('Admin updated social media links');
     }
 };
 

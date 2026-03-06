@@ -11,16 +11,19 @@
 
 <body class="dashboard-body">
 
+    <header class="top-header">
+        <a href="dashboard.html" class="header-logo">
+            <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                <circle cx="20" cy="20" r="4" fill="#39ff14" />
+            </svg>
+            SpinTask<span>.</span>
+        </a>
+    </header>
+
     <div class="dashboard-container">
         <!-- Sidebar -->
         <aside class="sidebar glass">
-            <div class="sidebar-logo">
-                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
-                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
-                </svg>
-                SpinTask<span>.</span>
-            </div>
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
@@ -34,6 +37,10 @@
                     <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
                 </ul>
             </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()"
+                    style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Logout</a>
+            </div>
         </aside>
 
         <!-- Main Content -->
@@ -93,10 +100,25 @@
         </main>
     </div>
 
+    <div id="notification-area"></div>
+
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/app.js"></script>
     <script src="js/notifications.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const content = Admin.getObjDb(Admin.DB_CONTENT);
+            if (content.contactText) {
+                const supportTitle = document.querySelector('.main-content header h2');
+                const supportDesc = document.createElement('p');
+                supportDesc.style.color = 'var(--text-muted)';
+                supportDesc.style.marginTop = '10px';
+                supportDesc.innerText = content.contactText;
+                supportTitle.parentElement.appendChild(supportDesc);
+            }
+        });
+    </script>
 </body>
 
 </html>

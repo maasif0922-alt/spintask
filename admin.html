@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --admin-secondary: #0f112e;
+            --admin-border: rgba(57, 255, 20, 0.1);
+        }
+
+        .admin-login-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 20%, rgba(57, 255, 20, 0.05) 0%, transparent 50%);
+        }
+
+        .admin-dashboard-view {
+            display: none;
+            /* Hidden by default until login */
+        }
+
+        .admin-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .admin-card:hover {
+            border-color: var(--primary-neon);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .admin-stat-card {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .admin-stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .admin-stat-card .label {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .admin-table th {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+        }
+
+        .status-approved {
+            background: rgba(57, 255, 20, 0.1);
+            color: var(--primary-neon);
+        }
+
+        .status-rejected {
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff4d4d;
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .active-section {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sidebar-nav a {
+            cursor: pointer;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btns .btn {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+
+<body class="dashboard-body">
+
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="admin-login-view">
+        <div class="glass" style="width: 100%; max-width: 400px; padding: 40px; border-radius: 20px;">
+            <div class="sidebar-logo" style="justify-content: center; margin-bottom: 30px;">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                Admin <span>Portal</span>
+            </div>
+            <form id="admin-login-form">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Admin Email</label>
+                    <input type="email" id="admin-email" placeholder="admin@spintask.com" required
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 8px; color: var(--text-muted);">Password</label>
+                    <input type="password" id="admin-password" placeholder="••••••••" required
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">ACCESS DASHBOARD</button>
+            </form>
+            <p id="login-error"
+                style="color: #ff4d4d; text-align: center; margin-top: 15px; font-size: 0.9rem; display: none;">Invalid
+                credentials.</p>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="dashboard-container admin-dashboard-view">
+        <aside class="sidebar glass">
+            <div class="sidebar-logo">
+                <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
+                    <circle cx="20" cy="20" r="4" fill="#39ff14" />
+                </svg>
+                SpinTask<span>.</span>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a onclick="showSection('dashboard')" data-section="dashboard" class="active"><span>📊</span>
+                            Dashboard</a></li>
+                    <li><a onclick="showSection('users')" data-section="users"><span>👥</span> Users</a></li>
+                    <li><a onclick="showSection('deposits')" data-section="deposits"><span>💰</span> Deposits</a></li>
+                    <li><a onclick="showSection('withdrawals')" data-section="withdrawals"><span>💸</span>
+                            Withdrawals</a></li>
+                    <li><a onclick="showSection('luckydraw')" data-section="luckydraw"><span>🎉</span> Lucky Draw</a>
+                    </li>
+                    <li><a onclick="showSection('notifications')" data-section="notifications"><span>🔔</span>
+                            Notifications</a></li>
+                    <li><a onclick="showSection('content')" data-section="content"><span>✍️</span> Website Content</a>
+                    </li>
+                    <li><a onclick="showSection('settings')" data-section="settings"><span>⚙️</span> Settings</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" onclick="Auth.logout()" style="color: #ff4d4d; font-size: 0.9rem; padding: 0 15px;">Admin
+                    Logout</a>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div id="section-title-box">
+                    <h2 id="main-title" style="font-size: 1.8rem;">Admin Overview</h2>
+                    <p id="main-subtitle" style="color: var(--text-muted);">Central management control center.</p>
+                </div>
+                <div style="display: flex; gap: 20px;">
+                    <button class="btn glass" onclick="location.reload()">Refresh Data</button>
+                    <div class="glass"
+                        style="padding: 10px 20px; border-radius: 10px; color: var(--primary-neon); font-weight: 700;">
+                        ADMIN PANEL</div>
+                </div>
+            </header>
+
+            <!-- SECTION: DASHBOARD -->
+            <div id="section-dashboard" class="admin-section active-section">
+                <div class="dash-grid">
+                    <div class="admin-card glass admin-stat-card">
+                        <div class="value" id="stat-total-users">0</div>
+                        <span class="label">Total Users</span>
+                    </div>
+                    <div class="admin-card glass admin-stat-card">
+                        <div class="value" id="stat-online-users">1</div>
+                        <span class="label">Online Users</span>
+                    </div>
+                    <div class="admin-card glass admin-stat-card">
+                        <div class="value" id="stat-total-deposits">$0.00</div>
+                        <span class="label">Total Deposits</span>
+                    </div>
+                    <div class="admin-card glass admin-stat-card">
+                        <div class="value" id="stat-total-withdrawals">$0.00</div>
+                        <span class="label">Total Withdrawals</span>
+                    </div>
+                    <div class="admin-card glass admin-stat-card">
+                        <div class="value" id="stat-total-earnings">$0.00</div>
+                        <span class="label">Total Earnings</span>
+                    </div>
+                </div>
+
+                <div class="glass" style="margin-top: 30px; padding: 30px; border-radius: 20px;">
+                    <h3>System Logs</h3>
+                    <div id="admin-logs"
+                        style="margin-top: 20px; font-family: monospace; font-size: 0.85rem; color: var(--text-muted); max-height: 200px; overflow-y: auto;">
+                        Fetching system logs...
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: USERS -->
+            <div id="section-users" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3>User Management</h3>
+                        <input type="text" id="user-search" placeholder="Search by email..." onkeyup="filterUsers()"
+                            class="search-input" style="max-width: 300px;">
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Balance</th>
+                                    <th>Deposits</th>
+                                    <th>Withdraws</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-list-body">
+                                <!-- Users list populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: DEPOSITS -->
+            <div id="section-deposits" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Deposit Requests</h3>
+                    <div style="overflow-x: auto; margin-top: 20px;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="deposit-list-body">
+                                <!-- Deposits populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: WITHDRAWALS -->
+            <div id="section-withdrawals" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Withdrawal Requests</h3>
+                    <div style="overflow-x: auto; margin-top: 20px;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Amount</th>
+                                    <th>Wallet Address</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="withdraw-list-body">
+                                <!-- Withdrawals populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: LUCKY DRAW -->
+            <div id="section-luckydraw" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Active Lucky Draws</h3>
+                    <div style="overflow-x: auto; margin-top: 20px;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Prize</th>
+                                    <th>Price</th>
+                                    <th>Tickets Sold</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="draw-list-body">
+                                <!-- Draws populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: NOTIFICATIONS -->
+            <div id="section-notifications" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Send Broadcast Notification</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 25px;">This message will appear in the
+                        notifications for all users.</p>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px;">Subject</label>
+                        <input type="text" id="note-subject" placeholder="🎉 Announcement Title" class="search-input"
+                            style="width: 100%; max-width: none;">
+                    </div>
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 8px;">Message</label>
+                        <textarea id="note-message" rows="4" placeholder="Enter notification message here..."
+                            class="search-input" style="width: 100%; max-width: none;"></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="sendBlast()">SEND TO ALL USERS</button>
+                </div>
+            </div>
+
+            <!-- SECTION: CONTENT -->
+            <div id="section-content" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Website Content Management</h3>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 25px;">
+                        <div class="admin-card">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 700;">Home Hero
+                                Heading</label>
+                            <textarea id="edit-home-hero" rows="2" class="search-input"
+                                style="width: 100%; max-width: none;"></textarea>
+                        </div>
+                        <div class="admin-card">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 700;">About Page
+                                Text</label>
+                            <textarea id="edit-about-text" rows="4" class="search-input"
+                                style="width: 100%; max-width: none;"></textarea>
+                        </div>
+                        <div class="admin-card">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 700;">Contact Support
+                                Message</label>
+                            <textarea id="edit-contact-text" rows="4" class="search-input"
+                                style="width: 100%; max-width: none;"></textarea>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveContent()" style="margin-top: 20px;">UPDATE
+                        CONTENT</button>
+                </div>
+            </div>
+
+            <!-- SECTION: SETTINGS -->
+            <div id="section-settings" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Global Platform Settings</h3>
+                    <div style="max-width: 500px; margin-top: 25px;">
+                        <div class="admin-card" style="margin-bottom: 25px;">
+                            <label style="display: block; margin-bottom: 10px; font-weight: 700;">USDT TRC20 Wallet
+                                Address (For Deposits)</label>
+                            <input type="text" id="setting-usdt-address" class="search-input"
+                                style="font-family: monospace; width: 100%; max-width: none; color: var(--primary-neon);">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        // PAGE STATE MANAGEMENT
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = Auth.getCurrentUser();
+            if (user && user.role === 'admin') {
+                document.getElementById('login-view').style.display = 'none';
+                document.getElementById('dashboard-view').style.display = 'flex';
+                initAdminDashboard();
+            }
+        });
+
+        // HANDLE LOGIN
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            const errorEl = document.getElementById('login-error');
+
+            try {
+                const res = await Auth.login(email, password);
+                if (res.user.role === 'admin') {
+                    location.reload();
+                } else {
+                    errorEl.innerText = "Access denied. Not an admin account.";
+                    errorEl.style.display = 'block';
+                    Auth.logout();
+                }
+            } catch (err) {
+                errorEl.innerText = err.message || "Invalid credentials.";
+                errorEl.style.display = 'block';
+            }
+        });
+
+        // NAVIGATION LOGIC
+        function showSection(sectionId) {
+            // Update Sidebar UI
+            document.querySelectorAll('.sidebar-nav a').forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('data-section') === sectionId) a.classList.add('active');
+            });
+
+            // Update Sections visibility
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById('section-' + sectionId).classList.add('active-section');
+
+            // Update header info
+            const titles = {
+                dashboard: { h1: 'Admin Overview', p: 'Central management control center.' },
+                users: { h1: 'User Management', p: 'Search, view balances and activities.' },
+                deposits: { h1: 'Deposits', p: 'Approve or reject customer funding requests.' },
+                withdrawals: { h1: 'Withdrawals', p: 'Process user cashout requests.' },
+                luckydraw: { h1: 'Lucky Draws', p: 'Manage lottery events and winners.' },
+                content: { h1: 'Website Content', p: 'Edit dynamic site text effortlessly.' },
+                notifications: { h1: 'Broadcasts', p: 'Communicate with global notifications.' },
+                settings: { h1: 'Platform Settings', p: 'Configure global system variables.' }
+            };
+            document.getElementById('main-title').innerText = titles[sectionId].h1;
+            document.getElementById('main-subtitle').innerText = titles[sectionId].p;
+        }
+
+        // INITIALIZATION
+        function initAdminDashboard() {
+            populateStats();
+            renderUsers();
+            renderTransactions();
+            renderDraws();
+            loadContentFields();
+            loadSettings();
+            renderLogs();
+        }
+
+        function populateStats() {
+            const users = Admin.getAllUsers();
+            const txs = Admin.getTransactions();
+            const approvedDeposits = txs.filter(t => t.type === 'deposit' && t.status === 'approved');
+            const approvedWithdraws = txs.filter(t => t.type === 'withdraw' && t.status === 'approved');
+
+            const totalDep = approvedDeposits.reduce((sum, t) => sum + t.amount, 0);
+            const totalWith = approvedWithdraws.reduce((sum, t) => sum + t.amount, 0);
+            const totalEarn = users.reduce((sum, u) => sum + (u.earnings || 0), 0);
+
+            document.getElementById('stat-total-users').innerText = users.length;
+            document.getElementById('stat-total-deposits').innerText = `$${totalDep.toFixed(2)}`;
+            document.getElementById('stat-total-withdrawals').innerText = `$${totalWith.toFixed(2)}`;
+            document.getElementById('stat-total-earnings').innerText = `$${totalEarn.toFixed(2)}`;
+        }
+
+        function renderUsers() {
+            const users = Admin.getAllUsers();
+            const txs = Admin.getTransactions();
+            const tbody = document.getElementById('user-list-body');
+            tbody.innerHTML = '';
+
+            users.filter(u => u.role !== 'admin').forEach(u => {
+                const userDeps = txs.filter(t => t.userId === u.id && t.type === 'deposit' && t.status === 'approved').length;
+                const userWiths = txs.filter(t => t.userId === u.id && t.type === 'withdraw' && t.status === 'approved').length;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${u.name}</strong></td>
+                    <td style="font-size: 0.9rem; color: var(--text-muted);">${u.email}</td>
+                    <td style="color: var(--primary-neon); font-weight: 700;">$${u.balance.toFixed(2)}</td>
+                    <td>${userDeps}</td>
+                    <td>${userWiths}</td>
+                    <td>
+                        <button class="btn glass" onclick="editUserBalance('${u.id}')" style="padding: 5px 10px; font-size: 0.7rem;">Modify</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderTransactions() {
+            const txs = Admin.getTransactions();
+            const users = Admin.getAllUsers();
+            const depBody = document.getElementById('deposit-list-body');
+            const withBody = document.getElementById('withdraw-list-body');
+
+            depBody.innerHTML = '';
+            withBody.innerHTML = '';
+
+            txs.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(t => {
+                const user = users.find(u => u.id === t.userId);
+                const userName = user ? user.email.split('@')[0] : 'Unknown';
+                const tr = document.createElement('tr');
+                const isPending = t.status === 'pending';
+
+                if (t.type === 'deposit') {
+                    tr.innerHTML = `
+                        <td>${userName}</td>
+                        <td style="color: var(--primary-neon); font-weight: 600;">$${t.amount.toFixed(2)}</td>
+                        <td style="font-size: 0.8rem;">${new Date(t.date).toLocaleDateString()}</td>
+                        <td><span class="status-badge status-${t.status}">${t.status}</span></td>
+                        <td>
+                            ${isPending ? `<div class="action-btns">
+                                <button class="btn btn-primary" onclick="handleTx('${t.id}', 'approved')">Approve</button>
+                                <button class="btn glass" onclick="handleTx('${t.id}', 'rejected')" style="color: #ff4d4d;">Reject</button>
+                            </div>` : '-'}
+                        </td>
+                    `;
+                    depBody.appendChild(tr);
+                } else if (t.type === 'withdraw') {
+                    tr.innerHTML = `
+                        <td>${userName}</td>
+                        <td style="color: #ff4d4d; font-weight: 600;">$${t.amount.toFixed(2)}</td>
+                        <td style="font-family: monospace; font-size: 0.8rem;">${t.address.substring(0, 15)}...</td>
+                        <td><span class="status-badge status-${t.status}">${t.status}</span></td>
+                        <td>
+                            ${isPending ? `<div class="action-btns">
+                                <button class="btn btn-primary" onclick="handleTx('${t.id}', 'approved')">Approve</button>
+                                <button class="btn glass" onclick="handleTx('${t.id}', 'rejected')" style="color: #ff4d4d;">Reject</button>
+                            </div>` : '-'}
+                        </td>
+                    `;
+                    withBody.appendChild(tr);
+                }
+            });
+        }
+
+        function renderDraws() {
+            const draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
+            const tbody = document.getElementById('draw-list-body');
+            tbody.innerHTML = '';
+
+            draws.forEach(d => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${d.title}</strong></td>
+                    <td>${d.prize}</td>
+                    <td>$${d.price}</td>
+                    <td>${d.totalTickets - d.remainingTickets} / ${d.totalTickets}</td>
+                    <td><span class="status-badge status-${d.status === 'active' ? 'approved' : 'rejected'}">${d.status}</span></td>
+                    <td>
+                        <button class="btn glass" onclick="alert('Function coming in next update')" style="padding: 5px 10px; font-size: 0.7rem;">Manage</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function loadContentFields() {
+            const content = Admin.getObjDb(Admin.DB_CONTENT);
+            document.getElementById('edit-home-hero').value = content.homeHero || '';
+            document.getElementById('edit-about-text').value = content.aboutText || '';
+            document.getElementById('edit-contact-text').value = content.contactText || '';
+        }
+
+        function loadSettings() {
+            document.getElementById('setting-usdt-address').value = Admin.getSetting('depositAddress');
+        }
+
+        function renderLogs() {
+            const logs = Admin.getDb(Admin.DB_LOGS).reverse();
+            const logBox = document.getElementById('admin-logs');
+            logBox.innerHTML = logs.length ? logs.map(l => `<div>[${new Date(l.time).toLocaleTimeString()}] ${l.desc}</div>`).join('') : 'No recent logs.';
+        }
+
+        // ACTION FUNCTIONS
+        function editUserBalance(userId) {
+            const newBal = prompt("Enter new total balance for this user (USDT):");
+            if (newBal !== null && !isNaN(parseFloat(newBal))) {
+                Admin.updateUserBalance(userId, parseFloat(newBal));
+                location.reload();
+            }
+        }
+
+        function handleTx(txId, status) {
+            if (confirm(`Confirm ${status} of this transaction?`)) {
+                Admin.resolveTransaction(txId, status);
+                location.reload();
+            }
+        }
+
+        function saveContent() {
+            const content = Admin.getObjDb(Admin.DB_CONTENT);
+            content.homeHero = document.getElementById('edit-home-hero').value;
+            content.aboutText = document.getElementById('edit-about-text').value;
+            content.contactText = document.getElementById('edit-contact-text').value;
+            Admin.saveDb(Admin.DB_CONTENT, content);
+            Admin.logAction("Admin updated dynamic website content.");
+            alert("Website content deployed successfully!");
+        }
+
+        function saveSettings() {
+            const addr = document.getElementById('setting-usdt-address').value;
+            Admin.updateSetting('depositAddress', addr);
+            alert("Global settings updated!");
+            location.reload();
+        }
+
+        function sendBlast() {
+            const sub = document.getElementById('note-subject').value;
+            const msg = document.getElementById('note-message').value;
+            if (sub && msg) {
+                Admin.sendBroadcast('all', sub, msg);
+                alert("Broadcast notification sent into all user dashboards!");
+                document.getElementById('note-subject').value = '';
+                document.getElementById('note-message').value = '';
+                location.reload();
+            } else {
+                alert("Please fill in both subject and message.");
+            }
+        }
+
+        function filterUsers() {
+            const q = document.getElementById('user-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#user-list-body tr');
+            rows.forEach(r => {
+                const txt = r.innerText.toLowerCase();
+                r.style.display = txt.includes(q) ? '' : 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>

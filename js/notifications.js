@@ -22,23 +22,29 @@ const Notifications = {
             bar.style.cssText = `
                 background: linear-gradient(90deg, var(--primary-neon), #00d4ff);
                 color: #000;
-                padding: 10px;
+                padding: 10px 20px;
                 text-align: center;
                 font-weight: 700;
                 font-size: 0.9rem;
-                position: relative;
-                z-index: 1100;
+                border-radius: 0 0 12px 12px;
                 box-shadow: 0 4px 15px rgba(57, 255, 20, 0.3);
+                position: fixed;
+                top: 70px;
+                left: 280px;
+                right: 0;
+                z-index: 999;
             `;
-            bar.innerHTML = `
-                <div class="container">
-                    ${announcement.text}
-                </div>
-            `;
-            // Insert at the very top of body
-            document.body.prepend(bar);
-            // Adjust sidebar/content top if needed
-            document.documentElement.style.setProperty('--banner-height', bar.offsetHeight + 'px');
+            bar.innerHTML = announcement.text;
+
+            // Insert into body; it's fixed so DOM position doesn't matter
+            document.body.appendChild(bar);
+
+            // Add top padding to main-content so content isn't hidden behind the bar
+            const mainContent = document.querySelector('.main-content');
+            if (mainContent) {
+                const barHeight = 42; // approx height
+                mainContent.style.paddingTop = (40 + barHeight) + 'px';
+            }
         }
     },
 
