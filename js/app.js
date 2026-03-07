@@ -164,10 +164,26 @@ const Trading = {
 const App = {
     init() {
         console.log('SpinTask App Initialized');
+        this.trackVisit();
         // Automatically process daily profits globally on app load
         Trading.processDailyProfits();
         this.bindEvents();
         this.renderContent();
+    },
+
+    trackVisit() {
+        // Only count one visit per session to represent unique clicks accurately
+        if (!sessionStorage.getItem('spintask_visited')) {
+            sessionStorage.setItem('spintask_visited', 'true');
+            const today = new Date().toDateString();
+            let clicksData = JSON.parse(localStorage.getItem('spintask_clicks') || '{"count":0}');
+            if (clicksData.date !== today) {
+                clicksData = { date: today, count: 1 };
+            } else {
+                clicksData.count = (clicksData.count || 0) + 1;
+            }
+            localStorage.setItem('spintask_clicks', JSON.stringify(clicksData));
+        }
     },
 
     bindEvents() {
