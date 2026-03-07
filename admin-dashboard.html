@@ -641,6 +641,51 @@
                     </div>
                 </div>
 
+                <!-- Today's Financial Summary -->
+                <div style="margin-top: 24px; margin-bottom: 24px;">
+                    <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px;">Today's Income & Withdrawals
+                        Breakdown</h3>
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #39ff14;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">📈
+                                Trading Plans Income</div>
+                            <div id="h-inc-plans"
+                                style="font-size: 1.4rem; font-weight: 700; color: #39ff14; margin-top: 6px;">$0.00
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #ffaa00;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">🎉
+                                Lucky Draw Income</div>
+                            <div id="h-inc-draw"
+                                style="font-size: 1.4rem; font-weight: 700; color: #ffaa00; margin-top: 6px;">$0.00
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #4d7cff;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">✅
+                                Verification Fees</div>
+                            <div id="h-inc-verify"
+                                style="font-size: 1.4rem; font-weight: 700; color: #4d7cff; margin-top: 6px;">$0.00
+                            </div>
+                        </div>
+                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #fff;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">💰
+                                Total Received Today</div>
+                            <div id="h-inc-total"
+                                style="font-size: 1.4rem; font-weight: 700; color: #fff; margin-top: 6px;">$0.00</div>
+                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">Includes standard
+                                deposits</div>
+                        </div>
+                        <div class="card"
+                            style="margin-bottom: 0; padding: 18px; border-top: 3px solid #ff4d4d; background: rgba(255, 77, 77, 0.05);">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">💸
+                                Total Withdrawals Today</div>
+                            <div id="h-out-total"
+                                style="font-size: 1.4rem; font-weight: 700; color: #ff4d4d; margin-top: 6px;">$0.00
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Main Layout -->
                 <div class="dashboard-layout">
                     <!-- Left Column: Charts -->
@@ -1120,6 +1165,20 @@
             let clicksData = JSON.parse(localStorage.getItem('spintask_clicks') || '{"count":0}');
             if (clicksData.date !== today) clicksData.count = 0;
             animateValue('h-clicks', 0, clicksData.count, 1000);
+
+            // Today's categorize income & withdrawals
+            const tdIncPlans = analytics.categorizedIncome.plan || 0;
+            const tdIncDraw = analytics.categorizedIncome.luckydraw || 0;
+            const tdIncVerify = analytics.categorizedIncome.verification || 0;
+            const tdIncStandardDep = (analytics.filtered.deposits || 0);
+            const tdIncTotal = tdIncPlans + tdIncDraw + tdIncVerify + tdIncStandardDep;
+            const tdOutTotal = (analytics.filtered.withdrawals || 0);
+
+            document.getElementById('h-inc-plans').textContent = fmt(tdIncPlans);
+            document.getElementById('h-inc-draw').textContent = fmt(tdIncDraw);
+            document.getElementById('h-inc-verify').textContent = fmt(tdIncVerify);
+            document.getElementById('h-inc-total').textContent = fmt(tdIncTotal);
+            document.getElementById('h-out-total').textContent = fmt(tdOutTotal);
 
             // Render Logs
             var logs = Admin.getDb(Admin.DB_LOGS).reverse().slice(0, 30);

@@ -156,6 +156,21 @@ const Auth = {
         users[idx].verificationDate = new Date().toISOString();
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
 
+        // Record Platform Income (Verification Fee)
+        if (typeof Admin !== 'undefined' && Admin.recordPlatformIncome) {
+            Admin.recordPlatformIncome('verification', 1, currentUser.id);
+        } else {
+            let incomeLogs = JSON.parse(localStorage.getItem('spintask_platform_income') || '[]');
+            incomeLogs.push({
+                id: 'inc_' + Date.now() + Math.random().toString(36).substr(2, 5),
+                category: 'verification',
+                amount: 1,
+                userId: currentUser.id,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('spintask_platform_income', JSON.stringify(incomeLogs));
+        }
+
         // Fire admin alert
         if (typeof Admin !== 'undefined') {
             Admin.addAdminAlert('verification', `User verified account: ${currentUser.name} (${currentUser.email})`);

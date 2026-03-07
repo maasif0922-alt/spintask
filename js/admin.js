@@ -20,6 +20,7 @@ const Admin = {
     DB_SPIN_SETTINGS: 'spintask_spin_settings',
     DB_TRANSFERS: 'spintask_transfers',
     DB_TRADING_SETTINGS: 'spintask_trading_settings',
+    DB_PLATFORM_INCOME: 'spintask_platform_income',
 
     // Default Settings Initialization
     init() {
@@ -176,6 +177,10 @@ const Admin = {
             };
             localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
         }
+
+        if (!localStorage.getItem(this.DB_PLATFORM_INCOME)) {
+            localStorage.setItem(this.DB_PLATFORM_INCOME, '[]');
+        }
     },
 
     // Retrieve full dataset
@@ -253,6 +258,21 @@ const Admin = {
         settings[key] = val;
         this.saveDb(this.DB_SETTINGS, settings);
         this.logAction(`Updated setting: ${key}`);
+    },
+
+    // ─── Platform Income Tracking ─────────────────────────────────────────
+
+    recordPlatformIncome(category, amount, userId) {
+        // category: 'plan' | 'luckydraw' | 'verification'
+        const incomeLogs = this.getDb(this.DB_PLATFORM_INCOME);
+        incomeLogs.push({
+            id: 'inc_' + Date.now() + Math.random().toString(36).substr(2, 5),
+            category,
+            amount: parseFloat(amount),
+            userId,
+            date: new Date().toISOString()
+        });
+        this.saveDb(this.DB_PLATFORM_INCOME, incomeLogs);
     },
 
     // ─── Transfers ────────────────────────────────────────────────────────
@@ -485,6 +505,7 @@ const Admin = {
         this.saveDb(this.DB_TICKETS, tickets);
         localStorage.setItem('spintask_users', JSON.stringify(users));
         this.logAction(`User ${user.email} purchased ticket #${ticketNumber} for ${draw.title}`);
+        this.recordPlatformIncome('luckydraw', draw.price, user.id);
 
         return { success: true, ticketNumber };
     },
@@ -651,6 +672,15 @@ const Admin = {
         // Date-filtered metrics
         let deposits = 0, withdrawals = 0, registrations = 0, refEarnings = 0;
 
+        // Categorized custom income
+        let incomePlan = 0, incomeDraw = 0, incomeVerify = 0;
+        const incomeLogs = this.getDb(this.DB_PLATFORM_INCOME) || [];
+        incomeLogs.filter(i => filterDate(i.date)).forEach(i => {
+            if (i.category === 'plan') incomePlan += i.amount;
+            if (i.category === 'luckydraw') incomeDraw += i.amount;
+            if (i.category === 'verification') incomeVerify += i.amount;
+        });
+
         txs.filter(t => filterDate(t.date)).forEach(t => {
             if (t.type === 'deposit' && t.status === 'approved') deposits += t.amount || 0;
             if (t.type === 'withdraw' && t.status === 'approved') withdrawals += t.amount || 0;
@@ -716,7 +746,8 @@ const Admin = {
             profit: { today: profit, month: monthProfit, allTime: allTimeProfit },
             summary: { totalDep: allTimeDep, totalWith: allTimeWith, pendingDep, pendingWith },
             users: { online: onlineUsers, active: activeUsersCount, total: users.length },
-            leaderboards: { topEarner, topInvestor, topReferrer }
+            leaderboards: { topEarner, topInvestor, topReferrer },
+            categorizedIncome: { plan: incomePlan, luckydraw: incomeDraw, verification: incomeVerify }
         };
     },
 
