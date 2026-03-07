@@ -82,7 +82,7 @@
                             style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                             <h4 style="color: var(--primary-neon);">Minimum deposit amount?</h4>
                             <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 5px;">The minimum deposit
-                                is $1 USDT (TRC20).</p>
+                                is $<span id="faq-min-dep">10</span> USDT (TRC20).</p>
                         </div>
                         <div
                             style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
@@ -93,7 +93,8 @@
                     </div>
                     <div style="text-align: center; margin-top: 20px;">
                         <p style="color: var(--text-muted); font-size: 0.9rem;">Still need help?</p>
-                        <a href="#" style="color: var(--accent-blue); font-weight: 600;">Join Telegram Community</a>
+                        <a href="#" id="faq-community-link" style="color: var(--accent-blue); font-weight: 600;">Join
+                            Official Community</a>
                     </div>
                 </div>
             </div>
@@ -131,6 +132,20 @@
                 }
             }
 
+            // Min deposit FAQ
+            const minDep = Admin.getSetting('minDeposit');
+            if (minDep) document.getElementById('faq-min-dep').innerText = minDep;
+
+            // Community link FAQ
+            const cl = Admin.getCommunityLinks();
+            const faqLink = document.getElementById('faq-community-link');
+            if (faqLink && cl) {
+                let targetUrl = cl.telegramLink || '#';
+                if (cl.activeLink === 'whatsappGroup') targetUrl = cl.whatsappGroupLink || '#';
+                else if (cl.activeLink === 'whatsappCommunity') targetUrl = cl.whatsappCommunityLink || '#';
+                faqLink.href = targetUrl && targetUrl !== '#' ? targetUrl : '#';
+            }
+
             // Dynamic social media links
             const sm = Admin.getSocialMedia();
             const PLATFORM_META = {
@@ -160,7 +175,7 @@
             }
         });
     </script>
-<!-- ========== MOBILE NAVIGATION DRAWER ========== -->
+    <!-- ========== MOBILE NAVIGATION DRAWER ========== -->
     <div class="mob-nav-overlay" id="mob-nav-overlay"></div>
     <div class="mob-nav-drawer" id="mob-nav-drawer">
         <!-- Header -->

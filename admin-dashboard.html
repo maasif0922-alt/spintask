@@ -1181,6 +1181,7 @@
         function renderDashboard() {
             var users = getUsers().filter(u => u.role !== 'admin');
             var txs = getTxs();
+            var analytics = Admin.getDashboardAnalytics('today'); // New: analytics for income categorization
             var dep = txs.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
             var wit = txs.filter(t => t.type === 'withdraw' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
             var pd = txs.filter(t => t.type === 'deposit' && t.status === 'pending').length;

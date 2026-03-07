@@ -43,12 +43,32 @@ const Admin = {
             localStorage.setItem(this.DB_SETTINGS, JSON.stringify(defaultSettings));
         }
 
-        // Ensure trading rate settings have defaults if missing
+        // Ensure critical settings have defaults if missing (for older localStorage versions)
         const settings = this.getObjDb(this.DB_SETTINGS);
         let needsSave = false;
-        if (!settings.ti_basic_rate) { settings.ti_basic_rate = 5; needsSave = true; }
-        if (!settings.ti_standard_rate) { settings.ti_standard_rate = 6; needsSave = true; }
-        if (!settings.ti_gold_rate) { settings.ti_gold_rate = 7; needsSave = true; }
+
+        const defaultKeys = {
+            siteName: 'SpinTask',
+            supportEmail: 'support@spintask.com',
+            depositAddress: 'TRC20_DEFAULT_ADDRESS_HERE',
+            btcAddress: 'BTC_DEFAULT_ADDRESS_HERE',
+            minDeposit: 10,
+            minWithdraw: 20,
+            refLvl1: 5,
+            refLvl2: 3,
+            allowTransfers: true,
+            ti_basic_rate: 5,
+            ti_standard_rate: 6,
+            ti_gold_rate: 7
+        };
+
+        for (const [key, val] of Object.entries(defaultKeys)) {
+            if (settings[key] === undefined) {
+                settings[key] = val;
+                needsSave = true;
+            }
+        }
+
         if (needsSave) this.saveDb(this.DB_SETTINGS, settings);
 
         if (!localStorage.getItem(this.DB_SIGNAL)) {
@@ -920,8 +940,9 @@ const Admin = {
 
         localStorage.setItem('spintask_users', JSON.stringify(users));
         localStorage.setItem('spintask_trading_investments', JSON.stringify(investments));
-        this.logAction(`Admin manually credited ${planId} plan — ${credited} users @ ${rate}%`);
-        return credited;
+        const message = `Successfully credited ${credited} users in ${planId} plan @ ${rate}%`;
+        this.logAction(message);
+        return { success: true, message, credited };
     },
 
     getChartData() {
