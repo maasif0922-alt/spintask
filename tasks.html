@@ -65,9 +65,31 @@
                 </div>
             </header>
 
-            <!-- Task List -->
             <div id="task-list">
                 <!-- Dynamically populated via JS -->
+            </div>
+
+            <!-- Verification Lock Screen (Hidden by default) -->
+            <div id="tasks-locked-screen" class="glass"
+                style="display:none; text-align:center; padding:60px 30px; border-radius:24px; margin:20px auto; max-width:600px; border:1px solid rgba(255,165,0,0.3);">
+                <span style="font-size:5rem; margin-bottom:20px; display:block;">🔒</span>
+                <h2 style="font-size:1.8rem; margin-bottom:15px;">Tasks are Locked</h2>
+                <p style="color:var(--text-muted); line-height:1.7; margin-bottom:25px;">
+                    Earning from tasks is exclusive to <strong>Verified Accounts</strong>.<br>
+                    Verify your account for just <strong>$1.00 USDT</strong> to unlock all tasks and start earning
+                    instantly.
+                </p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <a href="dashboard.html" class="btn btn-primary" style="padding: 12px 30px;">
+                        ✅ Verify Account — $1
+                    </a>
+                    <a href="deposit.html" class="btn btn-outline" style="padding: 12px 30px;">
+                        💰 Deposit First
+                    </a>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                    As soon as you verify, all available tasks will be unlocked for you!
+                </p>
             </div>
 
             <!-- Task Overlay / Timer -->
@@ -115,10 +137,20 @@
     <script src="js/mobile.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Set dynamic user data
             const user = Auth.getCurrentUser();
-            // User data population logic simplified since sidebar profile is removed
-            renderTasks();
+            if (!user) return;
+
+            const list = document.getElementById('task-list');
+            const lockedScreen = document.getElementById('tasks-locked-screen');
+
+            if (!user.verified) {
+                list.style.display = 'none';
+                lockedScreen.style.display = 'block';
+            } else {
+                list.style.display = 'block';
+                lockedScreen.style.display = 'none';
+                renderTasks();
+            }
         });
 
         function renderTasks() {
@@ -166,6 +198,13 @@
         }
 
         function startTask(btn, seconds, reward) {
+            const user = Auth.getCurrentUser();
+            if (!user || !user.verified) {
+                alert('⚠️ Please verify your account to start tasks.');
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
             const overlay = document.getElementById('task-overlay');
             const timerDisplay = document.getElementById('timer-display');
             overlay.style.display = 'flex';
@@ -197,7 +236,7 @@
             }, 1000);
         }
     </script>
-<!-- ========== MOBILE NAVIGATION DRAWER ========== -->
+    <!-- ========== MOBILE NAVIGATION DRAWER ========== -->
     <div class="mob-nav-overlay" id="mob-nav-overlay"></div>
     <div class="mob-nav-drawer" id="mob-nav-drawer">
         <!-- Header -->
