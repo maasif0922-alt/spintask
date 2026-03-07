@@ -1090,6 +1090,8 @@
                 <div class="card" style="max-width:560px;">
                     <div class="form-group"><label>USDT TRC20 Deposit Address</label><input id="set-usdt"
                             class="form-input" placeholder="TRC20 address"></div>
+                    <div class="form-group"><label>Bitcoin (BTC) Deposit Address</label><input id="set-btc"
+                            class="form-input" placeholder="BTC address"></div>
                     <div class="form-group"><label>Min Deposit (USDT)</label><input id="set-mindep" type="number"
                             class="form-input" step="0.01"></div>
                     <div class="form-group"><label>Min Withdrawal (USDT)</label><input id="set-minwith" type="number"
@@ -1831,6 +1833,7 @@
         function renderSettings() {
             var s = Admin.getObjDb(Admin.DB_SETTINGS);
             document.getElementById('set-usdt').value = s.depositAddress || '';
+            document.getElementById('set-btc').value = s.btcAddress || '';
             document.getElementById('set-mindep').value = s.minDeposit || 10;
             document.getElementById('set-minwith').value = s.minWithdraw || 20;
             document.getElementById('set-ref1').value = s.refLvl1 || 10;
@@ -1844,6 +1847,7 @@
         function saveAllSettings() {
             var s = Admin.getObjDb(Admin.DB_SETTINGS);
             s.depositAddress = document.getElementById('set-usdt').value;
+            s.btcAddress = document.getElementById('set-btc').value;
             s.minDeposit = parseFloat(document.getElementById('set-mindep').value) || 10;
             s.minWithdraw = parseFloat(document.getElementById('set-minwith').value) || 20;
             s.refLvl1 = parseInt(document.getElementById('set-ref1').value) || 10;
