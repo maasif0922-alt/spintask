@@ -21,6 +21,7 @@ const Admin = {
     DB_TRANSFERS: 'spintask_transfers',
     DB_TRADING_SETTINGS: 'spintask_trading_settings',
     DB_PLATFORM_INCOME: 'spintask_platform_income',
+    DB_SUPPORT_MESSAGES: 'spintask_support_messages',
 
     // Default Settings Initialization
     init() {
@@ -275,6 +276,69 @@ const Admin = {
         this.saveDb(this.DB_PLATFORM_INCOME, incomeLogs);
     },
 
+    // ─── Support Messaging ────────────────────────────────────────────────
+    sendSupportMessage(userId, message, senderType = 'user') {
+        const msgs = this.getDb(this.DB_SUPPORT_MESSAGES) || [];
+        const msg = {
+            id: 'msg_' + Date.now(),
+            userId,
+            message,
+            senderType,
+            time: new Date().toISOString(),
+            read: false
+        };
+        msgs.push(msg);
+        this.saveDb(this.DB_SUPPORT_MESSAGES, msgs);
+
+        if (senderType === 'user') {
+            this.addAdminAlert('task', `💬 New support message from user ID: ${userId}`);
+        } else {
+            this.sendNotificationToUser(userId, 'Support Reply', `Admin: ${message}`);
+        }
+        return msg;
+    },
+
+    getSupportMessages(userId) {
+        const msgs = this.getDb(this.DB_SUPPORT_MESSAGES) || [];
+        return msgs.filter(m => m.userId === userId);
+    },
+
+    getAllSupportMessages() {
+        return this.getDb(this.DB_SUPPORT_MESSAGES) || [];
+    },
+
+    // ─── User Notifications (Bell Center) ──────────────────────────────────
+    sendNotificationToUser(userId, subject, message) {
+        const notes = this.getDb(this.DB_NOTIFICATIONS) || [];
+        const note = {
+            id: 'notif_' + Date.now(),
+            userId,
+            subject,
+            message,
+            date: new Date().toISOString(),
+            readBy: []
+        };
+        notes.push(note);
+        this.saveDb(this.DB_NOTIFICATIONS, notes);
+        return note;
+    },
+
+    getUserNotifications(userId) {
+        const all = this.getDb(this.DB_NOTIFICATIONS) || [];
+        return all.filter(n => n.userId === userId || n.userId === 'all');
+    },
+
+    markNotificationRead(noteId, userId) {
+        const all = this.getDb(this.DB_NOTIFICATIONS) || [];
+        const idx = all.findIndex(n => n.id === noteId);
+        if (idx !== -1) {
+            if (!all[idx].readBy.includes(userId)) {
+                all[idx].readBy.push(userId);
+                this.saveDb(this.DB_NOTIFICATIONS, all);
+            }
+        }
+    },
+
     // ─── Transfers ────────────────────────────────────────────────────────
 
     getAllTransfers() {
@@ -506,6 +570,9 @@ const Admin = {
         localStorage.setItem('spintask_users', JSON.stringify(users));
         this.logAction(`User ${user.email} purchased ticket #${ticketNumber} for ${draw.title}`);
         this.recordPlatformIncome('luckydraw', draw.price, user.id);
+
+        // Fire admin alert
+        this.addAdminAlert('task', `🎉 Lucky Draw: ${user.name} bought a ticket for ${draw.title}`);
 
         return { success: true, ticketNumber };
     },

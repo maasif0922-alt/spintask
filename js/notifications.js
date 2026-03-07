@@ -52,27 +52,26 @@ const Notifications = {
         const user = Auth.getCurrentUser();
         if (!user) return;
 
-        const topBar = document.querySelector('.top-bar');
-        if (!topBar) return;
+        const container = document.getElementById('support-bell-container') || document.querySelector('.top-bar');
+        if (!container) return;
 
         // Check if bell already exists
         if (document.getElementById('notif-bell-container')) return;
 
-        const container = document.createElement('div');
-        container.id = 'notif-bell-container';
-        container.style.cssText = 'position: relative; cursor: pointer; margin-right: 20px;';
+        const bellDiv = document.createElement('div');
+        bellDiv.id = 'notif-bell-container';
+        bellDiv.style.cssText = 'position: relative; cursor: pointer;';
 
         const unreadCount = this.getUnreadCount(user.id);
 
-        container.innerHTML = `
+        bellDiv.innerHTML = `
             <div id="notif-bell" style="font-size: 1.5rem;">🔔</div>
             ${unreadCount > 0 ? `<span id="notif-badge" style="position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">${unreadCount}</span>` : ''}
         `;
 
-        // Insert before the balance or user info in top-bar
-        topBar.appendChild(container);
+        container.appendChild(bellDiv);
 
-        container.onclick = () => this.showNotificationModal(user.id);
+        bellDiv.onclick = () => this.showNotificationModal(user.id);
     },
 
     getUnreadCount(userId) {

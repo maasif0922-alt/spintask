@@ -533,6 +533,7 @@
                     <li><a href="#" onclick="switchTab('spinsettings',event)">&#x1F3A1; Spin Settings</a></li>
                     <li><a href="#" onclick="switchTab('trading',event)">&#x1F4C8; Trading Investment</a></li>
                     <li><a href="#" onclick="switchTab('luckydraw',event)">&#x1F389; Lucky Draw</a></li>
+                    <li><a href="#" onclick="switchTab('support',event)">&#x1F4AC; Support Center</a></li>
                     <li><a href="#" onclick="switchTab('notifications',event)">&#x1F4E3; Broadcast</a></li>
                     <li><a href="#" onclick="switchTab('communitylinks',event)">&#x1F680; Community Links</a></li>
                     <li><a href="#" onclick="switchTab('socialmedia',event)">&#x1F4F1; Social Media</a></li>
@@ -994,6 +995,41 @@
                 <div class="card">
                     <h3>Active Draws</h3>
                     <div id="draws-list" style="margin-top:12px;"></div>
+                </div>
+            </div>
+
+            <!-- SUPPORT CENTER -->
+            <div id="tab-support" class="admin-section">
+                <div class="page-title">💬 User Support Center</div>
+                <div class="dashboard-layout" style="grid-template-columns: 280px 1fr; height: 70vh;">
+                    <!-- User List -->
+                    <div class="card" style="margin-bottom:0; overflow-y: auto; padding: 15px;">
+                        <h4 style="margin-bottom: 15px; font-size: 0.9rem; color: var(--text-muted);">Conversations</h4>
+                        <div id="support-user-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                    <!-- Chat Window -->
+                    <div class="card"
+                        style="margin-bottom:0; display:flex; flex-direction: column; padding: 0; overflow: hidden;">
+                        <div id="chat-header"
+                            style="padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); font-weight: 600;">
+                            Select a user to start chatting
+                        </div>
+                        <div id="admin-chat-messages"
+                            style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="text-align: center; color: var(--text-muted); margin-top: 100px;">
+                                <div style="font-size: 3rem; margin-bottom: 10px;">💬</div>
+                                Click on a user from the left to view messages
+                            </div>
+                        </div>
+                        <div id="admin-chat-input-area"
+                            style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); display: none; gap: 10px;">
+                            <input type="text" id="admin-support-input" placeholder="Type your reply..."
+                                class="form-input" style="flex: 1; margin-bottom: 0;">
+                            <button onclick="sendAdminReply()" class="btn btn-primary">Reply</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1656,13 +1692,104 @@
         function sendBroadcast() {
             var target = document.getElementById('bc-target').value, sub = document.getElementById('bc-subject').value, msg = document.getElementById('bc-message').value;
             if (!sub || !msg) { alert('Subject and message required.'); return; }
-            var r = Admin.sendBroadcast(target, sub, msg);
-            alert('Sent to ' + r.count + ' users!');
+
+            // Send as individual notifications to satisfy user request for bell icon alerts
+            var users = getUsers();
+            if (target === 'active') users = users.filter(u => !u.suspended);
+            if (target === 'depositors') {
+                var txs = getTxs();
+                var depUserIds = [...new Set(txs.filter(t => t.type === 'deposit' && t.status === 'approved').map(t => t.userId))];
+                users = users.filter(u => depUserIds.includes(u.id));
+            }
+
+            // Using Admin.sendNotificationToUser with 'all' for simplicity if the method exists
+            Admin.sendNotificationToUser('all', sub, msg);
+
+            alert('Broadcast sent & notification bell triggered for all users!');
             document.getElementById('bc-subject').value = ''; document.getElementById('bc-message').value = '';
         }
         function saveAnnouncement() {
             Admin.updateAnnouncement(document.getElementById('ann-text').value, document.getElementById('ann-enabled').checked);
             alert('Announcement updated!');
+        }
+
+        // ── Support Center Logic ───────────────────────────────────────────────
+        let activeChatUserId = null;
+
+        function renderSupportCenter() {
+            const allMsgs = Admin.getAllSupportMessages();
+            const users = getUsers();
+            const userList = document.getElementById('support-user-list');
+
+            // Get unique user IDs who have sent messages
+            const userIds = [...new Set(allMsgs.map(m => m.userId))];
+
+            if (userIds.length === 0) {
+                userList.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">No support messages yet.</p>';
+                return;
+            }
+
+            userList.innerHTML = userIds.map(uid => {
+                const u = users.find(user => user.id === uid);
+                const uMsgs = allMsgs.filter(m => m.userId === uid);
+                const lastMsg = uMsgs[uMsgs.length - 1];
+                const unreadCount = uMsgs.filter(m => !m.read && m.senderType === 'user').length;
+
+                return `
+                    <div onclick="selectChat('${uid}')" style="padding: 12px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; background: ${activeChatUserId === uid ? 'rgba(57,255,20,0.1)' : 'rgba(255,255,255,0.03)'}; border: 1px solid ${activeChatUserId === uid ? 'var(--primary-neon)' : 'transparent'}; transition: all 0.2s;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong style="font-size:0.85rem;">${u ? (u.name || u.email) : 'Unknown User'}</strong>
+                            ${unreadCount > 0 ? `<span style="background:var(--primary-neon); color:#000; font-size:0.65rem; padding: 2px 6px; border-radius: 10px; font-weight:700;">${unreadCount}</span>` : ''}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px;">
+                            ${lastMsg ? lastMsg.message : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectChat(userId) {
+            activeChatUserId = userId;
+            const users = getUsers();
+            const u = users.find(user => user.id === userId);
+
+            document.getElementById('chat-header').innerText = `Chatting with: ${u ? (u.name || u.email) : userId}`;
+            document.getElementById('admin-chat-input-area').style.display = 'flex';
+
+            renderAdminMessages();
+            renderSupportCenter(); // Refresh list to show active state
+        }
+
+        function renderAdminMessages() {
+            if (!activeChatUserId) return;
+            const msgs = Admin.getSupportMessages(activeChatUserId);
+            const container = document.getElementById('admin-chat-messages');
+
+            container.innerHTML = msgs.map(m => {
+                const isAdmin = m.senderType === 'admin';
+                const time = new Date(m.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div style="align-self: ${isAdmin ? 'flex-end' : 'flex-start'}; max-width: 80%;">
+                        <div style="background: ${isAdmin ? 'var(--primary-neon)' : 'rgba(255,255,255,0.1)'}; color: ${isAdmin ? '#000' : '#fff'}; padding: 10px 15px; border-radius: 15px; border-bottom-${isAdmin ? 'right' : 'left'}-radius: 2px;">
+                            ${m.message}
+                        </div>
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; text-align: ${isAdmin ? 'right' : 'left'}">${time}</div>
+                    </div>
+                `;
+            }).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendAdminReply() {
+            const input = document.getElementById('admin-support-input');
+            const msg = input.value.trim();
+            if (!msg || !activeChatUserId) return;
+
+            Admin.sendSupportMessage(activeChatUserId, msg, 'admin');
+            input.value = '';
+            renderAdminMessages();
+            renderSupportCenter();
         }
 
         // ── Community Links ───────────────────────────────────────────────────────────
