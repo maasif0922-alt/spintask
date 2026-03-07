@@ -399,16 +399,3 @@ window.addEventListener('auth:balanceUpdated', (e) => {
     const balanceDisplays = document.querySelectorAll('.user-balance-value');
     balanceDisplays.forEach(el => el.innerText = `$${e.detail.balance.toFixed(2)} USDT`);
 });
-
-// Track Website Clicks Today
-document.addEventListener('click', () => {
-    try {
-        const today = new Date().toDateString();
-        let counts = JSON.parse(localStorage.getItem('spintask_clicks') || '{}');
-        if (counts.date !== today) {
-            counts = { date: today, count: 0 };
-        }
-        counts.count++;
-        localStorage.setItem('spintask_clicks', JSON.stringify(counts));
-    } catch (e) { }
-});
