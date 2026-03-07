@@ -686,6 +686,34 @@
                     </div>
                 </div>
 
+                <!-- Today's Income Ledger -->
+                <div class="card" style="margin-bottom: 24px; padding: 24px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+                        <h3 style="margin-bottom: 0;">📋 Today's Income Ledger</h3>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Real-time itemized payments</div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>User</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledger-body">
+                                <tr>
+                                    <td colspan="4" style="text-align:center; color:var(--text-muted); padding: 40px;">
+                                        Loading today's ledger...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Main Layout -->
                 <div class="dashboard-layout">
                     <!-- Left Column: Charts -->
@@ -1180,6 +1208,8 @@
             document.getElementById('h-inc-total').textContent = fmt(tdIncTotal);
             document.getElementById('h-out-total').textContent = fmt(tdOutTotal);
 
+            renderDailyLedger();
+
             // Render Logs
             var logs = Admin.getDb(Admin.DB_LOGS).reverse().slice(0, 30);
             document.getElementById('admin-logs').innerHTML = logs.length ? logs.map(l => {
@@ -1191,6 +1221,31 @@
             }).join('') : 'No logs yet.';
 
             renderFinanceChart(txs);
+        }
+
+        function renderDailyLedger() {
+            const today = new Date().toDateString();
+            const ledger = Admin.getDailyIncomeLedger(today);
+            const body = document.getElementById('ledger-body');
+            if (!body) return;
+
+            if (ledger.length === 0) {
+                body.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 40px;">No payments recorded for today yet.</td></tr>';
+                return;
+            }
+
+            body.innerHTML = ledger.map(item => {
+                const timeStr = new Date(item.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `<tr>
+                    <td><span style="color:var(--text-muted); font-size:0.85rem;">${timeStr}</span></td>
+                    <td>
+                        <div style="font-weight:600;">${item.user}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted);">${item.userEmail}</div>
+                    </td>
+                    <td><span class="badge" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1);">${item.type}</span></td>
+                    <td><strong style="color:var(--primary-neon);">+${fmt(item.amount)}</strong></td>
+                </tr>`;
+            }).join('');
         }
 
         function animateValue(id, start, end, duration) {
