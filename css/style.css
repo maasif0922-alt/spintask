@@ -1142,43 +1142,10 @@ footer {
 /* =====================================================
    TABLET BREAKPOINT (992px)
    ===================================================== */
+/* =====================================================
+   TABLET BREAKPOINT (992px)
+   ===================================================== */
 @media (max-width: 992px) {
-    .sidebar {
-        width: 80px;
-        top: 70px;
-        padding: 20px 10px;
-    }
-
-    .sidebar-nav a span:last-child,
-    .sidebar-logo span:not(:first-child),
-    .sidebar-footer a span:last-child {
-        display: none;
-    }
-
-    .sidebar-nav a {
-        justify-content: center;
-        gap: 0;
-        padding: 14px 10px;
-    }
-
-    .sidebar-nav a span {
-        font-size: 1.4rem;
-    }
-
-    .sidebar-footer a {
-        text-align: center;
-        font-size: 0;
-    }
-
-    .sidebar-footer a::before {
-        content: '🚪';
-        font-size: 1.4rem;
-    }
-
-    .main-content {
-        margin-left: 80px;
-    }
-
     .section-title h2 {
         font-size: 2rem;
     }
@@ -1189,9 +1156,9 @@ footer {
 }
 
 /* =====================================================
-   MOBILE BREAKPOINT (768px)
+   MOBILE BREAKPOINT (NOW EXPANDED TO 992px)
    ===================================================== */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
 
     /* ── Public Header ── */
     .nav-links {
