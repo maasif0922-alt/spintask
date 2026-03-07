@@ -4,9 +4,565 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Investment Plans | SpinTask</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Trading Investment | SpinTask</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ── Trading Investment Page Styles ── */
+        .ti-hero {
+            text-align: center;
+            padding: 10px 0 30px;
+        }
+
+        .ti-hero h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #39ff14, #4d7cff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .ti-hero p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Live Profit Rate Banner */
+        .profit-rate-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(57, 255, 20, 0.08), rgba(77, 124, 255, 0.06));
+            border: 1px solid rgba(57, 255, 20, 0.25);
+            border-radius: 16px;
+            padding: 14px 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .profit-rate-banner .prt-pulse {
+            width: 10px;
+            height: 10px;
+            background: #39ff14;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(57, 255, 20, 0.7);
+            animation: pulse-ring 1.5s ease-out infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(57, 255, 20, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(57, 255, 20, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(57, 255, 20, 0);
+            }
+        }
+
+        .profit-rate-banner .prt-text {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+        }
+
+        .profit-rate-banner .prt-text b {
+            color: #39ff14;
+            font-size: 1rem;
+        }
+
+        .profit-rate-banner .prt-rates {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .prt-badge {
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #39ff14;
+        }
+
+        .prt-badge.blue {
+            background: rgba(77, 124, 255, 0.1);
+            border-color: rgba(77, 124, 255, 0.3);
+            color: #4d7cff;
+        }
+
+        .prt-badge.gold {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: rgba(255, 170, 0, 0.3);
+            color: #ffaa00;
+        }
+
+        /* Plans Grid */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        /* Plan Card */
+        .plan-card {
+            border-radius: 24px;
+            padding: 32px 28px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: default;
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+
+        .plan-card.basic::before {
+            background: linear-gradient(90deg, #39ff14, #00c853);
+        }
+
+        .plan-card.regular::before {
+            background: linear-gradient(90deg, #4d7cff, #0060ff);
+        }
+
+        .plan-card.premium::before {
+            background: linear-gradient(90deg, #ffaa00, #ff6600);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-6px);
+        }
+
+        .plan-card.regular {
+            border: 1px solid rgba(77, 124, 255, 0.4) !important;
+            box-shadow: 0 0 40px rgba(77, 124, 255, 0.12);
+        }
+
+        .plan-card.regular:hover {
+            box-shadow: 0 16px 50px rgba(77, 124, 255, 0.2);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+        }
+
+        .plan-badge.popular {
+            background: #4d7cff;
+            color: #fff;
+        }
+
+        .plan-badge.hot {
+            background: linear-gradient(135deg, #ffaa00, #ff6600);
+            color: #000;
+        }
+
+        .plan-icon {
+            font-size: 2.4rem;
+            margin-bottom: 14px;
+            display: block;
+        }
+
+        .plan-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .plan-name.basic {
+            color: #39ff14;
+        }
+
+        .plan-name.regular {
+            color: #4d7cff;
+        }
+
+        .plan-name.premium {
+            color: #ffaa00;
+        }
+
+        .plan-tagline {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+        }
+
+        .plan-price {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .plan-price span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .plan-min-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 22px;
+        }
+
+        /* Profit Display */
+        .plan-profit-box {
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 22px;
+        }
+
+        .plan-card.basic .plan-profit-box {
+            background: rgba(57, 255, 20, 0.07);
+            border: 1px solid rgba(57, 255, 20, 0.2);
+        }
+
+        .plan-card.regular .plan-profit-box {
+            background: rgba(77, 124, 255, 0.07);
+            border: 1px solid rgba(77, 124, 255, 0.2);
+        }
+
+        .plan-card.premium .plan-profit-box {
+            background: rgba(255, 170, 0, 0.07);
+            border: 1px solid rgba(255, 170, 0, 0.2);
+        }
+
+        .plan-profit-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            margin-bottom: 7px;
+        }
+
+        .plan-profit-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .plan-profit-row .label {
+            color: var(--text-muted);
+        }
+
+        .plan-profit-row .value {
+            font-weight: 700;
+        }
+
+        .plan-card.basic .value {
+            color: #39ff14;
+        }
+
+        .plan-card.regular .value {
+            color: #4d7cff;
+        }
+
+        .plan-card.premium .value {
+            color: #ffaa00;
+        }
+
+        /* Features */
+        .plan-features {
+            list-style: none;
+            margin-bottom: 26px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 0.83rem;
+            color: var(--text-muted);
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .plan-features li:last-child {
+            border-bottom: none;
+        }
+
+        .plan-features li .fi {
+            font-size: 1rem;
+        }
+
+        /* Activate button */
+        .plan-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            letter-spacing: 0.02em;
+        }
+
+        .plan-btn.basic {
+            background: linear-gradient(135deg, #39ff14, #00c853);
+            color: #000;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+        }
+
+        .plan-btn.basic:hover {
+            box-shadow: 0 0 35px rgba(57, 255, 20, 0.5);
+            transform: scale(1.02);
+        }
+
+        .plan-btn.regular {
+            background: linear-gradient(135deg, #4d7cff, #0060ff);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(77, 124, 255, 0.3);
+        }
+
+        .plan-btn.regular:hover {
+            box-shadow: 0 0 35px rgba(77, 124, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+        .plan-btn.premium {
+            background: linear-gradient(135deg, #ffaa00, #ff6600);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 170, 0, 0.3);
+        }
+
+        .plan-btn.premium:hover {
+            box-shadow: 0 0 35px rgba(255, 170, 0, 0.5);
+            transform: scale(1.02);
+        }
+
+        .plan-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .plan-btn.active-plan {
+            background: rgba(57, 255, 20, 0.1) !important;
+            border: 2px solid rgba(57, 255, 20, 0.4) !important;
+            color: #39ff14 !important;
+            box-shadow: none !important;
+        }
+
+        /* Active Investments Section */
+        .active-inv-section {
+            margin-top: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .active-inv-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 18px;
+            padding: 22px 24px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .active-inv-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .inv-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .inv-icon.basic {
+            background: rgba(57, 255, 20, 0.1);
+        }
+
+        .inv-icon.regular {
+            background: rgba(77, 124, 255, 0.1);
+        }
+
+        .inv-icon.premium {
+            background: rgba(255, 170, 0, 0.1);
+        }
+
+        .inv-info h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .inv-info p {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .inv-stats {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+
+        .inv-stat {
+            text-align: center;
+        }
+
+        .inv-stat .sv {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #39ff14;
+        }
+
+        .inv-stat .sl {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 2px;
+        }
+
+        .inv-progress-wrap {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .inv-progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .inv-progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #39ff14, #00c853);
+            transition: width 0.5s ease;
+        }
+
+        .empty-inv {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-inv .ei-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        .empty-inv p {
+            font-size: 0.9rem;
+        }
+
+        /* How it Works */
+        .how-it-works {
+            margin-top: 40px;
+        }
+
+        .hiw-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .hiw-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .hiw-card .hiw-num {
+            width: 36px;
+            height: 36px;
+            background: rgba(57, 255, 20, 0.1);
+            border: 1px solid rgba(57, 255, 20, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #39ff14;
+            margin: 0 auto 12px;
+        }
+
+        .hiw-card p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .hiw-card h4 {
+            font-size: 0.92rem;
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .plans-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .active-inv-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .inv-stats {
+                gap: 16px;
+            }
+
+            .profit-rate-banner {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
 </head>
 
 <body class="dashboard-body">
@@ -19,11 +575,19 @@
             </svg>
             SpinTask<span>.</span>
         </a>
+        <!-- 3-Dots Mobile Menu Button -->
+        <button class="mobile-dots-btn" id="mob-dots-btn" aria-label="Open navigation menu">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </button>
     </header>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar glass">
+        <aside class="sidebar glass" id="main-sidebar">
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
@@ -31,7 +595,7 @@
                     <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
                     <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
                     <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
-                    <li><a href="plans.html" class="active"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="plans.html" class="active"><span>📈</span> Trading Plans</a></li>
                     <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
                     <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
                     <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
@@ -45,94 +609,388 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="top-bar">
-                <div>
-                    <h2 style="font-size: 1.8rem;">Investment Plans</h2>
-                    <p style="color: var(--text-muted);">Choose a plan to boost your daily earnings passively.</p>
-                </div>
-            </header>
 
-            <div class="dash-grid" style="margin-top: 30px;">
-                <!-- Starter Plan -->
-                <div class="glass"
-                    style="padding: 40px; border-radius: 20px; border-top: 5px solid var(--text-muted); text-align: center;">
-                    <h3 style="margin-bottom: 20px;">Starter Plan</h3>
-                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">$1.00</div>
-                    <p style="color: var(--text-muted); margin-bottom: 30px;">Investment Amount</p>
+            <div class="ti-hero">
+                <h2>📈 Trading Plans</h2>
+                <p>Invest & earn daily passive profit. Admin-controlled live rates. Auto-credited every 24 hours.</p>
+            </div>
 
-                    <ul style="text-align: left; margin-bottom: 30px; display: inline-block;">
-                        <li style="margin-bottom: 10px;">✅ Daily Profit: <b>$0.05</b></li>
-                        <li style="margin-bottom: 10px;">✅ Duration: <b>30 Days</b></li>
-                        <li style="margin-bottom: 10px;">✅ Total Return: <b>$1.50</b></li>
-                        <li style="margin-bottom: 10px;">✅ 24/7 Support</li>
-                    </ul>
-
-                    <button class="btn btn-outline" style="width: 100%;" onclick="buyPlan('Starter', 1)">Activate
-                        Plan</button>
-                </div>
-
-                <!-- Basic Plan -->
-                <div class="glass"
-                    style="padding: 40px; border-radius: 20px; border-top: 5px solid var(--accent-blue); text-align: center; transform: scale(1.05); border: 1px solid var(--accent-blue);">
-                    <div
-                        style="background: var(--accent-blue); color: #fff; display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; margin-bottom: 20px;">
-                        MOST POPULAR</div>
-                    <h3 style="margin-bottom: 20px;">Basic Plan</h3>
-                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">$5.00</div>
-                    <p style="color: var(--text-muted); margin-bottom: 30px;">Investment Amount</p>
-
-                    <ul style="text-align: left; margin-bottom: 30px; display: inline-block;">
-                        <li style="margin-bottom: 10px;">✅ Daily Profit: <b>$0.35</b></li>
-                        <li style="margin-bottom: 10px;">✅ Duration: <b>30 Days</b></li>
-                        <li style="margin-bottom: 10px;">✅ Total Return: <b>$10.50</b></li>
-                        <li style="margin-bottom: 10px;">✅ High Priority Tasks</li>
-                    </ul>
-
-                    <button class="btn btn-primary" style="width: 100%;" onclick="buyPlan('Basic', 5)">Activate
-                        Plan</button>
-                </div>
-
-                <!-- Pro Plan -->
-                <div class="glass"
-                    style="padding: 40px; border-radius: 20px; border-top: 5px solid var(--primary-neon); text-align: center;">
-                    <h3 style="margin-bottom: 20px;">Pro Plan</h3>
-                    <div style="font-size: 2.5rem; font-weight: 700; margin-bottom: 10px;">$10.00</div>
-                    <p style="color: var(--text-muted); margin-bottom: 30px;">Investment Amount</p>
-
-                    <ul style="text-align: left; margin-bottom: 30px; display: inline-block;">
-                        <li style="margin-bottom: 10px;">✅ Daily Profit: <b>$0.80</b></li>
-                        <li style="margin-bottom: 10px;">✅ Duration: <b>30 Days</b></li>
-                        <li style="margin-bottom: 10px;">✅ Total Return: <b>$24.00</b></li>
-                        <li style="margin-bottom: 10px;">✅ Instant Payouts</li>
-                    </ul>
-
-                    <button class="btn btn-outline"
-                        style="width: 100%; border-color: var(--primary-neon); color: var(--primary-neon);"
-                        onclick="buyPlan('Pro', 10)">Activate Plan</button>
+            <!-- Live Rate Banner -->
+            <div class="profit-rate-banner" id="profit-rate-banner">
+                <div class="prt-pulse"></div>
+                <div class="prt-text">🔴 <b>LIVE Daily Rates</b></div>
+                <div class="prt-rates" id="prt-rates-display">
+                    <!-- Populated by JS -->
                 </div>
             </div>
 
-            <!-- History -->
-            <div class="glass" style="margin-top: 50px; padding: 30px; border-radius: 20px;">
-                <h3>Active Investments</h3>
-                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
-                    You have no active investment plans.
+            <!-- Plans Grid -->
+            <div class="plans-grid" id="plans-grid">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Active Investments -->
+            <div class="active-inv-section glass" style="padding: 28px; border-radius: 22px;">
+                <div class="section-header">
+                    <h3>🏦 My Active Investments</h3>
+                    <span id="active-inv-count" style="font-size:0.8rem; color: var(--text-muted);"></span>
+                </div>
+                <div id="active-investments-list">
+                    <div class="empty-inv">
+                        <div class="ei-icon">📊</div>
+                        <p>No active investments yet.<br>Choose a plan above to start earning daily profit!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How it Works -->
+            <div class="how-it-works glass" style="padding: 28px; border-radius: 22px; margin-top: 24px;">
+                <h3 style="margin-bottom:4px;">⚡ How It Works</h3>
+                <p style="font-size:0.82rem; color: var(--text-muted); margin-bottom: 16px;">Simple steps to earning
+                    daily passive income.</p>
+                <div class="hiw-grid">
+                    <div class="hiw-card">
+                        <div class="hiw-num">1</div>
+                        <h4>Choose a Plan</h4>
+                        <p>Select Basic, Regular or Premium based on your investment capacity.</p>
+                    </div>
+                    <div class="hiw-card">
+                        <div class="hiw-num">2</div>
+                        <h4>Activate</h4>
+                        <p>Funds are deducted from your balance instantly and your plan goes live.</p>
+                    </div>
+                    <div class="hiw-card">
+                        <div class="hiw-num">3</div>
+                        <h4>Earn Daily</h4>
+                        <p>Profit is auto-credited every 24 hours based on the admin's live rate.</p>
+                    </div>
+                    <div class="hiw-card">
+                        <div class="hiw-num">4</div>
+                        <h4>Withdraw Anytime</h4>
+                        <p>Your earned profits are added to your balance. Withdraw anytime you want.</p>
+                    </div>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- ========== MOBILE NAVIGATION DRAWER ========== -->
+    <div class="mob-nav-overlay" id="mob-nav-overlay"></div>
+    <div class="mob-nav-drawer" id="mob-nav-drawer">
+        <div class="mob-nav-header">
+            <div class="mob-nav-title">
+                <div class="mob-nav-avatar" id="mob-nav-avatar">👤</div>
+                <div>
+                    <div class="mob-nav-username" id="mob-nav-username">Welcome!</div>
+                    <div class="mob-nav-subtitle">SpinTask Member</div>
+                </div>
+            </div>
+            <button class="mob-nav-close" id="mob-nav-close" aria-label="Close menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+        <div class="mob-nav-balance">
+            <div class="mob-nav-bal-item">
+                <span class="mob-nav-bal-label">💰 Balance</span>
+                <span class="mob-nav-bal-value user-balance-value">$0.00</span>
+            </div>
+            <a href="deposit.html" class="mob-nav-dep-btn">+ Deposit</a>
+        </div>
+        <div class="mob-nav-section-label">Navigation</div>
+        <div class="mob-nav-grid">
+            <a href="dashboard.html" class="mob-nav-item">
+                <div class="mob-nav-icon">🏠</div>
+                <div class="mob-nav-label">Home</div>
+            </a>
+            <a href="tasks.html" class="mob-nav-item">
+                <div class="mob-nav-icon">📋</div>
+                <div class="mob-nav-label">Tasks</div>
+            </a>
+            <a href="spin.html" class="mob-nav-item">
+                <div class="mob-nav-icon">🎡</div>
+                <div class="mob-nav-label">Spin Wheel</div>
+            </a>
+            <a href="luckydraw.html" class="mob-nav-item">
+                <div class="mob-nav-icon">🎉</div>
+                <div class="mob-nav-label">Lucky Draw</div>
+            </a>
+            <a href="pool.html" class="mob-nav-item">
+                <div class="mob-nav-icon">👥</div>
+                <div class="mob-nav-label">Community Pool</div>
+            </a>
+            <a href="plans.html" class="mob-nav-item active">
+                <div class="mob-nav-icon">📈</div>
+                <div class="mob-nav-label">Trading Plans</div>
+            </a>
+            <a href="referral.html" class="mob-nav-item">
+                <div class="mob-nav-icon">🔗</div>
+                <div class="mob-nav-label">Referrals</div>
+            </a>
+            <a href="deposit.html" class="mob-nav-item">
+                <div class="mob-nav-icon">💰</div>
+                <div class="mob-nav-label">Deposit</div>
+            </a>
+            <a href="withdraw.html" class="mob-nav-item">
+                <div class="mob-nav-icon">💸</div>
+                <div class="mob-nav-label">Withdraw</div>
+            </a>
+            <a href="profile.html" class="mob-nav-item">
+                <div class="mob-nav-icon">👤</div>
+                <div class="mob-nav-label">Profile</div>
+            </a>
+        </div>
+        <div class="mob-nav-footer">
+            <a href="support.html" class="mob-nav-support-btn">💬 Support</a>
+            <button class="mob-nav-logout-btn" onclick="Auth.logout()">🚪 Logout</button>
+        </div>
     </div>
 
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
     <script src="js/app.js"></script>
     <script src="js/notifications.js"></script>
+
     <script>
-        function buyPlan(name, price) {
-            if (confirm(`Do you want to activate the ${name} Plan for $${price} USDT?`)) {
-                alert('Insufficient balance. Please deposit USDT first.');
-                window.location.href = 'deposit.html';
-            }
+        // ── Trading Investment Logic ──────────────────────────────────────────
+        const TI_KEY = 'spintask_trading_investments';
+
+        function renderRateBanner() {
+            const el = document.getElementById('prt-rates-display');
+            if (!el) return;
+            el.innerHTML = Trading.PLANS_DEF.map(p => {
+                const r = Trading.getRate(p);
+                const cls = p.colorClass === 'basic' ? '' : p.colorClass === 'regular' ? 'blue' : 'gold';
+                return `<span class="prt-badge ${cls}">${p.name}: ${r}% / day</span>`;
+            }).join('');
         }
+
+        function renderPlans(user) {
+            const grid = document.getElementById('plans-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            Trading.PLANS_DEF.forEach(plan => {
+                const rate = Trading.getRate(plan);
+                const dailyProfit = parseFloat(((plan.price * rate) / 100).toFixed(2));
+                const monthlyProfit = parseFloat((dailyProfit * 30).toFixed(2));
+                const totalReturn = parseFloat((plan.price + (dailyProfit * 60)).toFixed(2));
+                const activePlan = Trading.getUserActivePlan(user ? user.id : null, plan.id);
+                const userBalance = user ? (user.balance || 0) : 0;
+                const canAfford = userBalance >= plan.price;
+
+                const card = document.createElement('div');
+                card.className = `plan-card glass ${plan.colorClass}`;
+
+                card.innerHTML = `
+                ${plan.badge ? `<div class="plan-badge ${plan.badgeClass}">${plan.badge}</div>` : ''}
+                <span class="plan-icon">${plan.icon}</span>
+                <div class="plan-name ${plan.colorClass}">${plan.name} Plan</div>
+                <div class="plan-tagline">${plan.tagline}</div>
+                <div class="plan-price">$${plan.price}<span> USDT</span></div>
+                <div class="plan-min-label">60-Day Investment Duration</div>
+                <div class="plan-profit-box">
+                    <div class="plan-profit-row">
+                        <span class="label">📈 Daily Rate</span>
+                        <span class="value">${rate}%</span>
+                    </div>
+                    <div class="plan-profit-row">
+                        <span class="label">💵 Daily Profit</span>
+                        <span class="value">+$${dailyProfit}</span>
+                    </div>
+                    <div class="plan-profit-row">
+                        <span class="label">📅 Monthly Est.</span>
+                        <span class="value">+$${monthlyProfit}</span>
+                    </div>
+                    <div class="plan-profit-row">
+                        <span class="label">🏆 60D Total Return</span>
+                        <span class="value">$${totalReturn}</span>
+                    </div>
+                </div>
+                <ul class="plan-features">
+                    <li><span class="fi">✅</span> Auto daily profit credit</li>
+                    <li><span class="fi">✅</span> Admin-controlled live rates</li>
+                    <li><span class="fi">✅</span> 60-day investment period</li>
+                    <li><span class="fi">✅</span> Optional Reinvest boost</li>
+                    ${plan.id === 'standard' ? '<li><span class="fi">✅</span> Priority customer support</li>' : ''}
+                    ${plan.id === 'gold' ? '<li><span class="fi">✅</span> VIP support & early access</li>' : ''}
+                </ul>
+                ${activePlan
+                        ? `<button class="plan-btn ${plan.colorClass} active-plan" disabled>✅ Plan Active</button>`
+                        : `<button class="plan-btn ${plan.colorClass}" onclick="activatePlan('${plan.id}')" ${!canAfford ? 'disabled title="Insufficient balance"' : ''}>
+                        ${canAfford ? '⚡ Activate Plan' : `💰 Need $${plan.price} (Deposit First)`}
+                       </button>`
+                    }
+            `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderActiveInvestments(user) {
+            const listEl = document.getElementById('active-investments-list');
+            const countEl = document.getElementById('active-inv-count');
+            if (!listEl || !user) return;
+
+            const investments = Trading.getUserInvestments().filter(i => i.userId === user.id && i.status === 'active');
+
+            if (countEl) countEl.textContent = investments.length > 0 ? `${investments.length} Active` : '';
+
+            if (investments.length === 0) {
+                listEl.innerHTML = `
+                <div class="empty-inv">
+                    <div class="ei-icon">📊</div>
+                    <p>No active investments yet.<br>Choose a plan above to start earning daily profit!</p>
+                </div>`;
+                return;
+            }
+
+            listEl.innerHTML = investments.map(inv => {
+                const plan = Trading.PLANS_DEF.find(p => p.id === inv.planId);
+                if (!plan) return '';
+                const baseRate = Trading.getRate(plan);
+                const rate = parseFloat((baseRate + (inv.reinvestBonus || 0)).toFixed(2));
+                const since = new Date(inv.startDate);
+                const now = new Date();
+                const daysElapsed = Math.floor((now - since) / (1000 * 60 * 60 * 24));
+                const dailyProfit = parseFloat(((plan.price * rate) / 100).toFixed(2));
+                const totalEarned = parseFloat((inv.totalCredited || 0).toFixed(2));
+                const progressPct = Math.min(100, Math.round((daysElapsed / 60) * 100));
+
+                return `
+                <div class="active-inv-card">
+                    <div class="active-inv-left">
+                        <div class="inv-icon ${plan.colorClass}">${plan.icon}</div>
+                        <div class="inv-info">
+                            <h4>${plan.name} Plan</h4>
+                            <p>Since ${since.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                        </div>
+                    </div>
+                    <div class="inv-stats">
+                        <div class="inv-stat">
+                            <div class="sv">$${inv.amount}</div>
+                            <div class="sl">Invested</div>
+                        </div>
+                        <div class="inv-stat">
+                            <div class="sv">${rate}% ${inv.reinvestBonus ? '<span style="color:#ffaa00; font-size:0.75rem;">(+Bonus)</span>' : ''}</div>
+                            <div class="sl">Rate/Day</div>
+                        </div>
+                        <div class="inv-stat">
+                            <div class="sv">$${dailyProfit}</div>
+                            <div class="sl">Daily $</div>
+                        </div>
+                        <div class="inv-stat">
+                            <div class="sv" style="color:#39ff14;">+$${totalEarned}</div>
+                            <div class="sl">Earned Total</div>
+                        </div>
+                        <div class="inv-stat">
+                            <div class="sv">${daysElapsed}</div>
+                            <div class="sl">Days Active</div>
+                        </div>
+                    </div>
+                    <div class="inv-progress-wrap">
+                        <div style="font-size:0.72rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                            <span>Progress</span><span>${daysElapsed}/60 days</span>
+                        </div>
+                        <div class="inv-progress-bar">
+                            <div class="inv-progress-fill" style="width:${progressPct}%"></div>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function activatePlan(planId) {
+            const user = Auth.getCurrentUser();
+            if (!user) { alert('Please login first.'); return; }
+
+            const plan = Trading.PLANS_DEF.find(p => p.id === planId);
+            if (!plan) return;
+
+            if ((user.balance || 0) < plan.price) {
+                if (confirm(`❌ Insufficient balance. You need $${plan.price} USDT.\n\nGo to Deposit page?`)) {
+                    window.location.href = 'deposit.html';
+                }
+                return;
+            }
+
+            if (Trading.getUserActivePlan(user.id, planId)) {
+                alert('⚠️ You already have an active ' + plan.name + ' plan.');
+                return;
+            }
+
+            const rate = Trading.getRate(plan);
+            const dailyProfit = parseFloat(((plan.price * rate) / 100).toFixed(2));
+
+            if (!confirm(`🚀 Activate ${plan.name} Plan?\n\n💵 Investment: $${plan.price} USDT\n📈 Daily Rate: ${rate}%\n💰 Daily Profit: +$${dailyProfit}\n\nFunds will be deducted from your balance immediately.`)) return;
+
+            // Deduct balance
+            const users = Auth.getUsers();
+            const idx = users.findIndex(u => u.id === user.id);
+            if (idx === -1) return;
+            users[idx].balance = parseFloat(((users[idx].balance || 0) - plan.price).toFixed(2));
+            localStorage.setItem('spintask_users', JSON.stringify(users));
+
+            // Create investment record
+            const investments = Trading.getUserInvestments();
+            investments.push({
+                id: 'ti_' + Date.now(),
+                userId: user.id,
+                planId: plan.id,
+                amount: plan.price,
+                reinvestBonus: 0,
+                startDate: new Date().toISOString(),
+                lastCreditDate: new Date().toISOString(),
+                totalCredited: 0,
+                status: 'active'
+            });
+            Trading.saveUserInvestments(investments);
+
+            // Admin alert
+            if (typeof Admin !== 'undefined') {
+                Admin.addAdminAlert('trading', `📈 ${user.name} activated ${plan.name} Trading Plan — $${plan.price} USDT`);
+            }
+
+            window.dispatchEvent(new CustomEvent('auth:balanceUpdated', { detail: { balance: users[idx].balance } }));
+            alert(`✅ ${plan.name} Plan activated! You will earn $${dailyProfit} USDT daily.`);
+            location.reload();
+        }
+
+        // ── Init ─────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = Auth.getCurrentUser();
+            renderRateBanner();
+            renderPlans(user);
+            renderActiveInvestments(user);
+        });
+
+        // ── Mobile Nav ────────────────────────────────────────────────
+        (function () {
+            const dotsBtn = document.getElementById('mob-dots-btn');
+            const drawer = document.getElementById('mob-nav-drawer');
+            const overlay = document.getElementById('mob-nav-overlay');
+            const closeBtn = document.getElementById('mob-nav-close');
+            function openDrawer() {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                const user = (typeof Auth !== 'undefined') ? Auth.getCurrentUser() : null;
+                if (user) {
+                    const el = document.getElementById('mob-nav-username');
+                    if (el) el.textContent = user.name ? user.name.split(' ')[0] : 'User';
+                }
+            }
+            function closeDrawer() {
+                drawer.classList.remove('open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            if (dotsBtn) dotsBtn.addEventListener('click', openDrawer);
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+            if (overlay) overlay.addEventListener('click', closeDrawer);
+        })();
     </script>
 </body>
 

@@ -113,7 +113,6 @@
 <body class="dashboard-body">
 
     <header class="top-header">
-        <button class="mobile-menu-btn" id="mob-menu-btn" aria-label="Open sidebar">☰</button>
         <a href="dashboard.html" class="header-logo">
             <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
@@ -121,6 +120,12 @@
             </svg>
             SpinTask<span>.</span>
         </a>
+        <!-- 3-Dots Mobile Menu Button -->
+        <button class="mobile-dots-btn" id="mob-dots-btn" aria-label="Open navigation menu">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </button>
     </header>
 
     <!-- Sidebar Overlay (mobile) -->
@@ -136,7 +141,7 @@
                     <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
                     <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
                     <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
-                    <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
+                    <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
                     <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
                     <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
                     <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
@@ -259,16 +264,23 @@
                 </div>
             </div>
 
+            <!-- Trading Investment Section -->
+            <div id="dashboard-trading-section" style="margin-top: 30px;">
+                <!-- Populated by JS -->
+            </div>
+
+
             <!-- Plans & Referrals -->
             <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                 <div class="glass"
                     style="padding: 30px; border-radius: 20px; border-left: 4px solid var(--primary-neon);">
-                    <h4>Your Active Plan</h4>
-                    <p style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">Free Tier</p>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Upgrade to earn up to $0.80
-                        daily profit.</p>
+                    <h4>Your Trading Plan</h4>
+                    <p id="dash-plan-basic-name" style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">Free Tier
+                    </p>
+                    <p id="dash-plan-basic-desc" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">
+                        Upgrade to earn passive daily profit.</p>
                     <a href="plans.html" class="btn btn-primary"
-                        style="margin-top: 20px; padding: 8px 20px; font-size: 0.9rem;">Upgrade Now</a>
+                        style="margin-top: 20px; padding: 8px 20px; font-size: 0.9rem;">View Trading Plans</a>
                 </div>
                 <div class="glass"
                     style="padding: 30px; border-radius: 20px; border-left: 4px solid var(--accent-blue);">
@@ -289,32 +301,87 @@
     <script src="js/app.js"></script>
     <script src="js/notifications.js"></script>
 
-    <!-- Mobile Bottom Nav -->
-    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
-        <ul>
-            <li><a href="dashboard.html" class="active"><span class="bn-icon">🏠</span>Home</a></li>
-            <li><a href="tasks.html"><span class="bn-icon">📋</span>Tasks</a></li>
-            <li><a href="spin.html"><span class="bn-icon">🎡</span>Spin</a></li>
-            <li><a href="withdraw.html"><span class="bn-icon">💸</span>Withdraw</a></li>
-            <li><a href="#" id="more-btn"><span class="bn-icon">⋯</span>More</a></li>
-        </ul>
-    </nav>
+    <!-- ========== MOBILE NAVIGATION DRAWER ========== -->
+    <div class="mob-nav-overlay" id="mob-nav-overlay"></div>
+    <div class="mob-nav-drawer" id="mob-nav-drawer">
+        <!-- Header -->
+        <div class="mob-nav-header">
+            <div class="mob-nav-title">
+                <div class="mob-nav-avatar" id="mob-nav-avatar">👤</div>
+                <div>
+                    <div class="mob-nav-username" id="mob-nav-username">Welcome!</div>
+                    <div class="mob-nav-subtitle">SpinTask Member</div>
+                </div>
+            </div>
+            <button class="mob-nav-close" id="mob-nav-close" aria-label="Close menu">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
 
-    <!-- More Sheet -->
-    <div class="mobile-more-sheet" id="more-sheet">
-        <div class="more-sheet-handle"></div>
-        <ul>
-            <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
-            <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
-            <li><a href="plans.html"><span>🚀</span> Investment Plans</a></li>
-            <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
-            <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
-            <li><a href="profile.html"><span>👤</span> Profile</a></li>
-            <li><a href="#" onclick="Auth.logout(); return false;" style="color:#ff4d4d;"><span>🚪</span> Logout</a>
-            </li>
-        </ul>
+        <!-- Balance strip -->
+        <div class="mob-nav-balance">
+            <div class="mob-nav-bal-item">
+                <span class="mob-nav-bal-label">💰 Balance</span>
+                <span class="mob-nav-bal-value user-balance-value">$0.00</span>
+            </div>
+            <a href="deposit.html" class="mob-nav-dep-btn">+ Deposit</a>
+        </div>
+
+        <!-- Nav Grid -->
+        <div class="mob-nav-section-label">Navigation</div>
+        <div class="mob-nav-grid">
+            <a href="dashboard.html" class="mob-nav-item active">
+                <div class="mob-nav-icon">🏠</div>
+                <div class="mob-nav-label">Home</div>
+            </a>
+            <a href="tasks.html" class="mob-nav-item">
+                <div class="mob-nav-icon">📋</div>
+                <div class="mob-nav-label">Tasks</div>
+            </a>
+            <a href="spin.html" class="mob-nav-item">
+                <div class="mob-nav-icon">🎡</div>
+                <div class="mob-nav-label">Spin Wheel</div>
+            </a>
+            <a href="luckydraw.html" class="mob-nav-item">
+                <div class="mob-nav-icon">🎉</div>
+                <div class="mob-nav-label">Lucky Draw</div>
+            </a>
+            <a href="pool.html" class="mob-nav-item">
+                <div class="mob-nav-icon">👥</div>
+                <div class="mob-nav-label">Community Pool</div>
+            </a>
+            <a href="plans.html" class="mob-nav-item">
+                <div class="mob-nav-icon">📈</div>
+                <div class="mob-nav-label">Trading Plans</div>
+            </a>
+            <a href="referral.html" class="mob-nav-item">
+                <div class="mob-nav-icon">🔗</div>
+                <div class="mob-nav-label">Referrals</div>
+            </a>
+            <a href="deposit.html" class="mob-nav-item">
+                <div class="mob-nav-icon">💰</div>
+                <div class="mob-nav-label">Deposit</div>
+            </a>
+            <a href="withdraw.html" class="mob-nav-item">
+                <div class="mob-nav-icon">💸</div>
+                <div class="mob-nav-label">Withdraw</div>
+            </a>
+            <a href="profile.html" class="mob-nav-item">
+                <div class="mob-nav-icon">👤</div>
+                <div class="mob-nav-label">Profile</div>
+            </a>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="mob-nav-footer">
+            <a href="support.html" class="mob-nav-support-btn">💬 Support</a>
+            <button class="mob-nav-logout-btn" onclick="Auth.logout()">🚪 Logout</button>
+        </div>
     </div>
-    <div class="sidebar-overlay" id="more-overlay" style="z-index:1065;"></div>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const user = Auth.getCurrentUser();
@@ -405,7 +472,110 @@
                     </div>
                 `;
             }
+
+            // Trading Investment Section population
+            renderDashboardTrading(user);
         });
+
+        function renderDashboardTrading(user) {
+            const container = document.getElementById('dashboard-trading-section');
+            if (!container || !user) return;
+
+            if (typeof Trading === 'undefined') return;
+
+            const investments = Trading.getUserInvestments().filter(i => i.userId === user.id && i.status === 'active');
+
+            if (investments.length > 0) {
+                // Update the small side block
+                const pName = document.getElementById('dash-plan-basic-name');
+                const pDesc = document.getElementById('dash-plan-basic-desc');
+                if (pName && pDesc) {
+                    pName.innerText = investments.length + ' Active Plan(s)';
+                    pDesc.innerText = 'You are earning daily passive profit!';
+                }
+            }
+
+            if (investments.length === 0) {
+                container.innerHTML = `
+                    <div class="glass" style="padding: 30px; border-radius: 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.2);">
+                        <h3 style="margin-bottom: 10px;">📈 Trading & Investment</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">You do not have any active trading plans. Start earning daily passive income today!</p>
+                        <a href="plans.html" class="btn btn-primary">Explore Trading Plans</a>
+                    </div>
+                 `;
+                return;
+            }
+
+            let html = '<div class="glass" style="padding: 30px; border-radius: 20px;"><h3 style="margin-bottom: 20px;">📈 Active Trading Plans</h3><div style="display: flex; flex-direction: column; gap: 20px;">';
+
+            investments.forEach(inv => {
+                const plan = Trading.PLANS_DEF.find(p => p.id === inv.planId);
+                if (!plan) return;
+
+                const baseRate = Trading.getRate(plan);
+                const rate = parseFloat((baseRate + (inv.reinvestBonus || 0)).toFixed(2));
+                const dailyProfit = parseFloat(((inv.amount * rate) / 100).toFixed(2));
+                const earnedAmount = parseFloat((inv.totalCredited || 0).toFixed(2));
+
+                const since = new Date(inv.startDate);
+                const daysElapsed = Math.floor((new Date() - since) / (1000 * 60 * 60 * 24));
+                const remainingDays = Math.max(0, 60 - daysElapsed);
+
+                html += `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; position: relative;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="color: var(--primary-neon); font-size: 1.1rem; margin-bottom: 5px;">${plan.name} Plan</h4>
+                                <span style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 4px;">Since ${since.toLocaleDateString()}</span>
+                            </div>
+                            <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="border-color: #39ff14; color: #39ff14; padding: 6px 15px; font-size: 0.85rem;" ${earnedAmount <= 0 ? 'disabled title="Earn some profit first to reinvest"' : ''}>♻️ Reinvest Profits</button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px;">
+                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Total Invested</div>
+                                <div style="font-weight: 700;">$${inv.amount.toFixed(2)}</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Daily Rate</div>
+                                <div style="font-weight: 700;">${rate}% ${inv.reinvestBonus ? '<span style="color:#ffaa00; font-size: 0.8em;">(Bonus)</span>' : ''}</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Daily Earnings</div>
+                                <div style="font-weight: 700; color: #39ff14;">+$${dailyProfit}</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Total Earned</div>
+                                <div style="font-weight: 700; color: #ffaa00;">$${earnedAmount}</div>
+                            </div>
+                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Remaining Days</div>
+                                <div style="font-weight: 700;">${remainingDays} Days</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+            container.innerHTML = html;
+        }
+
+        window.handleReinvest = function (investmentId) {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            if (!confirm('♻️ Are you sure you want to reinvest your accrued profits?\nThis will deduct the earned amount from your balance, add it to your investment, and give you a +0.5% daily rate bonus!')) {
+                return;
+            }
+
+            const res = Trading.reinvestProfits(user.id, investmentId);
+            if (res.success) {
+                alert(res.message);
+                location.reload();
+            } else {
+                alert('❌ ' + res.message);
+            }
+        };
 
         function doVerify() {
             const user = Auth.getCurrentUser();
@@ -425,46 +595,43 @@
             }
         }
     </script>
-    <!-- Mobile JS -->
+    <!-- Mobile Navigation JS -->
     <script>
         (function () {
-            const menuBtn = document.getElementById('mob-menu-btn');
-            const sidebar = document.getElementById('main-sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            const moreBtn = document.getElementById('more-btn');
-            const moreSheet = document.getElementById('more-sheet');
-            const moreOverlay = document.getElementById('more-overlay');
+            const dotsBtn = document.getElementById('mob-dots-btn');
+            const drawer = document.getElementById('mob-nav-drawer');
+            const overlay = document.getElementById('mob-nav-overlay');
+            const closeBtn = document.getElementById('mob-nav-close');
 
-            function openSidebar() {
-                if (sidebar) sidebar.classList.add('mobile-open');
-                if (overlay) overlay.classList.add('active');
+            function openDrawer() {
+                drawer.classList.add('open');
+                overlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                // Fill user info
+                const user = (typeof Auth !== 'undefined') ? Auth.getCurrentUser() : null;
+                if (user) {
+                    const uname = document.getElementById('mob-nav-username');
+                    if (uname) uname.textContent = user.name ? user.name.split(' ')[0] : 'User';
+                }
             }
-            function closeSidebar() {
-                if (sidebar) sidebar.classList.remove('mobile-open');
-                if (overlay) overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            function openMoreSheet() {
-                if (moreSheet) moreSheet.classList.add('open');
-                if (moreOverlay) moreOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeMoreSheet() {
-                if (moreSheet) moreSheet.classList.remove('open');
-                if (moreOverlay) moreOverlay.classList.remove('active');
+            function closeDrawer() {
+                drawer.classList.remove('open');
+                overlay.classList.remove('active');
                 document.body.style.overflow = '';
             }
 
-            if (menuBtn) menuBtn.addEventListener('click', function () {
-                sidebar && sidebar.classList.contains('mobile-open') ? closeSidebar() : openSidebar();
-            });
-            if (overlay) overlay.addEventListener('click', closeSidebar);
-            if (moreBtn) moreBtn.addEventListener('click', function (e) {
-                e.preventDefault();
-                moreSheet && moreSheet.classList.contains('open') ? closeMoreSheet() : openMoreSheet();
-            });
-            if (moreOverlay) moreOverlay.addEventListener('click', closeMoreSheet);
+            if (dotsBtn) dotsBtn.addEventListener('click', openDrawer);
+            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+            if (overlay) overlay.addEventListener('click', closeDrawer);
+
+            // Swipe down to close
+            let startY = 0;
+            if (drawer) {
+                drawer.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
+                drawer.addEventListener('touchend', (e) => {
+                    if (e.changedTouches[0].clientY - startY > 80) closeDrawer();
+                }, { passive: true });
+            }
         })();
     </script>
 </body>

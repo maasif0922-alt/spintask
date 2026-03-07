@@ -531,6 +531,7 @@
                                 id="alert-badge-nav" class="alert-badge" style="display:none">0</span></a></li>
                     <li><a href="#" onclick="switchTab('tasks',event)">&#x1F4CB; Tasks</a></li>
                     <li><a href="#" onclick="switchTab('spinsettings',event)">&#x1F3A1; Spin Settings</a></li>
+                    <li><a href="#" onclick="switchTab('trading',event)">&#x1F4C8; Trading Investment</a></li>
                     <li><a href="#" onclick="switchTab('luckydraw',event)">&#x1F389; Lucky Draw</a></li>
                     <li><a href="#" onclick="switchTab('notifications',event)">&#x1F4E3; Broadcast</a></li>
                     <li><a href="#" onclick="switchTab('communitylinks',event)">&#x1F680; Community Links</a></li>
@@ -630,6 +631,12 @@
                                 Payouts</div>
                             <div id="h-payouts"
                                 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">$0.00</div>
+                        </div>
+                        <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #b339ff;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Website
+                                Clicks</div>
+                            <div id="h-clicks"
+                                style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
                         </div>
                     </div>
                 </div>
@@ -856,6 +863,40 @@
                 </div>
             </div>
 
+            <!-- TRADING INVESTMENT -->
+            <div id="tab-trading" class="admin-section">
+                <div class="page-title">📈 Trading Plans Management</div>
+                <div class="card">
+                    <p style="color:var(--text-muted); margin-bottom: 20px;">Manage daily profit rates for each plan.
+                        Investments are auto-credited daily, but you can force manual credits.</p>
+
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;"
+                        id="trading-management-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h3>All Active Trading Investments</h3>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Plan</th>
+                                    <th>Invested</th>
+                                    <th>Current Rate</th>
+                                    <th>Total Returned</th>
+                                    <th>Days Active</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ti-active-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- LUCKY DRAW -->
             <div id="tab-luckydraw" class="admin-section">
                 <div class="page-title">🎉 Lucky Draw</div>
@@ -1004,6 +1045,7 @@
             if (id === 'adminalerts') renderAlerts();
             if (id === 'tasks') renderTasks();
             if (id === 'spinsettings') renderSpinSettings();
+            if (id === 'trading') renderTrading();
             if (id === 'luckydraw') renderDraws();
             if (id === 'notifications') renderBroadcast();
             if (id === 'communitylinks') renderCommunityLinks();
@@ -1073,6 +1115,11 @@
             // Total Payouts Today
             const payoutsToday = txs.filter(t => t.type === 'withdraw' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
             document.getElementById('h-payouts').textContent = fmt(payoutsToday);
+
+            // Website Clicks Today
+            let clicksData = JSON.parse(localStorage.getItem('spintask_clicks') || '{"count":0}');
+            if (clicksData.date !== today) clicksData.count = 0;
+            animateValue('h-clicks', 0, clicksData.count, 1000);
 
             // Render Logs
             var logs = Admin.getDb(Admin.DB_LOGS).reverse().slice(0, 30);
@@ -1378,7 +1425,91 @@
             Admin.saveSpinSettings(ss); alert('Spin settings saved!');
         }
 
+        // ── Trading Investment ────────────────────────────────────────────────────────
+        function renderTrading() {
+            var allData = Admin.getTradingByPlan();
+            var grid = document.getElementById('trading-management-grid');
+
+            var plans = [
+                { id: 'basic', name: 'Basic Plan', defaultRate: 5, bg: 'rgba(255,255,255,0.05)', hr: '#ccc' },
+                { id: 'standard', name: 'Standard Plan', defaultRate: 6, bg: 'linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.05))', hr: '#4facfe' },
+                { id: 'gold', name: 'Gold Plan', defaultRate: 7, bg: 'linear-gradient(135deg, rgba(246, 211, 101, 0.1), rgba(253, 160, 133, 0.05))', hr: '#f6d365' }
+            ];
+
+            grid.innerHTML = plans.map(p => {
+                var currentRate = parseFloat(Admin.getSetting('ti_' + p.id + '_rate')) || p.defaultRate;
+                var count = (allData[p.id] || []).length;
+                return `<div style="background: ${p.bg}; border: 1px solid var(--border); border-radius: 12px; padding: 20px; border-top: 3px solid ${p.hr};">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 15px;">
+                        <h4 style="font-size: 1.1rem;">${p.name}</h4>
+                        <span class="badge badge-approved">${count} Active</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Daily Rate (%)</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="number" id="tr-rate-${p.id}" class="form-input" value="${currentRate}" step="0.1" max="15" min="1">
+                            <button class="btn btn-outline" style="white-space:nowrap; border-color:${p.hr}; color:${p.hr};" onclick="updateTradingRate('${p.id}')">Save Rate</button>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.85rem;" onclick="forceCreditTrading('${p.id}')">⚡ Force Credit Profit Now</button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            var tbody = document.getElementById('ti-active-body');
+            var activeInvs = [];
+            Object.keys(allData).forEach(k => { activeInvs = activeInvs.concat(allData[k]); });
+            activeInvs.sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+
+            tbody.innerHTML = activeInvs.map(inv => {
+                var baseRate = parseFloat(Admin.getSetting('ti_' + inv.planId + '_rate')) || (inv.planId === 'basic' ? 5 : inv.planId === 'standard' ? 6 : 7);
+                var curRate = baseRate + (inv.reinvestBonus || 0);
+                var days = Math.floor((new Date() - new Date(inv.startDate)) / (1000 * 60 * 60 * 24));
+                return `<tr>
+                    <td><strong>${inv.userName}</strong><br><span style="font-size:0.75rem;color:var(--text-muted)">${inv.userEmail}</span></td>
+                    <td style="text-transform: capitalize;">${inv.planId}</td>
+                    <td style="color:var(--primary-neon)">${fmt(inv.amount)}</td>
+                    <td>${curRate.toFixed(2)}% ${inv.reinvestBonus ? '<span style="color:#ffaa00; font-size:0.75rem;">(+Bonus)</span>' : ''}</td>
+                    <td style="color:#39ff14">+${fmt(inv.totalCredited || 0)}</td>
+                    <td>${days} days</td>
+                    <td><button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d; font-size:0.75rem; padding: 4px 10px;" onclick="cancelTrading('${inv.id}', '${inv.planId}')">Cancel</button></td>
+                </tr>`;
+            }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">No active trading investments</td></tr>';
+        }
+
+        function updateTradingRate(planId) {
+            var val = document.getElementById('tr-rate-' + planId).value;
+            if (val && parseFloat(val) > 0) {
+                Admin.setTradingRate(planId, parseFloat(val));
+                alert(planId + ' rate updated to ' + val + '%');
+                renderTrading();
+            }
+        }
+
+        function forceCreditTrading(planId) {
+            if (confirm('Force credit ALL active ' + planId + ' investments right now? This overrides the 24h timer.')) {
+                var res = Admin.manualCreditTrading(planId);
+                alert(res.message);
+                renderTrading();
+            }
+        }
+
+        function cancelTrading(invId, planId) {
+            if (confirm('Cancel this investment? User will stop earning daily profit. The invested amount will NOT be refunded automatically!')) {
+                var allDb = Admin.getDb('spintask_trading_investments');
+                var idx = allDb.findIndex(i => i.id === invId);
+                if (idx !== -1) {
+                    allDb[idx].status = 'cancelled';
+                    Admin.saveDb('spintask_trading_investments', allDb);
+                    alert('Investment cancelled');
+                    renderTrading();
+                }
+            }
+        }
+
         // ── Lucky Draw ────────────────────────────────────────────────────────────────
+
         function renderDraws() {
             var draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
             document.getElementById('draws-list').innerHTML = draws.map(d => `<div class="task-row">

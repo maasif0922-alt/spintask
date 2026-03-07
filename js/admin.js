@@ -19,6 +19,7 @@ const Admin = {
     DB_ADMIN_ALERTS: 'spintask_admin_alerts',
     DB_SPIN_SETTINGS: 'spintask_spin_settings',
     DB_TRANSFERS: 'spintask_transfers',
+    DB_TRADING_SETTINGS: 'spintask_trading_settings',
 
     // Default Settings Initialization
     init() {
@@ -32,10 +33,21 @@ const Admin = {
                 minWithdraw: 20,
                 refLvl1: 10,
                 refLvl2: 5,
-                allowTransfers: true
+                allowTransfers: true,
+                ti_basic_rate: 5,
+                ti_standard_rate: 6,
+                ti_gold_rate: 7
             };
             localStorage.setItem(this.DB_SETTINGS, JSON.stringify(defaultSettings));
         }
+
+        // Ensure trading rate settings have defaults if missing
+        const settings = this.getObjDb(this.DB_SETTINGS);
+        let needsSave = false;
+        if (!settings.ti_basic_rate) { settings.ti_basic_rate = 5; needsSave = true; }
+        if (!settings.ti_standard_rate) { settings.ti_standard_rate = 6; needsSave = true; }
+        if (!settings.ti_gold_rate) { settings.ti_gold_rate = 7; needsSave = true; }
+        if (needsSave) this.saveDb(this.DB_SETTINGS, settings);
 
         if (!localStorage.getItem(this.DB_SIGNAL)) {
             const defaultSignal = {
@@ -706,6 +718,74 @@ const Admin = {
             users: { online: onlineUsers, active: activeUsersCount, total: users.length },
             leaderboards: { topEarner, topInvestor, topReferrer }
         };
+    },
+
+    // ─── Trading Investment Admin Methods ─────────────────────────────────
+
+    /**
+     * Get all active trading investments across all users
+     */
+    getAllTradingInvestments() {
+        return JSON.parse(localStorage.getItem('spintask_trading_investments') || '[]');
+    },
+
+    /**
+     * Get active trading investments grouped by plan
+     * @returns {Object} { basic: [...], regular: [...], premium: [...] }
+     */
+    getTradingByPlan() {
+        const all = this.getAllTradingInvestments().filter(i => i.status === 'active');
+        const users = this.getAllUsers();
+        const getUserName = (id) => { const u = users.find(u => u.id === id); return u ? u.name : id; };
+        const getUserEmail = (id) => { const u = users.find(u => u.id === id); return u ? u.email : ''; };
+        return {
+            basic: all.filter(i => i.planId === 'basic').map(i => ({ ...i, userName: getUserName(i.userId), userEmail: getUserEmail(i.userId) })),
+            standard: all.filter(i => i.planId === 'standard').map(i => ({ ...i, userName: getUserName(i.userId), userEmail: getUserEmail(i.userId) })),
+            gold: all.filter(i => i.planId === 'gold').map(i => ({ ...i, userName: getUserName(i.userId), userEmail: getUserEmail(i.userId) }))
+        };
+    },
+
+    /**
+     * Update daily profit rate for a plan
+     * @param {string} planId - 'basic' | 'standard' | 'gold'
+     * @param {number} rate - percentage (5 to 8)
+     */
+    setTradingRate(planId, rate) {
+        const r = parseFloat(rate);
+        if (isNaN(r) || r < 0 || r > 100) return false;
+        const key = `ti_${planId}_rate`;
+        this.updateSetting(key, r);
+        this.logAction(`Admin set ${planId} trading plan rate to ${r}%`);
+        return true;
+    },
+
+    /**
+     * Manually credit all active trading investors for a plan now
+     */
+    manualCreditTrading(planId) {
+        const PLANS_AMOUNTS = { basic: 25, standard: 50, gold: 100 };
+        const investments = this.getAllTradingInvestments();
+        const users = JSON.parse(localStorage.getItem('spintask_users') || '[]');
+        const rate = parseFloat(this.getSetting(`ti_${planId}_rate`)) || (planId === 'basic' ? 5 : planId === 'standard' ? 6 : 7);
+        let credited = 0;
+
+        investments.forEach(inv => {
+            if (inv.planId !== planId || inv.status !== 'active') return;
+            const dailyProfit = parseFloat(((inv.amount * rate) / 100).toFixed(2));
+            const uIdx = users.findIndex(u => u.id === inv.userId);
+            if (uIdx !== -1) {
+                users[uIdx].balance = parseFloat(((users[uIdx].balance || 0) + dailyProfit).toFixed(2));
+                users[uIdx].earnings = parseFloat(((users[uIdx].earnings || 0) + dailyProfit).toFixed(2));
+                inv.totalCredited = parseFloat(((inv.totalCredited || 0) + dailyProfit).toFixed(2));
+                inv.lastCreditDate = new Date().toISOString();
+                credited++;
+            }
+        });
+
+        localStorage.setItem('spintask_users', JSON.stringify(users));
+        localStorage.setItem('spintask_trading_investments', JSON.stringify(investments));
+        this.logAction(`Admin manually credited ${planId} plan — ${credited} users @ ${rate}%`);
+        return credited;
     },
 
     getChartData() {
