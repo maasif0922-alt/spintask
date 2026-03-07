@@ -1850,8 +1850,8 @@
             s.btcAddress = document.getElementById('set-btc').value;
             s.minDeposit = parseFloat(document.getElementById('set-mindep').value) || 10;
             s.minWithdraw = parseFloat(document.getElementById('set-minwith').value) || 20;
-            s.refLvl1 = parseInt(document.getElementById('set-ref1').value) || 10;
-            s.refLvl2 = parseInt(document.getElementById('set-ref2').value) || 5;
+            s.refLvl1 = parseInt(document.getElementById('set-ref1').value) || 5;
+            s.refLvl2 = parseInt(document.getElementById('set-ref2').value) || 3;
             s.allowTransfers = document.getElementById('set-transfers').checked;
             Admin.saveDb(Admin.DB_SETTINGS, s);
             var sig = Admin.getObjDb(Admin.DB_SIGNAL);
