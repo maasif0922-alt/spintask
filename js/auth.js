@@ -41,7 +41,7 @@ const Auth = {
     /**
      * Register a new user
      */
-    async register(name, email, password) {
+    async register(name, email, password, referredByCode = null) {
         const users = this.getUsers();
         if (users.find(u => u.email === email)) {
             throw new Error('Email already registered.');
@@ -59,6 +59,8 @@ const Auth = {
             verificationDate: null,
             registeredAt: new Date().toISOString(),
             referralCode: 'REF' + Math.random().toString(36).substring(2, 7).toUpperCase(),
+            referredBy: referredByCode || null,
+            referralCount: 0,
             createdAt: new Date().toISOString()
         };
 

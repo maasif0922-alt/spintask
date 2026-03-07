@@ -230,6 +230,44 @@ const Admin = {
         this.saveDb(this.DB_ADMIN_ALERTS, alerts);
     },
 
+    /**
+     * Distribute referral commissions for a plan purchase
+     */
+    distributeReferralCommissions(userId, amount) {
+        const users = this.getAllUsers();
+        const settings = this.getObjDb(this.DB_SETTINGS);
+
+        const ref1Percent = parseFloat(settings.refLvl1) || 5;
+        const ref2Percent = parseFloat(settings.refLvl2) || 3;
+
+        const currentUser = users.find(u => u.id === userId);
+        if (!currentUser || !currentUser.referredBy) return;
+
+        // Level 1 Referrer
+        const ref1 = users.find(u => u.referralCode === currentUser.referredBy);
+        if (ref1) {
+            const comm1 = parseFloat(((amount * ref1Percent) / 100).toFixed(2));
+            ref1.balance = parseFloat(((ref1.balance || 0) + comm1).toFixed(2));
+            ref1.earnings = parseFloat(((ref1.earnings || 0) + comm1).toFixed(2));
+
+            this.addAdminAlert('task', `🔗 Referral Comm: ${ref1.name} earned $${comm1} (Level 1) from ${currentUser.name}'s plan activation`);
+
+            // Level 2 Referrer
+            if (ref1.referredBy) {
+                const ref2 = users.find(u => u.referralCode === ref1.referredBy);
+                if (ref2) {
+                    const comm2 = parseFloat(((amount * ref2Percent) / 100).toFixed(2));
+                    ref2.balance = parseFloat(((ref2.balance || 0) + comm2).toFixed(2));
+                    ref2.earnings = parseFloat(((ref2.earnings || 0) + comm2).toFixed(2));
+
+                    this.addAdminAlert('task', `🔗 Referral Comm: ${ref2.name} earned $${comm2} (Level 2) from ${currentUser.name}'s plan activation`);
+                }
+            }
+        }
+
+        localStorage.setItem('spintask_users', JSON.stringify(users));
+    },
+
     getAdminAlerts() {
         return this.getDb(this.DB_ADMIN_ALERTS);
     },

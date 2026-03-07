@@ -481,6 +481,14 @@
                 `;
             }
 
+            // Referral Rates population
+            if (typeof Admin !== 'undefined') {
+                const r1 = Admin.getSetting('refLvl1') || 5;
+                const r2 = Admin.getSetting('refLvl2') || 3;
+                const refRatesEl = document.getElementById('dash-ref-rates');
+                if (refRatesEl) refRatesEl.innerText = `Level 1: ${r1}% | Level 2: ${r2}%`;
+            }
+
             // Trading Investment Section population
             renderDashboardTrading(user);
         });

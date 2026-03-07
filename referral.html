@@ -195,6 +195,16 @@
             const user = Auth.getCurrentUser();
             if (!user) return;
 
+            // Referral Rates
+            if (typeof Admin !== 'undefined') {
+                const r1 = Admin.getSetting('refLvl1') || 5;
+                const r2 = Admin.getSetting('refLvl2') || 3;
+                const l1El = document.getElementById('ref-lvl1-rate');
+                const l2El = document.getElementById('ref-lvl2-rate');
+                if (l1El) l1El.innerText = r1 + '%';
+                if (l2El) l2El.innerText = r2 + '%';
+            }
+
             // Welcome message
             const wm = document.getElementById('welcome-msg');
             if (wm) wm.innerText = `Welcome back, ${user.name.split(' ')[0]}! 👋`;

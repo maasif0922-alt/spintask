@@ -1836,8 +1836,8 @@
             document.getElementById('set-btc').value = s.btcAddress || '';
             document.getElementById('set-mindep').value = s.minDeposit || 10;
             document.getElementById('set-minwith').value = s.minWithdraw || 20;
-            document.getElementById('set-ref1').value = s.refLvl1 || 10;
-            document.getElementById('set-ref2').value = s.refLvl2 || 5;
+            document.getElementById('set-ref1').value = s.refLvl1 || 5;
+            document.getElementById('set-ref2').value = s.refLvl2 || 3;
             document.getElementById('set-transfers').checked = s.allowTransfers !== false;
             var sig = Admin.getObjDb(Admin.DB_SIGNAL);
             document.getElementById('set-sig-url').value = sig.telegramUrl || '';
