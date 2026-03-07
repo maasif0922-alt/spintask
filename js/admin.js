@@ -25,182 +25,189 @@ const Admin = {
 
     // Default Settings Initialization
     init() {
+        // --- Merge Global Config (Initial/Forced Sync) ---
+        if (typeof GLOBAL_CONFIG !== 'undefined') {
+            const config = GLOBAL_CONFIG;
+            if (config.settings) {
+                // Only overwrite if not exists or if we want to force a global reset
+                // For "Live Sync", we overwrite key settings from the live config file
+                const currentSettings = this.getObjDb(this.DB_SETTINGS);
+                const mergedSettings = { ...currentSettings, ...config.settings };
+                localStorage.setItem(this.DB_SETTINGS, JSON.stringify(mergedSettings));
+            }
+            if (config.signal) {
+                localStorage.setItem(this.DB_SIGNAL, JSON.stringify(config.signal));
+            }
+            if (config.tasks) {
+                localStorage.setItem(this.DB_TASKS, JSON.stringify(config.tasks));
+            }
+            if (config.announcement) {
+                localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(config.announcement));
+            }
+        }
+
         if (!localStorage.getItem(this.DB_SETTINGS)) {
-            const defaultSettings = {
+            // ... fallback to old defaults if GLOBAL_CONFIG is somehow missing
+
+            // Ensure critical settings have defaults if missing (for older localStorage versions)
+            const settings = this.getObjDb(this.DB_SETTINGS);
+            let needsSave = false;
+
+            const defaultKeys = {
                 siteName: 'SpinTask',
                 supportEmail: 'support@spintask.com',
                 depositAddress: 'TRC20_DEFAULT_ADDRESS_HERE',
                 btcAddress: 'BTC_DEFAULT_ADDRESS_HERE',
                 minDeposit: 10,
                 minWithdraw: 20,
-                refLvl1: 10,
-                refLvl2: 5,
+                refLvl1: 5,
+                refLvl2: 3,
                 allowTransfers: true,
                 ti_basic_rate: 5,
                 ti_standard_rate: 6,
                 ti_gold_rate: 7
             };
-            localStorage.setItem(this.DB_SETTINGS, JSON.stringify(defaultSettings));
-        }
 
-        // Ensure critical settings have defaults if missing (for older localStorage versions)
-        const settings = this.getObjDb(this.DB_SETTINGS);
-        let needsSave = false;
-
-        const defaultKeys = {
-            siteName: 'SpinTask',
-            supportEmail: 'support@spintask.com',
-            depositAddress: 'TRC20_DEFAULT_ADDRESS_HERE',
-            btcAddress: 'BTC_DEFAULT_ADDRESS_HERE',
-            minDeposit: 10,
-            minWithdraw: 20,
-            refLvl1: 5,
-            refLvl2: 3,
-            allowTransfers: true,
-            ti_basic_rate: 5,
-            ti_standard_rate: 6,
-            ti_gold_rate: 7
-        };
-
-        for (const [key, val] of Object.entries(defaultKeys)) {
-            if (settings[key] === undefined) {
-                settings[key] = val;
-                needsSave = true;
-            }
-        }
-
-        if (needsSave) this.saveDb(this.DB_SETTINGS, settings);
-
-        if (!localStorage.getItem(this.DB_SIGNAL)) {
-            const defaultSignal = {
-                enabled: true,
-                telegramUrl: 'https://t.me/your_signal_group',
-                buttonText: '📡 Free Crypto & Forex Signals',
-                subText: 'Join Telegram — Get FREE Daily Signals!'
-            };
-            localStorage.setItem(this.DB_SIGNAL, JSON.stringify(defaultSignal));
-        }
-
-        if (!localStorage.getItem(this.DB_TASKS)) {
-            const defaultTasks = [
-                { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true },
-                { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true }
-            ];
-            localStorage.setItem(this.DB_TASKS, JSON.stringify(defaultTasks));
-        }
-
-        if (!localStorage.getItem(this.DB_CONTENT)) {
-            const defaultContent = {
-                aboutText: 'The most trusted micro-task platform.',
-                termsText: 'These are the default terms and conditions.',
-                privacyText: 'Your privacy is important. We encrypt your data.',
-                contactText: 'Get in touch with us for support and inquiries.',
-                homeHero: 'Earn USDT Online with Simple Tasks and Spins',
-                homeSub: 'Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet.'
-            };
-            localStorage.setItem(this.DB_CONTENT, JSON.stringify(defaultContent));
-        }
-
-        if (!localStorage.getItem(this.DB_LUCKYDRAWS)) {
-            const defaultDraws = [
-                {
-                    id: 'ld1',
-                    title: 'Mobile Phone Draw',
-                    prize: 'iPhone 15 Pro Max',
-                    image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&auto=format&fit=crop&q=60',
-                    price: 1,
-                    totalTickets: 500,
-                    remainingTickets: 500,
-                    drawDate: new Date(Date.now() + 86400000 * 7).toISOString(),
-                    status: 'active'
-                },
-                {
-                    id: 'ld2',
-                    title: 'Used Car Draw',
-                    prize: 'Toyota Corolla 2018',
-                    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&auto=format&fit=crop&q=60',
-                    price: 2,
-                    totalTickets: 1000,
-                    remainingTickets: 1000,
-                    drawDate: new Date(Date.now() + 86400000 * 14).toISOString(),
-                    status: 'active'
-                },
-                {
-                    id: 'ld3',
-                    title: 'New Car Draw',
-                    prize: 'Tesla Model 3',
-                    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&auto=format&fit=crop&q=60',
-                    price: 5,
-                    totalTickets: 2000,
-                    remainingTickets: 2000,
-                    drawDate: new Date(Date.now() + 86400000 * 30).toISOString(),
-                    status: 'active'
+            for (const [key, val] of Object.entries(defaultKeys)) {
+                if (settings[key] === undefined) {
+                    settings[key] = val;
+                    needsSave = true;
                 }
-            ];
-            localStorage.setItem(this.DB_LUCKYDRAWS, JSON.stringify(defaultDraws));
-        }
+            }
 
-        if (!localStorage.getItem(this.DB_TICKETS)) {
-            localStorage.setItem(this.DB_TICKETS, JSON.stringify([]));
-        }
+            if (needsSave) this.saveDb(this.DB_SETTINGS, settings);
 
-        if (!localStorage.getItem(this.DB_ANNOUNCEMENTS)) {
-            const defaultAnnouncement = {
-                text: '🎉 Big News! Mobile Lucky Draw has started. Buy tickets now and win amazing prizes.',
-                enabled: true
-            };
-            localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(defaultAnnouncement));
-        }
+            if (!localStorage.getItem(this.DB_SIGNAL)) {
+                const defaultSignal = {
+                    enabled: true,
+                    telegramUrl: 'https://t.me/your_signal_group',
+                    buttonText: '📡 Free Crypto & Forex Signals',
+                    subText: 'Join Telegram — Get FREE Daily Signals!'
+                };
+                localStorage.setItem(this.DB_SIGNAL, JSON.stringify(defaultSignal));
+            }
 
-        if (!localStorage.getItem(this.DB_NOTIFICATIONS)) {
-            localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify([]));
-        }
+            if (!localStorage.getItem(this.DB_TASKS)) {
+                const defaultTasks = [
+                    { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true },
+                    { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true }
+                ];
+                localStorage.setItem(this.DB_TASKS, JSON.stringify(defaultTasks));
+            }
 
-        if (!localStorage.getItem(this.DB_ADMIN_ALERTS)) {
-            localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify([]));
-        }
+            if (!localStorage.getItem(this.DB_CONTENT)) {
+                const defaultContent = {
+                    aboutText: 'The most trusted micro-task platform.',
+                    termsText: 'These are the default terms and conditions.',
+                    privacyText: 'Your privacy is important. We encrypt your data.',
+                    contactText: 'Get in touch with us for support and inquiries.',
+                    homeHero: 'Earn USDT Online with Simple Tasks and Spins',
+                    homeSub: 'Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet.'
+                };
+                localStorage.setItem(this.DB_CONTENT, JSON.stringify(defaultContent));
+            }
 
-        if (!localStorage.getItem(this.DB_COMMUNITY_LINKS)) {
-            const defaultCommunity = {
-                telegramLink: 'https://t.me/your_group',
-                whatsappGroupLink: 'https://chat.whatsapp.com/your_group',
-                whatsappCommunityLink: 'https://chat.whatsapp.com/your_community',
-                activeLink: 'telegram'
-            };
-            localStorage.setItem(this.DB_COMMUNITY_LINKS, JSON.stringify(defaultCommunity));
-        }
+            if (!localStorage.getItem(this.DB_LUCKYDRAWS)) {
+                const defaultDraws = [
+                    {
+                        id: 'ld1',
+                        title: 'Mobile Phone Draw',
+                        prize: 'iPhone 15 Pro Max',
+                        image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&auto=format&fit=crop&q=60',
+                        price: 1,
+                        totalTickets: 500,
+                        remainingTickets: 500,
+                        drawDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+                        status: 'active'
+                    },
+                    {
+                        id: 'ld2',
+                        title: 'Used Car Draw',
+                        prize: 'Toyota Corolla 2018',
+                        image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&auto=format&fit=crop&q=60',
+                        price: 2,
+                        totalTickets: 1000,
+                        remainingTickets: 1000,
+                        drawDate: new Date(Date.now() + 86400000 * 14).toISOString(),
+                        status: 'active'
+                    },
+                    {
+                        id: 'ld3',
+                        title: 'New Car Draw',
+                        prize: 'Tesla Model 3',
+                        image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&auto=format&fit=crop&q=60',
+                        price: 5,
+                        totalTickets: 2000,
+                        remainingTickets: 2000,
+                        drawDate: new Date(Date.now() + 86400000 * 30).toISOString(),
+                        status: 'active'
+                    }
+                ];
+                localStorage.setItem(this.DB_LUCKYDRAWS, JSON.stringify(defaultDraws));
+            }
 
-        if (!localStorage.getItem(this.DB_SOCIAL_MEDIA)) {
-            const defaultSocial = {
-                facebook: { url: 'https://facebook.com/', enabled: true },
-                telegram: { url: 'https://t.me/your_channel', enabled: true },
-                whatsapp: { url: 'https://chat.whatsapp.com/your_group', enabled: true },
-                tiktok: { url: 'https://tiktok.com/@your_page', enabled: true },
-                instagram: { url: 'https://instagram.com/your_page', enabled: true },
-                youtube: { url: 'https://youtube.com/@your_channel', enabled: true }
-            };
-            localStorage.setItem(this.DB_SOCIAL_MEDIA, JSON.stringify(defaultSocial));
-        }
+            if (!localStorage.getItem(this.DB_TICKETS)) {
+                localStorage.setItem(this.DB_TICKETS, JSON.stringify([]));
+            }
 
-        if (!localStorage.getItem(this.DB_SPIN_SETTINGS)) {
-            const defaultSpinSettings = {
-                enabled: true,
-                segments: [
-                    { label: '$0.01', value: 0.01, type: 'cash' },
-                    { label: '$0.02', value: 0.02, type: 'cash' },
-                    { label: '$0.05', value: 0.05, type: 'cash' },
-                    { label: '$0.10', value: 0.10, type: 'cash' },
-                    { label: 'Try Again', value: 0, type: 'none' },
-                    { label: '$0.01', value: 0.01, type: 'cash' },
-                    { label: 'Bonus', value: 0, type: 'bonus' },
-                    { label: '$0.02', value: 0.02, type: 'cash' }
-                ]
-            };
-            localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
-        }
+            if (!localStorage.getItem(this.DB_ANNOUNCEMENTS)) {
+                const defaultAnnouncement = {
+                    text: '🎉 Big News! Mobile Lucky Draw has started. Buy tickets now and win amazing prizes.',
+                    enabled: true
+                };
+                localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(defaultAnnouncement));
+            }
 
-        if (!localStorage.getItem(this.DB_PLATFORM_INCOME)) {
-            localStorage.setItem(this.DB_PLATFORM_INCOME, '[]');
+            if (!localStorage.getItem(this.DB_NOTIFICATIONS)) {
+                localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify([]));
+            }
+
+            if (!localStorage.getItem(this.DB_ADMIN_ALERTS)) {
+                localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify([]));
+            }
+
+            if (!localStorage.getItem(this.DB_COMMUNITY_LINKS)) {
+                const defaultCommunity = {
+                    telegramLink: 'https://t.me/your_group',
+                    whatsappGroupLink: 'https://chat.whatsapp.com/your_group',
+                    whatsappCommunityLink: 'https://chat.whatsapp.com/your_community',
+                    activeLink: 'telegram'
+                };
+                localStorage.setItem(this.DB_COMMUNITY_LINKS, JSON.stringify(defaultCommunity));
+            }
+
+            if (!localStorage.getItem(this.DB_SOCIAL_MEDIA)) {
+                const defaultSocial = {
+                    facebook: { url: 'https://facebook.com/', enabled: true },
+                    telegram: { url: 'https://t.me/your_channel', enabled: true },
+                    whatsapp: { url: 'https://chat.whatsapp.com/your_group', enabled: true },
+                    tiktok: { url: 'https://tiktok.com/@your_page', enabled: true },
+                    instagram: { url: 'https://instagram.com/your_page', enabled: true },
+                    youtube: { url: 'https://youtube.com/@your_channel', enabled: true }
+                };
+                localStorage.setItem(this.DB_SOCIAL_MEDIA, JSON.stringify(defaultSocial));
+            }
+
+            if (!localStorage.getItem(this.DB_SPIN_SETTINGS)) {
+                const defaultSpinSettings = {
+                    enabled: true,
+                    segments: [
+                        { label: '$0.01', value: 0.01, type: 'cash' },
+                        { label: '$0.02', value: 0.02, type: 'cash' },
+                        { label: '$0.05', value: 0.05, type: 'cash' },
+                        { label: '$0.10', value: 0.10, type: 'cash' },
+                        { label: 'Try Again', value: 0, type: 'none' },
+                        { label: '$0.01', value: 0.01, type: 'cash' },
+                        { label: 'Bonus', value: 0, type: 'bonus' },
+                        { label: '$0.02', value: 0.02, type: 'cash' }
+                    ]
+                };
+                localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
+            }
+
+            if (!localStorage.getItem(this.DB_PLATFORM_INCOME)) {
+                localStorage.setItem(this.DB_PLATFORM_INCOME, '[]');
+            }
         }
     },
 

@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/auth.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/admin.js"></script>
     <style>
         :root {
@@ -1111,6 +1112,27 @@
                             Enabled</label><input type="checkbox" id="set-sig-en" style="width:18px;height:18px;"></div>
                     <button class="btn btn-primary" onclick="saveAllSettings()">Save All Settings</button>
                 </div>
+
+                <!-- NEW: SYNC TO LIVE SECTION -->
+                <div class="card" style="max-width:560px; margin-top:20px; border: 1px solid var(--primary-neon);">
+                    <h3 style="color: var(--primary-neon); margin-bottom: 10px;">🌐 Sync to All Users (Live Push)</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">
+                        After clicking "Save All Settings" above, use this button to generate a sync code.
+                        <b>Send this code to the AI Assistant</b> to update the site for all users.
+                    </p>
+                    <button class="btn btn-outline" onclick="generateSyncCode()"
+                        style="border-color: var(--primary-neon); color: var(--primary-neon);">🔄 Generate Sync Code for
+                        Assistant</button>
+
+                    <div id="sync-code-area" style="display:none; margin-top:15px;">
+                        <label style="font-size: 0.8rem; color: var(--primary-neon);">Copy this code and give it to the
+                            AI Assistant:</label>
+                        <textarea id="sync-code-output" class="form-input" rows="4" readonly
+                            style="font-family: monospace; font-size: 0.75rem; background: rgba(0,0,0,0.3); margin-top:5px;"></textarea>
+                        <button class="btn btn-outline" onclick="copySyncCode()"
+                            style="margin-top:5px; font-size: 0.8rem;">📋 Copy Code</button>
+                    </div>
+                </div>
             </div>
 
             <!-- CONTENT -->
@@ -1849,19 +1871,50 @@
             var s = Admin.getObjDb(Admin.DB_SETTINGS);
             s.depositAddress = document.getElementById('set-usdt').value;
             s.btcAddress = document.getElementById('set-btc').value;
-            s.minDeposit = parseFloat(document.getElementById('set-mindep').value) || 10;
-            s.minWithdraw = parseFloat(document.getElementById('set-minwith').value) || 20;
-            s.refLvl1 = parseInt(document.getElementById('set-ref1').value) || 5;
-            s.refLvl2 = parseInt(document.getElementById('set-ref2').value) || 3;
+            s.minDeposit = parseFloat(document.getElementById('set-mindep').value);
+            s.minWithdraw = parseFloat(document.getElementById('set-minwith').value);
+            s.refLvl1 = parseInt(document.getElementById('set-ref1').value);
+            s.refLvl2 = parseInt(document.getElementById('set-ref2').value);
             s.allowTransfers = document.getElementById('set-transfers').checked;
-            Admin.saveDb(Admin.DB_SETTINGS, s);
+
+            // Signal button
             var sig = Admin.getObjDb(Admin.DB_SIGNAL);
+            sig.enabled = document.getElementById('set-sig-en').checked;
             sig.telegramUrl = document.getElementById('set-sig-url').value;
             sig.buttonText = document.getElementById('set-sig-text').value;
-            sig.enabled = document.getElementById('set-sig-en').checked;
+
+            Admin.saveDb(Admin.DB_SETTINGS, s);
             Admin.saveDb(Admin.DB_SIGNAL, sig);
-            Admin.logAction('Admin updated platform settings');
-            alert('Settings saved!');
+            alert('Settings saved locally. Use "Generate Sync Code" below to push live to all users!');
+        }
+
+        // --- NEW: SYNC LOGIC ---
+        function generateSyncCode() {
+            const settings = Admin.getObjDb(Admin.DB_SETTINGS);
+            const signal = Admin.getObjDb(Admin.DB_SIGNAL);
+            const tasks = Admin.getDb(Admin.DB_TASKS);
+            const announcement = Admin.getAnnouncement();
+
+            const syncData = {
+                settings,
+                signal,
+                tasks,
+                announcement,
+                version: "1.0." + Date.now().toString().slice(-4),
+                lastUpdated: new Date().toISOString()
+            };
+
+            const output = document.getElementById('sync-code-output');
+            output.value = JSON.stringify(syncData, null, 2);
+            document.getElementById('sync-code-area').style.display = 'block';
+        }
+
+        function copySyncCode() {
+            const copyText = document.getElementById("sync-code-output");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            alert("Sync Code Copied! Now paste it to the AI Assistant.");
         }
 
         // ── Content ───────────────────────────────────────────────────────────────────
