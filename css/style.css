@@ -804,6 +804,26 @@ footer {
 /* =====================================================
    ── NEW MOBILE 3-DOTS BUTTON ──
    ===================================================== */
+@keyframes pulse-dot {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 rgba(57, 255, 20, 0);
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+        box-shadow: 0 0 10px rgba(57, 255, 20, 0.4);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 0 rgba(57, 255, 20, 0);
+    }
+}
+
 .mobile-dots-btn {
     display: none;
     /* shown only on mobile via media query */
@@ -819,6 +839,7 @@ footer {
     transition: all 0.25s ease;
     flex-shrink: 0;
     margin-left: auto;
+    animation: pulse-dot 2.5s infinite ease-in-out;
 }
 
 .mobile-dots-btn:hover,
@@ -1301,24 +1322,45 @@ footer {
 
     /* ── Top bar in dashboard ── */
     .top-bar {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap;
         gap: 12px;
         margin-bottom: 20px;
     }
 
+    .top-bar>div:first-child {
+        flex: 1 1 auto;
+        margin-bottom: 0;
+        min-width: 150px;
+    }
+
     .top-bar>div:last-child {
         display: flex;
-        width: 100%;
-        gap: 10px;
-        flex-wrap: wrap;
+        width: auto;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-end;
+    }
+
+    .top-bar .glass {
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .top-bar .btn {
-        flex: 1;
+        flex: 1 1 auto !important;
         text-align: center;
-        padding: 10px 14px;
-        font-size: 0.9rem;
+        padding: 8px 14px !important;
+        font-size: 0.85rem !important;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     /* ── Dashboard profile card ── */
