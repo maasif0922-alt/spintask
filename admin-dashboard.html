@@ -533,6 +533,7 @@
                     <li><a href="#" onclick="switchTab('tasks',event)">&#x1F4CB; Tasks</a></li>
                     <li><a href="#" onclick="switchTab('spinsettings',event)">&#x1F3A1; Spin Settings</a></li>
                     <li><a href="#" onclick="switchTab('trading',event)">&#x1F4C8; Trading Investment</a></li>
+                    <li><a href="#" onclick="switchTab('sportxbet',event)">&#x1F3C5; SportXBet</a></li>
                     <li><a href="#" onclick="switchTab('luckydraw',event)">&#x1F389; Lucky Draw</a></li>
                     <li><a href="#" onclick="switchTab('support',event)">&#x1F4AC; Support Center</a></li>
                     <li><a href="#" onclick="switchTab('notifications',event)">&#x1F4E3; Broadcast</a></li>
@@ -1077,6 +1078,68 @@
                 </div>
             </div>
 
+            <!-- SPORTXBET -->
+            <div id="tab-sportxbet" class="admin-section">
+                <div class="page-title">🏅 SportXBet Management</div>
+                <div class="card" style="margin-bottom:20px;">
+                    <h3>Add New Match</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-top:15px;">
+                        <div class="form-group">
+                            <label>Sport</label>
+                            <select id="sxb-sport" class="form-input">
+                                <option value="Cricket">Cricket</option>
+                                <option value="Football">Football</option>
+                                <option value="Tennis">Tennis</option>
+                                <option value="Basketball">Basketball</option>
+                                <option value="eSports">eSports</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Team A</label><input id="sxb-teamA" class="form-input" placeholder="e.g. India"></div>
+                        <div class="form-group"><label>Team B</label><input id="sxb-teamB" class="form-input" placeholder="e.g. Australia"></div>
+                        <div class="form-group"><label>Odds (Team A)</label><input id="sxb-oddsA" class="form-input" type="number" step="0.01" value="1.90"></div>
+                        <div class="form-group"><label>Odds (Team B)</label><input id="sxb-oddsB" class="form-input" type="number" step="0.01" value="1.90"></div>
+                        <div class="form-group"><label>Match Time</label><input id="sxb-time" class="form-input" type="datetime-local"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addSXBMatch()">➕ Add Match</button>
+                </div>
+                <div class="card" style="margin-bottom:20px;">
+                    <h3>Active Matches</h3>
+                    <div style="overflow-x:auto; margin-top:15px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sport</th>
+                                    <th>Event</th>
+                                    <th>Time</th>
+                                    <th>Odds</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sxb-matches-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Betting History & Payouts</h3>
+                    <div style="overflow-x:auto; margin-top:15px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Selection</th>
+                                    <th>Stake</th>
+                                    <th>Payout</th>
+                                    <th>Status</th>
+                                    <th>-</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sxb-bets-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- SOCIAL MEDIA -->
             <div id="tab-socialmedia" class="admin-section">
                 <div class="page-title">📱 Social Media</div>
@@ -1179,6 +1242,7 @@
             if (id === 'tasks') renderTasks();
             if (id === 'spinsettings') renderSpinSettings();
             if (id === 'trading') renderTrading();
+            if (id === 'sportxbet') renderSportXBet();
             if (id === 'luckydraw') renderDraws();
             if (id === 'notifications') renderBroadcast();
             if (id === 'communitylinks') renderCommunityLinks();
@@ -1934,6 +1998,85 @@
             Admin.saveDb(Admin.DB_CONTENT, c);
             Admin.logAction('Admin updated website content');
             alert('Content updated!');
+        }
+
+        // ── SportXBet ────────────────────────────────────────────────────────
+        function renderSportXBet() {
+            renderSXBMatches();
+            renderSXBBets();
+        }
+
+        function renderSXBMatches() {
+            const matches = Admin.getMatches();
+            const tbody = document.getElementById('sxb-matches-body');
+            if(!tbody) return;
+            tbody.innerHTML = matches.map(m => `
+                <tr>
+                    <td>${m.sport}</td>
+                    <td><strong>${m.teamA}</strong> vs <strong>${m.teamB}</strong></td>
+                    <td>${new Date(m.matchTime).toLocaleString()}</td>
+                    <td>${m.oddsA} / ${m.oddsB}</td>
+                    <td><span class="badge badge-${m.status === 'finished' ? 'rejected' : 'approved'}">${m.status}</span></td>
+                    <td class="tr-actions">
+                        ${m.status !== 'finished' ? `
+                            <button class="btn btn-outline" style="color:var(--primary-neon)" onclick="finishMatch('${m.id}', '${m.teamA}')">Winner A</button>
+                            <button class="btn btn-outline" style="color:var(--primary-neon)" onclick="finishMatch('${m.id}', '${m.teamB}')">Winner B</button>
+                        ` : ''}
+                        <button class="btn btn-outline" style="color:#ff4d4d" onclick="deleteMatch('${m.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No matches added</td></tr>';
+        }
+
+        function renderSXBBets() {
+            const bets = Admin.getBets();
+            const tbody = document.getElementById('sxb-bets-body');
+            if(!tbody) return;
+            tbody.innerHTML = bets.map(b => `
+                <tr>
+                    <td>${b.userName}<br><span style="font-size:0.75rem;color:var(--text-muted)">${b.userEmail}</span></td>
+                    <td>Bet on <strong>${b.team}</strong></td>
+                    <td style="color:var(--primary-neon)">${fmt(b.amount)}</td>
+                    <td style="color:#ffaa00">${fmt(b.potentialPayout)}</td>
+                    <td><span class="badge badge-${b.status === 'won' ? 'approved' : b.status === 'lost' ? 'rejected' : 'pending'}">${b.status}</span></td>
+                    <td>-</td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No bets placed yet</td></tr>';
+        }
+
+        function addSXBMatch() {
+            const sport = document.getElementById('sxb-sport').value;
+            const teamA = document.getElementById('sxb-teamA').value;
+            const teamB = document.getElementById('sxb-teamB').value;
+            const time = document.getElementById('sxb-time').value;
+            const oddsA = document.getElementById('sxb-oddsA').value;
+            const oddsB = document.getElementById('sxb-oddsB').value;
+
+            if (!teamA || !teamB || !time || !oddsA || !oddsB) {
+                alert('All fields are required!');
+                return;
+            }
+
+            Admin.addMatch(sport, teamA, teamB, time, oddsA, oddsB);
+            alert('Match added!');
+            renderSXBMatches();
+            // Clear fields
+            ['sxb-teamA', 'sxb-teamB', 'sxb-time', 'sxb-oddsA', 'sxb-oddsB'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function finishMatch(matchId, winningTeam) {
+            if (confirm(`Confirm ${winningTeam} as the winner and process payouts?`)) {
+                const res = Admin.processMatchResult(matchId, winningTeam);
+                alert(res.message);
+                renderSportXBet();
+            }
+        }
+
+        function deleteMatch(id) {
+            if (confirm('Delete this match?')) {
+                Admin.deleteMatch(id);
+                renderSXBMatches();
+            }
         }
 
         // ── Init ──────────────────────────────────────────────────────────────────────

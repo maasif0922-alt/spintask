@@ -22,6 +22,8 @@ const Admin = {
     DB_TRADING_SETTINGS: 'spintask_trading_settings',
     DB_PLATFORM_INCOME: 'spintask_platform_income',
     DB_SUPPORT_MESSAGES: 'spintask_support_messages',
+    DB_SPORTXBET_MATCHES: 'spintask_sportxbet_matches',
+    DB_SPORTXBET_BETS: 'spintask_sportxbet_bets',
 
     // Default Settings Initialization
     init() {
@@ -997,6 +999,113 @@ const Admin = {
         }
 
         return { labels, deposits, withdrawals, newUsers };
+    },
+
+    // ─── SportXBet ────────────────────────────────────────────────────────
+
+    getMatches() {
+        return this.getDb(this.DB_SPORTXBET_MATCHES) || [];
+    },
+
+    addMatch(sport, teamA, teamB, matchTime, oddsA, oddsB) {
+        const matches = this.getMatches();
+        const newMatch = {
+            id: 'm_' + Date.now(),
+            sport, teamA, teamB,
+            matchTime: new Date(matchTime).toISOString(),
+            oddsA: parseFloat(oddsA),
+            oddsB: parseFloat(oddsB),
+            status: 'upcoming',
+            winner: null
+        };
+        matches.push(newMatch);
+        this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
+        this.logAction(`Admin added SportXBet match: ${teamA} vs ${teamB}`);
+        return newMatch;
+    },
+
+    updateMatchStatus(matchId, status) {
+        const matches = this.getMatches();
+        const match = matches.find(m => m.id === matchId);
+        if (match) {
+            match.status = status;
+            this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
+        }
+    },
+
+    deleteMatch(matchId) {
+        let matches = this.getMatches();
+        matches = matches.filter(m => m.id !== matchId);
+        this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
+    },
+
+    getBets() {
+        return this.getDb(this.DB_SPORTXBET_BETS) || [];
+    },
+
+    placeBet(userId, matchId, team, amount, odds) {
+        const users = this.getAllUsers();
+        const uIndex = users.findIndex(u => u.id === userId);
+        if (uIndex === -1) return { success: false, message: 'User not found' };
+
+        const user = users[uIndex];
+        const betAmount = parseFloat(amount);
+        if (user.balance < betAmount) return { success: false, message: 'Insufficient balance' };
+
+        user.balance -= betAmount;
+        localStorage.setItem('spintask_users', JSON.stringify(users));
+
+        const bets = this.getBets();
+        const newBet = {
+            id: 'b_' + Date.now(),
+            userId, userName: user.name, userEmail: user.email,
+            matchId, team, amount: betAmount, odds: parseFloat(odds),
+            potentialPayout: betAmount * parseFloat(odds),
+            status: 'pending', date: new Date().toISOString()
+        };
+        bets.unshift(newBet);
+        this.saveDb(this.DB_SPORTXBET_BETS, bets);
+        this.logAction(`User ${user.email} placed $${betAmount} bet on ${team}`);
+
+        return { success: true, message: 'Bet placed successfully!', newBalance: user.balance };
+    },
+
+    processMatchResult(matchId, winningTeam) {
+        const matches = this.getMatches();
+        const match = matches.find(m => m.id === matchId);
+        if (!match) return { success: false, message: 'Match not found' };
+
+        match.status = 'finished';
+        match.winner = winningTeam;
+        this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
+
+        const bets = this.getBets();
+        const users = this.getAllUsers();
+        let totalPayout = 0;
+        let winnersCount = 0;
+
+        bets.forEach(bet => {
+            if (bet.matchId === matchId && bet.status === 'pending') {
+                if (bet.team === winningTeam) {
+                    bet.status = 'won';
+                    const uIndex = users.findIndex(u => u.id === bet.userId);
+                    if (uIndex !== -1) {
+                        users[uIndex].balance = parseFloat((users[uIndex].balance + bet.potentialPayout).toFixed(2));
+                        users[uIndex].earnings = parseFloat(((users[uIndex].earnings || 0) + (bet.potentialPayout - bet.amount)).toFixed(2));
+                        totalPayout += bet.potentialPayout;
+                        winnersCount++;
+                    }
+                } else {
+                    bet.status = 'lost';
+                }
+            }
+        });
+
+        this.saveDb(this.DB_SPORTXBET_BETS, bets);
+        localStorage.setItem('spintask_users', JSON.stringify(users));
+        this.logAction(`Processed results for match ${matchId}. Paid out $${totalPayout} to ${winnersCount} winners.`);
+        
+        return { success: true, message: `Processed results. Paid out $${totalPayout.toFixed(2)} to ${winnersCount} winners.` };
     }
 };
 
