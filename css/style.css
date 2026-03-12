@@ -1183,19 +1183,36 @@ footer {
 
     /* ── Public Header ── */
     .nav-links {
+        display: flex;
+        gap: 15px;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        max-width: 45%;
+    }
+    .nav-links::-webkit-scrollbar {
         display: none;
+    }
+    .nav-links li {
+        flex-shrink: 0;
     }
 
     .auth-btns {
-        display: none;
+        display: flex;
+        gap: 8px;
+        padding: 4px 10px;
+        scale: 0.85;
+        transform-origin: right center;
     }
 
     .hamburger-btn {
-        display: flex;
+        display: none !important;
     }
 
     .mobile-drawer {
-        display: flex;
+        display: none !important;
     }
 
     header {
