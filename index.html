@@ -23,6 +23,18 @@
         </div>
     </div>
 
+    <!-- Sport Match Ticker -->
+    <div class="sport-ticker-wrapper">
+        <div class="sport-ticker-title">Live Matches</div>
+        <div class="sport-ticker-content" id="sport-ticker-matches">
+            <!-- Dynamic Matches -->
+            <div class="ticker-match"><span class="sport-icon">🏏</span> India vs Australia <span class="live-dot"></span> 182-3 (19.4)</div>
+            <div class="ticker-match"><span class="sport-icon">⚽</span> Real Madrid vs Barcelona <span class="live-dot"></span> 2 - 1 (P)</div>
+            <div class="ticker-match"><span class="sport-icon">🏆</span> PSL: Multan vs Peshawar <span class="live-dot"></span> 145-2 (15)</div>
+            <div class="ticker-match"><span class="sport-icon">🔥</span> IPL: RCB vs CSK <span class="live-dot"></span> Starting Soon</div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="glass">
         <div class="container container-nav">
@@ -82,9 +94,29 @@
                 <p id="pub-hero-sub">The most trusted micro-task platform. Complete simple actions, spin the daily
                     wheel, and withdraw
                     your earnings directly to your Binance wallet.</p>
-                <div class="hero-btns">
-                    <a href="register.html" class="btn btn-primary">Start Earning Now</a>
-                    <a href="login.html" class="btn btn-outline">Member Login</a>
+                
+                <!-- Sport Categories Grid -->
+                <div class="sport-categories-grid">
+                    <a href="sportxbet.html?tab=cricket" class="sport-box">
+                        <span class="icon">🏏</span>
+                        <span class="name">Cricket</span>
+                        <span class="count" id="count-cricket">Active Matches: 12</span>
+                    </a>
+                    <a href="sportxbet.html?tab=football" class="sport-box">
+                        <span class="icon">⚽</span>
+                        <span class="name">Football</span>
+                        <span class="count" id="count-football">Live Now: 8</span>
+                    </a>
+                    <a href="sportxbet.html?tab=psl" class="sport-box">
+                        <span class="icon">🏆</span>
+                        <span class="name">PSL 2024</span>
+                        <span class="count">Featured Events</span>
+                    </a>
+                    <a href="sportxbet.html?tab=ipl" class="sport-box">
+                        <span class="icon">🔥</span>
+                        <span class="name">IPL Season</span>
+                        <span class="count">Upcoming Matches</span>
+                    </a>
                 </div>
             </div>
         </section>
@@ -383,8 +415,49 @@
                 }
             }
 
+            // SportXBet Ticker & Category Logic
+            function updateSportXBetUI() {
+                try {
+                    const matches = Admin.getMatches().filter(m => m.status !== 'finished');
+                    
+                    // Update Counts
+                    const cricketMatches = matches.filter(m => m.sport === 'Cricket');
+                    const footballMatches = matches.filter(m => m.sport === 'Football');
+                    
+                    const cricketEl = document.getElementById('count-cricket');
+                    const footballEl = document.getElementById('count-football');
+                    
+                    if(cricketEl) cricketEl.textContent = `Active Matches: ${cricketMatches.length}`;
+                    if(footballEl) footballEl.textContent = `Live Now: ${footballMatches.length}`;
+
+                    // Update Ticker
+                    const sportTicker = document.getElementById('sport-ticker-matches');
+                    if(sportTicker) {
+                        if(matches.length > 0) {
+                            // Triple for smooth infinite loop
+                            const displayMatches = [...matches, ...matches, ...matches];
+                            sportTicker.innerHTML = displayMatches.map(m => `
+                                <div class="ticker-match">
+                                    <span class="sport-icon">${m.sport === 'Cricket' ? '🏏' : m.sport === 'Football' ? '⚽' : '🏆'}</span> 
+                                    ${m.teamA} vs ${m.teamB} 
+                                    <span class="live-dot"></span> 
+                                    ${m.oddsA} / ${m.oddsB}
+                                </div>
+                            `).join('');
+                        } else {
+                            sportTicker.innerHTML = `
+                                <div class="ticker-match"><span class="sport-icon">🏏</span> No live matches available. Check back soon!</div>
+                                <div class="ticker-match"><span class="sport-icon">⚽</span> New tournaments starting today. Browse categories below.</div>
+                            `;
+                        }
+                    }
+                } catch (e) { console.warn('SportXBet UI error:', e); }
+            }
+
             fetchHomeMarket();
             setInterval(fetchHomeMarket, 60000);
+            updateSportXBetUI();
+            setInterval(updateSportXBetUI, 30000);
         });
     </script>
     <!-- Mobile Drawer JS -->
