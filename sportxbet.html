@@ -16,11 +16,11 @@
             </a>
         </div>
         <div class="top-header-right">
-            <button class="icon-btn">⚙️</button>
-            <button class="icon-btn">$</button>
+            <a href="profile.html" class="icon-btn" title="Settings">⚙️</a>
+            <a href="deposit.html" class="icon-btn" title="Deposit">$</a>
             <button class="btn-header-login" onclick="window.location.href='login.html'">LOG IN</button>
             <button class="btn-header-reg" onclick="window.location.href='register.html'">REGISTRATION</button>
-            <div class="header-settings">
+            <div class="header-settings" style="cursor:pointer;" onclick="alert('Language settings opened')">
                 <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png" width="16" alt="EN"> 
                 EN / <span id="nav-time">03:15 PM</span>
             </div>
@@ -29,16 +29,16 @@
 
     <!-- Main Navigation -->
     <nav class="main-nav">
-        <ul class="nav-links">
-            <li><a href="#" class="nav-item">🏆 TOP-EVENTS ▼</a></li>
-            <li><a href="#" class="nav-item active">CRICKET</a></li>
-            <li><a href="#" class="nav-item">SPORTS ▼</a></li>
-            <li><a href="#" class="nav-item">LIVE ▼</a></li>
-            <li><a href="#" class="nav-item">1XGAMES ▼</a></li>
-            <li><a href="#" class="nav-item">CASINO ▼</a></li>
-            <li><a href="#" class="nav-item">LIVE CASINO ▼</a></li>
-            <li><a href="#" class="nav-item">ESPORTS ▼</a></li>
-            <li><a href="#" class="nav-item">MORE ▼</a></li>
+        <ul class="nav-links" id="main-nav-ul">
+            <li><a href="#" class="nav-item" onclick="switchNavTab(this, 'Top Events')">🏆 TOP-EVENTS ▼</a></li>
+            <li><a href="#" class="nav-item active" onclick="switchNavTab(this, 'Cricket')">CRICKET</a></li>
+            <li><a href="#" class="nav-item" onclick="switchNavTab(this, 'Sports')">SPORTS ▼</a></li>
+            <li><a href="#" class="nav-item" onclick="switchNavTab(this, 'Live')">LIVE ▼</a></li>
+            <li><a href="#" class="nav-item" onclick="switchNavTab(this, '1xGames')">1XGAMES ▼</a></li>
+            <li><a href="index.html" class="nav-item">CASINO ▼</a></li>
+            <li><a href="index.html" class="nav-item">LIVE CASINO ▼</a></li>
+            <li><a href="#" class="nav-item" onclick="switchNavTab(this, 'eSports')">ESPORTS ▼</a></li>
+            <li><a href="#" class="nav-item" onclick="switchNavTab(this, 'More')">MORE ▼</a></li>
         </ul>
         <div class="nav-search">
             <input type="text" placeholder="Search by match">
@@ -296,6 +296,15 @@
             document.getElementById('reg-form-phone').classList.add('d-none');
             document.getElementById('reg-form-oneclick').classList.add('d-none');
             document.getElementById('reg-form-' + type).classList.remove('d-none');
+        }
+
+        // Top Nav Tabs
+        window.switchNavTab = function(btn, category) {
+            document.querySelectorAll('#main-nav-ul .nav-item').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            if(category !== 'Cricket' && category !== 'Sports' && category !== 'Live' && category !== 'Top Events') {
+                alert('Loading ' + category + ' Games...');
+            }
         }
 
         // Betting Logic
