@@ -3,477 +3,342 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportXBet | Professional Sports Betting</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        :root {
-            --sxb-accent: #ffaa00;
-            --sxb-bg: #0d0e21;
-            --sxb-card: rgba(255, 255, 255, 0.03);
-            --sxb-border: rgba(255, 255, 255, 0.08);
-        }
-
-        .sxb-wrapper {
-            display: flex;
-            min-height: calc(100vh - 80px);
-            background: var(--sxb-bg);
-        }
-
-        /* Left Sidebar */
-        .sxb-sidebar {
-            width: 260px;
-            background: rgba(0,0,0,0.2);
-            border-right: 1px solid var(--sxb-border);
-            padding: 20px;
-        }
-
-        .sxb-category-list {
-            list-style: none;
-        }
-
-        .sxb-category-item {
-            padding: 12px 15px;
-            border-radius: 10px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: all 0.2s;
-            color: var(--text-muted);
-        }
-
-        .sxb-category-item:hover, .sxb-category-item.active {
-            background: var(--sxb-card);
-            color: #fff;
-        }
-
-        .sxb-category-item.active {
-            border-left: 3px solid var(--sxb-accent);
-        }
-
-        .sxb-count {
-            background: rgba(255,255,255,0.1);
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-        }
-
-        /* Main Section */
-        .sxb-main {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .sxb-tabs {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid var(--sxb-border);
-            padding-bottom: 10px;
-        }
-
-        .sxb-tab {
-            cursor: pointer;
-            padding-bottom: 10px;
-            color: var(--text-muted);
-            font-weight: 600;
-            position: relative;
-        }
-
-        .sxb-tab.active {
-            color: #fff;
-        }
-
-        .sxb-tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: -1px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: var(--sxb-accent);
-        }
-
-        /* Match Cards */
-        .match-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .match-card {
-            background: var(--sxb-card);
-            border: 1px solid var(--sxb-border);
-            border-radius: 15px;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: 0.3s;
-        }
-
-        .match-card:hover {
-            border-color: var(--sxb-accent);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .match-info {
-            flex: 1;
-        }
-
-        .match-teams {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .match-meta {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .match-odds {
-            display: flex;
-            gap: 10px;
-        }
-
-        .odd-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--sxb-border);
-            border-radius: 8px;
-            padding: 10px 20px;
-            text-align: center;
-            cursor: pointer;
-            min-width: 100px;
-            transition: 0.2s;
-        }
-
-        .odd-btn:hover {
-            background: var(--sxb-accent);
-            color: #000;
-            border-color: var(--sxb-accent);
-        }
-
-        .odd-name {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-        .odd-btn:hover .odd-name { color: #000; }
-
-        .odd-value {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        /* Bet Slip */
-        .sxb-right {
-            width: 320px;
-            background: rgba(0,0,0,0.3);
-            border-left: 1px solid var(--sxb-border);
-            padding: 20px;
-        }
-
-        .slip-card {
-            background: var(--sxb-card);
-            border: 1px solid var(--sxb-border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-
-        .slip-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .bet-item {
-            border-bottom: 1px solid var(--sxb-border);
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-
-        .bet-team { font-weight: 700; color: var(--sxb-accent); }
-        .bet-match { font-size: 0.85rem; color: var(--text-muted); margin: 4px 0; }
-
-        .bet-input-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .bet-input {
-            background: rgba(0,0,0,0.3);
-            border: 1px solid var(--sxb-border);
-            border-radius: 5px;
-            padding: 8px;
-            color: #fff;
-            width: 80px;
-        }
-
-        .payout-info {
-            background: rgba(57, 255, 20, 0.05);
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 0.9rem;
-        }
-
-        .payout-val { color: var(--primary-neon); font-weight: 700; float: right; }
-
-        .header-user {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(255,255,255,0.05);
-            padding: 5px 15px;
-            border-radius: 30px;
-            border: 1px solid var(--sxb-border);
-        }
-
-        .user-balance { font-weight: 700; color: var(--primary-neon); }
-
-        @media (max-width: 992px) {
-            .sxb-sidebar, .sxb-right { display: none; }
-        }
-    </style>
+    <title>SportXBet | Live Sports Betting</title>
+    <link rel="stylesheet" href="css/sportxbet.css">
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="glass">
-        <div class="container container-nav">
-            <nav>
-                <a href="index.html" class="logo">
-                    🏅 SportXBet<span>.</span>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="index.html">Main Website</a></li>
-                    <li><a href="dashboard.html">Earnings</a></li>
-                </ul>
-
-                <div id="user-header-info" class="header-user" style="display:none;">
-                    <span class="user-balance" id="header-balance">$0.00</span>
-                    <a href="deposit.html" class="btn btn-primary" style="padding: 6px 15px; font-size: 0.8rem;">Deposit</a>
-                </div>
-
-                <div id="auth-header-btns" class="auth-btns">
-                    <a href="login.html" class="btn btn-outline">Login</a>
-                    <a href="register.html" class="btn btn-primary">Join Now</a>
-                </div>
-            </nav>
+    <!-- Top Header -->
+    <header class="top-header">
+        <div class="top-header-left">
+            <a href="index.html" class="sxb-logo">
+                <span style="color:var(--accent-light-blue)">SPORT</span><span style="color:#fff">X</span><span style="color:var(--accent-light-blue)">BET</span>
+            </a>
+        </div>
+        <div class="top-header-right">
+            <button class="btn-header-login" onclick="window.location.href='login.html'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px;vertical-align:middle"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg> LOG IN</button>
+            <button class="btn-header-reg" onclick="window.location.href='register.html'">REGISTRATION</button>
+            <div style="color:#fff; font-size:12px; margin-left:10px; display:flex; align-items:center; gap:5px;">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png" width="16" alt="EN"> EN
+            </div>
         </div>
     </header>
 
-    <div class="sxb-wrapper">
-        <!-- Sidebar -->
-        <aside class="sxb-sidebar">
-            <h3 style="margin-bottom: 20px; font-size: 1rem; color: var(--text-muted);">ALL SPORTS</h3>
-            <ul class="sxb-category-list">
-                <li class="sxb-category-item active" onclick="switchSport('All')">
-                    <span>🌍 All Sports</span>
-                </li>
-                <li class="sxb-category-item" onclick="switchSport('Cricket')">
-                    <span>🏏 Cricket</span>
-                    <span class="sxb-count" id="count-Cricket">0</span>
-                </li>
-                <li class="sxb-category-item" onclick="switchSport('Football')">
-                    <span>⚽ Football</span>
-                    <span class="sxb-count" id="count-Football">0</span>
-                </li>
-                <li class="sxb-category-item" onclick="switchSport('Tennis')">
-                    <span>🎾 Tennis</span>
-                    <span class="sxb-count" id="count-Tennis">0</span>
-                </li>
-                <li class="sxb-category-item" onclick="switchSport('Basketball')">
-                    <span>🏀 Basketball</span>
-                    <span class="sxb-count" id="count-Basketball">0</span>
-                </li>
-                <li class="sxb-category-item" onclick="switchSport('eSports')">
-                    <span>🎮 eSports</span>
-                    <span class="sxb-count" id="count-eSports">0</span>
-                </li>
-            </ul>
+    <!-- Main Navigation -->
+    <nav class="main-nav">
+        <ul class="nav-links">
+            <li><a href="#" class="nav-item"><span style="color:var(--accent-light-blue)">🏆</span> TOP-EVENTS <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item active">CRICKET</a></li>
+            <li><a href="#" class="nav-item">SPORTS <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">LIVE <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">1XGAMES <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">CASINO <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">LIVE CASINO <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">ESPORTS <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">MORE <span style="font-size:8px">▼</span></a></li>
+        </ul>
+        <div class="nav-search">
+            <input type="text" placeholder="Search by match">
+            <span style="color:var(--text-muted)">🔍</span>
+        </div>
+    </nav>
+
+    <div class="layout-container">
+        
+        <!-- Left Sidebar -->
+        <aside class="sidebar-left">
+            <div class="sidebar-panel">
+                <div class="sidebar-tab-switch">
+                    <button class="active"><span style="color:var(--accent-green); margin-right:5px">●</span> LIVE</button>
+                    <button>SPORTS</button>
+                </div>
+                <div class="sidebar-search-small">
+                    <input type="text" placeholder="Top">
+                </div>
+                <div class="sidebar-list" id="left-sidebar-leagues">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="sxb-main">
-            <div class="sxb-tabs">
-                <div class="sxb-tab active">Live Now</div>
-                <div class="sxb-tab">Upcoming</div>
-                <div class="sxb-tab">Finished</div>
+        <!-- Center Feed -->
+        <main class="center-feed">
+            
+            <!-- Hero Banner Slider equivalent -->
+            <div class="hero-banner">
+                <div class="hero-content">
+                    <h2>CRICKET FREE BET</h2>
+                    <p>Guaranteed free bet if your bet loses</p>
+                    <button class="btn-hero" onclick="alert('Bet slip opened!')">TAKE PART</button>
+                </div>
             </div>
 
-            <h2 id="current-sport-title" style="margin-bottom: 20px;">All Sports</h2>
-            
-            <div class="match-grid" id="match-list">
+            <!-- Top Games -->
+            <div class="feed-header">
+                <h3><span style="color:var(--accent-yellow)">🔥</span> TOP GAMES</h3>
+                <a href="#">All events</a>
+            </div>
+            <div class="games-grid" id="top-games-grid">
                 <!-- Populated by JS -->
             </div>
-        </main>
 
-        <!-- Right Side -->
-        <aside class="sxb-right">
-            <div class="slip-card">
-                <div class="slip-title">🎟️ My Bet Slip</div>
-                
-                <div id="slip-empty" style="text-align: center; color: var(--text-muted); padding: 20px 0;">
-                    Your bet slip is empty.<br>Select odds to add a bet.
+            <!-- Top Competitions Banner Area -->
+            <div class="feed-header" style="margin-top:10px;">
+                <h3>🏆 TOP COMPETITIONS</h3>
+                <a href="#">All leagues</a>
+            </div>
+            <div class="games-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover; height:120px; border-radius:4px; border:1px solid var(--border-color); position:relative; overflow:hidden;">
+                    <div style="position:absolute; inset:0; background:linear-gradient(0deg, #112034 0%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:10px;">
+                        <div style="font-weight:700; font-size:13px; color:#fff">🏆 T20 World Cup</div>
+                        <div style="font-size:11px; color:var(--accent-light-blue)">12 Events</div>
+                    </div>
                 </div>
-
-                <div id="slip-content" style="display:none;">
-                    <div id="selected-bet" class="bet-item">
-                        <!-- Bet details here -->
+                <div style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover; height:120px; border-radius:4px; border:1px solid var(--border-color); position:relative; overflow:hidden;">
+                    <div style="position:absolute; inset:0; background:linear-gradient(0deg, #112034 0%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:10px;">
+                        <div style="font-weight:700; font-size:13px; color:#fff">🏆 PSL</div>
+                        <div style="font-size:11px; color:var(--accent-light-blue)">5 Events</div>
                     </div>
-
-                    <div class="bet-input-row">
-                        <label>Stake ($):</label>
-                        <input type="number" id="bet-amount" class="bet-input" value="10" oninput="updatePayout()">
+                </div>
+                <div style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover; height:120px; border-radius:4px; border:1px solid var(--border-color); position:relative; overflow:hidden;">
+                    <div style="position:absolute; inset:0; background:linear-gradient(0deg, #112034 0%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:10px;">
+                        <div style="font-weight:700; font-size:13px; color:#fff">🏆 IPL</div>
+                        <div style="font-size:11px; color:var(--accent-light-blue)">8 Events</div>
                     </div>
-
-                    <div class="payout-info">
-                        Potential Payout: <span class="payout-val" id="potential-payout">$0.00</span>
-                    </div>
-
-                    <button class="btn btn-primary" style="width:100%; margin-top: 20px; font-weight:700;" onclick="placeBet()">PLACE BET</button>
-                    <button class="btn btn-outline" style="width:100%; margin-top: 10px; border-color: rgba(255,255,255,0.1); color: var(--text-muted);" onclick="clearSlip()">Clear</button>
                 </div>
             </div>
+
+            <!-- All Games List -->
+            <div class="feed-header" style="margin-top:10px;">
+                <h3>📝 ALL GAMES</h3>
+                <div class="nav-search" style="height:22px; width:150px;">
+                    <input type="text" placeholder="Search by match">
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div style="background:var(--bg-panel); border:1px solid var(--border-color); display:flex; gap:15px; padding:10px 15px; margin-bottom:5px;">
+                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter" checked> <span style="color:var(--accent-green)">●</span> Live</label>
+                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> Sports</label>
+                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> T20</label>
+                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> Test</label>
+                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> ODI</label>
+            </div>
+
+            <div id="all-games-list">
+                <!-- Populated by JS -->
+            </div>
+
+            <div style="text-align:center; padding:10px; background:var(--bg-panel); border:1px solid var(--border-color); color:var(--accent-light-blue); cursor:pointer;">
+                Show more
+            </div>
+
+        </main>
+
+        <!-- Right Sidebar (Registration) -->
+        <aside class="sidebar-right">
+            <div class="reg-widget">
+                <div class="reg-header">
+                    REGISTRATION
+                </div>
+                <div class="reg-tabs">
+                    <button class="reg-tab active" style="display:flex; align-items:center; justify-content:center; gap:5px;">📱 By phone</button>
+                    <button class="reg-tab" style="display:flex; align-items:center; justify-content:center; gap:5px;">⚡ One-click</button>
+                </div>
+                
+                <div class="reg-form" style="padding: 15px; background: #fff;">
+                    <div style="color:#0055a6; font-size:12px; font-weight:700; margin-bottom:10px;">By phone</div>
+                    <div style="font-size:11px; color:#666; margin-bottom:10px; line-height:1.2;">To register on the website, enter your phone number and choose how you want to receive the code.</div>
+                    
+                    <div class="reg-input-group">
+                        <div class="reg-flag">🇵🇰 +92</div>
+                        <input type="text" id="reg-phone" class="reg-input" placeholder="301 2345678">
+                    </div>
+                    
+                    <button class="btn-sms" onclick="alert('SMS sent to your phone number!')" style="margin-top:10px;">SEND IN AN SMS</button>
+                    
+                    <div class="reg-input-group" style="margin-top:15px;">
+                        <input type="text" class="reg-input" value="Pakistani rupee (PKR)" readonly style="background:#f7f9fc; cursor:not-allowed;">
+                    </div>
+                    
+                    <div class="reg-input-group" style="margin-top:10px;">
+                        <input type="text" class="reg-input" placeholder="Confirmation code">
+                        <div style="background:#8b9eb5; color:#fff; display:flex; align-items:center; padding:0 15px; cursor:pointer;">✓</div>
+                    </div>
+                    
+                    <div class="reg-input-group" style="margin-top:10px;">
+                        <input type="text" class="reg-input" placeholder="Promo code (if you have one)">
+                    </div>
+                    
+                    <button class="btn-register" onclick="window.location.href='register.html'" style="margin-top:15px;">REGISTER</button>
+                    
+                    <div style="margin-top:15px; display:flex; gap:8px; align-items:flex-start;">
+                        <input type="checkbox" checked style="margin-top:2px;">
+                        <div class="reg-terms">By clicking this button you confirm that you have read and agree to the <a href="#" style="color:#0055a6; text-decoration:underline;">Terms and Conditions</a> and <a href="#" style="color:#0055a6; text-decoration:underline;">Privacy Policy</a> of the company and confirm that you are of legal age.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bet Slip Placeholder -->
+            <div class="reg-widget" style="margin-top:10px;">
+                <div class="reg-tabs" style="background:#154e8e; border-bottom:none;">
+                    <div class="reg-tab active" style="background:#154e8e; color:#fff; font-weight:700;">BET SLIP</div>
+                    <div class="reg-tab" style="background:#113a69; color:#c3cedd;">MY BETS</div>
+                </div>
+                <div style="padding:40px 20px; text-align:center; color:#666; font-size:12px; background:#f7f9fc;">
+                    Please click on the odds to add events to the bet slip.
+                </div>
+            </div>
+
         </aside>
+
     </div>
 
-    <!-- Scripts -->
-    <script src="js/auth.js"></script>
+    <!-- Partner Logos Footer -->
+    <footer class="partner-footer">
+        <div class="partners-logos">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/1200px-FC_Barcelona_%28crest%29.svg.png" alt="FCB">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/e/e1/Serie_A_logo_%282019%29.svg/1200px-Serie_A_logo_%282019%29.svg.png" alt="Serie A">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a7/Paris_Saint-Germain_F.C..svg/1200px-Paris_Saint-Germain_F.C..svg.png" alt="PSG">
+            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Esports_logo.svg/1200px-Esports_logo.svg.png" alt="ESL">
+        </div>
+        <div class="footer-copy">
+            Copyright © 2026 «SportXBet». <br>
+            SportXBet uses cookies to ensure the best user experience. By remaining on the website, you consent to the use of your cookie files.
+        </div>
+    </footer>
+
+
     <script src="js/admin.js"></script>
     <script>
-        let currentSport = 'All';
-        let currentSelection = null; // { matchId, team, odds }
-
         document.addEventListener('DOMContentLoaded', () => {
-            updateHeader();
-            loadMatches();
-            updateCounts();
-        });
-
-        function updateHeader() {
-            const user = Auth.getCurrentUser();
-            if (user) {
-                document.getElementById('user-header-info').style.display = 'flex';
-                document.getElementById('auth-header-btns').style.display = 'none';
-                document.getElementById('header-balance').textContent = '$' + user.balance.toFixed(2);
-            }
-        }
-
-        function loadMatches() {
-            const matches = Admin.getMatches();
-            const filtered = currentSport === 'All' ? matches : matches.filter(m => m.sport === currentSport);
-            const container = document.getElementById('match-list');
+            // Fetch Matches
+            const allMatches = Admin.getMatches().filter(m => m.status !== 'finished');
             
-            container.innerHTML = filtered.map(m => `
-                <div class="match-card">
-                    <div class="match-info">
-                        <div class="match-meta">🏆 ${m.sport} • ${new Date(m.matchTime).toLocaleString()}</div>
-                        <div class="match-teams">${m.teamA} <span style="color:var(--sxb-accent)">vs</span> ${m.teamB}</div>
-                        ${m.status === 'finished' ? `<div class="badge badge-rejected" style="display:inline-block; margin-top:5px;">Ended • Winner: ${m.winner}</div>` : ''}
-                    </div>
-                    <div class="match-odds">
-                        <div class="odd-btn" onclick="addToSlip('${m.id}', '${m.teamA}', ${m.oddsA}, '${m.teamA} vs ${m.teamB}')">
-                            <span class="odd-name">W1</span>
-                            <span class="odd-value">${m.oddsA}</span>
+            // Populate Left Sidebar Leagues
+            const leaguesBlock = document.getElementById('left-sidebar-leagues');
+            const uniqueTeams = [...new Set(allMatches.flatMap(m => [m.teamA, m.teamB]))];
+            
+            let sidebarHTML = '';
+            for(let i=0; i<Math.min(6, allMatches.length); i++) {
+                sidebarHTML += `
+                <a href="#" class="sidebar-item">
+                    <span style="font-size:14px">${i%2===0?'🏏':'⚽'}</span> 
+                    ${allMatches[i].teamA} vs ${allMatches[i].teamB}
+                    <span class="cnt">(1)</span>
+                </a>`;
+            }
+            leaguesBlock.innerHTML = sidebarHTML;
+
+
+            // Render Match HTML Block
+            function renderMatchBlockCard(match) {
+                const sportIcon = match.sport === 'Football' ? '⚽' : (match.sport === 'Tennis' ? '🎾' : '🏏');
+                const isLive = Math.random() > 0.5 ? '<span class="live-badge">LIVE</span>' : '';
+                return `
+                <div class="game-block-card">
+                    <div class="gb-top">
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            ${sportIcon} ${match.teamA} vs ${match.teamB}
                         </div>
-                        <div class="odd-btn" onclick="addToSlip('${m.id}', '${m.teamB}', ${m.oddsB}, '${m.teamA} vs ${m.teamB}')">
-                            <span class="odd-name">W2</span>
-                            <span class="odd-value">${m.oddsB}</span>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            ${isLive}
+                            <span class="score">${Math.floor(Math.random()*150)}/${Math.floor(Math.random()*5)}</span>
+                        </div>
+                    </div>
+                    <div class="gb-teams">
+                        <div class="team">
+                            <div class="team-logo">${match.teamA.charAt(0)}</div>
+                            <div class="team-name">${match.teamA}</div>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div class="team">
+                            <div class="team-logo">${match.teamB.charAt(0)}</div>
+                            <div class="team-name">${match.teamB}</div>
+                        </div>
+                    </div>
+                    <div class="gb-odds">
+                        <button class="odd-btn" onclick="alert('Added ${match.teamA} win to slip')">
+                            <span class="lbl">W1</span>
+                            <span class="val">${match.oddsA}</span>
+                        </button>
+                        <button class="odd-btn" onclick="alert('Added Draw to slip')">
+                            <span class="lbl">X</span>
+                            <span class="val">${(parseFloat(match.oddsA) + 1.2).toFixed(2)}</span>
+                        </button>
+                        <button class="odd-btn" onclick="alert('Added ${match.teamB} win to slip')">
+                            <span class="lbl">W2</span>
+                            <span class="val">${match.oddsB}</span>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }
+
+            // Render Event Row
+            function renderEventRow(match) {
+                const sportIcon = match.sport === 'Football' ? '⚽' : (match.sport === 'Tennis' ? '🎾' : '🏏');
+                const isLive = Math.random() > 0.5 ? '<span style="background:var(--accent-green); color:#000; padding:1px 4px; border-radius:2px; font-weight:700;">LIVE</span>' : '';
+                
+                return `
+                <div class="event-row">
+                    <div class="er-header">
+                        <div style="display:flex; align-items:center; gap:5px;">
+                            ${sportIcon} India. Ayodhya Premier League ${isLive}
+                        </div>
+                        <div style="color:var(--accent-yellow); font-size:16px;">☆</div>
+                    </div>
+                    <div class="er-body">
+                        <div class="er-teams">
+                            <div class="er-team">
+                                <div style="width:24px; height:24px; border-radius:50%; background:#fff; color:#000; text-align:center; line-height:24px;">${match.teamA.charAt(0)}</div>
+                                <div>${match.teamA}</div>
+                            </div>
+                            <div class="er-score">
+                                <span class="val">${Math.floor(Math.random()*200)}/${Math.floor(Math.random()*10)}</span>
+                                <span class="time">Event in progress</span>
+                            </div>
+                            <div class="er-team" style="flex-direction:row-reverse;">
+                                <div style="width:24px; height:24px; border-radius:50%; background:#fff; color:#000; text-align:center; line-height:24px;">${match.teamB.charAt(0)}</div>
+                                <div>${match.teamB}</div>
+                            </div>
+                        </div>
+                        <div class="er-odds">
+                            <button class="odd-btn" style="background:#152840;">
+                                <span class="lbl">W1</span>
+                                <span class="val">${match.oddsA}</span>
+                            </button>
+                            <button class="odd-btn" style="background:#152840;">
+                                <span class="lbl">Draw</span>
+                                <span class="val">${(parseFloat(match.oddsA) + 0.8).toFixed(2)}</span>
+                            </button>
+                            <button class="odd-btn" style="background:#152840;">
+                                <span class="lbl">W2</span>
+                                <span class="val">${match.oddsB}</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-            `).join('') || '<div style="text-align:center; color:var(--text-muted); padding: 40px;">No events found for this category.</div>';
-        }
-
-        function updateCounts() {
-            const matches = Admin.getMatches();
-            const categories = ['Cricket', 'Football', 'Tennis', 'Basketball', 'eSports'];
-            categories.forEach(cat => {
-                const count = matches.filter(m => m.sport === cat && m.status !== 'finished').length;
-                const el = document.getElementById('count-' + cat);
-                if (el) el.textContent = count;
-            });
-        }
-
-        function switchSport(sport) {
-            currentSport = sport;
-            document.getElementById('current-sport-title').textContent = sport + ' Events';
-            document.querySelectorAll('.sxb-category-item').forEach(li => {
-                li.classList.remove('active');
-                if (li.textContent.includes(sport)) li.classList.add('active');
-                if (sport === 'All' && li.textContent.includes('All')) li.classList.add('active');
-            });
-            loadMatches();
-        }
-
-        function addToSlip(matchId, team, odds, matchLabel) {
-            currentSelection = { matchId, team, odds, label: matchLabel };
-            document.getElementById('slip-empty').style.display = 'none';
-            document.getElementById('slip-content').style.display = 'block';
-            
-            document.getElementById('selected-bet').innerHTML = `
-                <div class="bet-team">${team} to win</div>
-                <div class="bet-match">${matchLabel}</div>
-                <div style="font-weight:700; font-size:1.1rem;">Odds: ${odds}</div>
-            `;
-            updatePayout();
-        }
-
-        function updatePayout() {
-            if (!currentSelection) return;
-            const amount = parseFloat(document.getElementById('bet-amount').value) || 0;
-            const payout = amount * currentSelection.odds;
-            document.getElementById('potential-payout').textContent = '$' + payout.toFixed(2);
-        }
-
-        function clearSlip() {
-            currentSelection = null;
-            document.getElementById('slip-empty').style.display = 'block';
-            document.getElementById('slip-content').style.display = 'none';
-        }
-
-        function placeBet() {
-            const user = Auth.getCurrentUser();
-            if (!user) {
-                alert('Please login to place a bet.');
-                location.href = 'login.html';
-                return;
+                `;
             }
 
-            const amount = parseFloat(document.getElementById('bet-amount').value);
-            if (!amount || amount < 1) {
-                alert('Minimum bet is $1.');
-                return;
-            }
 
-            if (user.balance < amount) {
-                alert('Insufficient balance. Please deposit first.');
-                return;
-            }
+            // Populate
+            const topGrid = document.getElementById('top-games-grid');
+            const allList = document.getElementById('all-games-list');
 
-            const res = Admin.placeBet(user.id, currentSelection.matchId, currentSelection.team, amount, currentSelection.odds);
-            if (res.success) {
-                alert(res.message);
-                clearSlip();
-                updateHeader();
-                // Refresh local user data in Auth
-                const users = JSON.parse(localStorage.getItem('spintask_users'));
-                localStorage.setItem('spintask_user_session', JSON.stringify(users.find(u => u.id === user.id)));
-            } else {
-                alert(res.message);
+            let topHTML = '';
+            for(let i=0; i<Math.min(3, allMatches.length); i++) {
+                topHTML += renderMatchBlockCard(allMatches[i]);
             }
-        }
+            topGrid.innerHTML = topHTML;
+
+            let allHTML = '';
+            for(let i=0; i<allMatches.length; i++) {
+                allHTML += renderEventRow(allMatches[i]);
+            }
+            allList.innerHTML = allHTML;
+        });
     </script>
 </body>
 </html>
