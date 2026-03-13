@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportXBet | Live Sports Betting</title>
+    <title>1XBET Clone | SportXBet</title>
     <link rel="stylesheet" href="css/sportxbet.css">
 </head>
 <body>
@@ -12,14 +12,17 @@
     <header class="top-header">
         <div class="top-header-left">
             <a href="index.html" class="sxb-logo">
-                <span style="color:var(--accent-light-blue)">SPORT</span><span style="color:#fff">X</span><span style="color:var(--accent-light-blue)">BET</span>
+                <span class="one">1</span><span class="x">X</span><span class="bet">BET</span>
             </a>
         </div>
         <div class="top-header-right">
-            <button class="btn-header-login" onclick="window.location.href='login.html'"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:5px;vertical-align:middle"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg> LOG IN</button>
+            <button class="icon-btn">⚙️</button>
+            <button class="icon-btn">$</button>
+            <button class="btn-header-login" onclick="window.location.href='login.html'">LOG IN</button>
             <button class="btn-header-reg" onclick="window.location.href='register.html'">REGISTRATION</button>
-            <div style="color:#fff; font-size:12px; margin-left:10px; display:flex; align-items:center; gap:5px;">
-                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png" width="16" alt="EN"> EN
+            <div class="header-settings">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Flag_of_the_United_Kingdom.svg/1200px-Flag_of_the_United_Kingdom.svg.png" width="16" alt="EN"> 
+                EN / <span id="nav-time">03:15 PM</span>
             </div>
         </div>
     </header>
@@ -27,19 +30,19 @@
     <!-- Main Navigation -->
     <nav class="main-nav">
         <ul class="nav-links">
-            <li><a href="#" class="nav-item"><span style="color:var(--accent-light-blue)">🏆</span> TOP-EVENTS <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">🏆 TOP-EVENTS ▼</a></li>
             <li><a href="#" class="nav-item active">CRICKET</a></li>
-            <li><a href="#" class="nav-item">SPORTS <span style="font-size:8px">▼</span></a></li>
-            <li><a href="#" class="nav-item">LIVE <span style="font-size:8px">▼</span></a></li>
-            <li><a href="#" class="nav-item">1XGAMES <span style="font-size:8px">▼</span></a></li>
-            <li><a href="#" class="nav-item">CASINO <span style="font-size:8px">▼</span></a></li>
-            <li><a href="#" class="nav-item">LIVE CASINO <span style="font-size:8px">▼</span></a></li>
-            <li><a href="#" class="nav-item">ESPORTS <span style="font-size:8px">▼</span></a></li>
-            <li><a href="#" class="nav-item">MORE <span style="font-size:8px">▼</span></a></li>
+            <li><a href="#" class="nav-item">SPORTS ▼</a></li>
+            <li><a href="#" class="nav-item">LIVE ▼</a></li>
+            <li><a href="#" class="nav-item">1XGAMES ▼</a></li>
+            <li><a href="#" class="nav-item">CASINO ▼</a></li>
+            <li><a href="#" class="nav-item">LIVE CASINO ▼</a></li>
+            <li><a href="#" class="nav-item">ESPORTS ▼</a></li>
+            <li><a href="#" class="nav-item">MORE ▼</a></li>
         </ul>
         <div class="nav-search">
             <input type="text" placeholder="Search by match">
-            <span style="color:var(--text-muted)">🔍</span>
+            <span style="color:var(--text-muted-dark)">🔍</span>
         </div>
     </nav>
 
@@ -47,14 +50,22 @@
         
         <!-- Left Sidebar -->
         <aside class="sidebar-left">
-            <div class="sidebar-panel">
+            <div class="sidebar-panel" style="margin-bottom:10px;">
+                <div class="sidebar-search-small">
+                    <input type="text" placeholder="Cricket">
+                </div>
+                <div class="sidebar-subnav">
+                    <div>Cricket</div> <div style="color:var(--accent-light-blue)">Broadcasts</div> <div>🏠</div>
+                </div>
+                <div class="collapse-block">« Collapse block</div>
+                <div class="sidebar-category">☆ Favorite matches <span>▼</span></div>
+                <div class="sidebar-category" style="background:#0e2a4d;">🏆 All leagues</div>
+                <div class="sidebar-category" style="background:#0e2a4d;">🏅 All Games</div>
                 <div class="sidebar-tab-switch">
-                    <button class="active"><span style="color:var(--accent-green); margin-right:5px">●</span> LIVE</button>
+                    <button class="active">● LIVE</button>
                     <button>SPORTS</button>
                 </div>
-                <div class="sidebar-search-small">
-                    <input type="text" placeholder="Top">
-                </div>
+                <div class="sidebar-category" style="background:#fff; color:#113a69; font-size:11px;">Top</div>
                 <div class="sidebar-list" id="left-sidebar-leagues">
                     <!-- Populated by JS -->
                 </div>
@@ -64,18 +75,28 @@
         <!-- Center Feed -->
         <main class="center-feed">
             
-            <!-- Hero Banner Slider equivalent -->
-            <div class="hero-banner">
+            <!-- Dual Hero Area -->
+            <div class="hero-top">
                 <div class="hero-content">
                     <h2>CRICKET FREE BET</h2>
                     <p>Guaranteed free bet if your bet loses</p>
-                    <button class="btn-hero" onclick="alert('Bet slip opened!')">TAKE PART</button>
+                    <button class="btn-hero" onclick="addNotification('Opted in for Free Bet!')">TAKE PART</button>
+                </div>
+            </div>
+            <div class="hero-bottom-banners">
+                <div class="h-banner">
+                    <span>Accumulator Of The Day ></span>
+                    <img src="https://sports.mrbet.com/assets/images/promotion/bonus_accumulator.png" alt="">
+                </div>
+                <div class="h-banner" style="background:#205e49;">
+                    <span>Cricket Free Bet ></span>
+                    <img src="https://media.npr.org/assets/img/2024/06/07/gettyimages-2155798939_custom-6345dc7cff0ec843c08cdde59cba6784d1dd6813-s1100-c50.jpg" alt="">
                 </div>
             </div>
 
             <!-- Top Games -->
             <div class="feed-header">
-                <h3><span style="color:var(--accent-yellow)">🔥</span> TOP GAMES</h3>
+                <h3><span style="color:#e74c3c">🔥</span> TOP GAMES</h3>
                 <a href="#">All events</a>
             </div>
             <div class="games-grid" id="top-games-grid">
@@ -88,105 +109,140 @@
                 <a href="#">All leagues</a>
             </div>
             <div class="games-grid" style="grid-template-columns: repeat(3, 1fr);">
-                <div style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover; height:120px; border-radius:4px; border:1px solid var(--border-color); position:relative; overflow:hidden;">
-                    <div style="position:absolute; inset:0; background:linear-gradient(0deg, #112034 0%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:10px;">
-                        <div style="font-weight:700; font-size:13px; color:#fff">🏆 T20 World Cup</div>
-                        <div style="font-size:11px; color:var(--accent-light-blue)">12 Events</div>
+                <!-- comp card 1 -->
+                <div class="comp-card" style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover;">
+                    <div class="comp-card-content">
+                        <div class="comp-events" style="background:#e74c3c">LIVE</div>
+                        <div>
+                            <div class="comp-title">🏆 Bangladesh vs Pakistan</div>
+                            <div class="comp-events" style="background:#154e8e">1 Events</div>
+                        </div>
                     </div>
                 </div>
-                <div style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover; height:120px; border-radius:4px; border:1px solid var(--border-color); position:relative; overflow:hidden;">
-                    <div style="position:absolute; inset:0; background:linear-gradient(0deg, #112034 0%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:10px;">
-                        <div style="font-weight:700; font-size:13px; color:#fff">🏆 PSL</div>
-                        <div style="font-size:11px; color:var(--accent-light-blue)">5 Events</div>
+                <!-- comp card 2 -->
+                <div class="comp-card" style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover;">
+                    <div class="comp-card-content">
+                        <div class="comp-events" style="background:#e74c3c">LIVE</div>
+                        <div>
+                            <div class="comp-title">🏆 Australian Champ. Women</div>
+                            <div class="comp-events" style="background:#154e8e">1 Events</div>
+                        </div>
                     </div>
                 </div>
-                <div style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover; height:120px; border-radius:4px; border:1px solid var(--border-color); position:relative; overflow:hidden;">
-                    <div style="position:absolute; inset:0; background:linear-gradient(0deg, #112034 0%, transparent 100%); display:flex; flex-direction:column; justify-content:flex-end; padding:10px;">
-                        <div style="font-weight:700; font-size:13px; color:#fff">🏆 IPL</div>
-                        <div style="font-size:11px; color:var(--accent-light-blue)">8 Events</div>
+                <!-- comp card 3 -->
+                <div class="comp-card" style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover;">
+                    <div class="comp-card-content">
+                        <div class="comp-events" style="background:#e74c3c">LIVE</div>
+                        <div>
+                            <div class="comp-title">🏆 Pro50 Championship</div>
+                            <div class="comp-events" style="background:#154e8e">2 Events</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- All Games List -->
-            <div class="feed-header" style="margin-top:10px;">
+            <div class="feed-header" style="margin-top:10px; border-bottom:none; border-radius: 4px 4px 0 0;">
                 <h3>📝 ALL GAMES</h3>
-                <div class="nav-search" style="height:22px; width:150px;">
+                <div class="nav-search" style="height:22px; width:150px; background:rgba(255,255,255,0.1)">
                     <input type="text" placeholder="Search by match">
                 </div>
             </div>
             
             <!-- Filters -->
-            <div style="background:var(--bg-panel); border:1px solid var(--border-color); display:flex; gap:15px; padding:10px 15px; margin-bottom:5px;">
-                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter" checked> <span style="color:var(--accent-green)">●</span> Live</label>
-                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> Sports</label>
-                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> T20</label>
-                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> Test</label>
-                <label style="display:flex; align-items:center; gap:5px; cursor:pointer;"><input type="radio" name="gfilter"> ODI</label>
+            <div class="filters-bar">
+                <div class="filter-tab active"><span style="color:#e74c3c">●</span> Live</div>
+                <div class="filter-tab">≡ Sports</div>
+                <div class="filter-tab">🏏 T20</div>
+                <div class="filter-tab">🏏 Test</div>
+                <div class="filter-tab">🏏 ODI</div>
+                <div class="filter-tab">🏏 T10</div>
+                <div class="filter-tab">≡ Others</div>
             </div>
 
             <div id="all-games-list">
                 <!-- Populated by JS -->
             </div>
 
-            <div style="text-align:center; padding:10px; background:var(--bg-panel); border:1px solid var(--border-color); color:var(--accent-light-blue); cursor:pointer;">
+            <div style="text-align:center; padding:12px; background:#fff; color:var(--accent-light-blue); cursor:pointer; border-radius:0 0 4px 4px; font-weight:500;">
                 Show more
             </div>
 
         </main>
 
-        <!-- Right Sidebar (Registration) -->
+        <!-- Right Sidebar (Registration + Bet Slip) -->
         <aside class="sidebar-right">
+            <!-- Registration -->
             <div class="reg-widget">
-                <div class="reg-header">
-                    REGISTRATION
-                </div>
+                <div class="reg-header">REGISTRATION</div>
                 <div class="reg-tabs">
-                    <button class="reg-tab active" style="display:flex; align-items:center; justify-content:center; gap:5px;">📱 By phone</button>
-                    <button class="reg-tab" style="display:flex; align-items:center; justify-content:center; gap:5px;">⚡ One-click</button>
+                    <div class="reg-tab active" onclick="switchRegTab(this, 'phone')">📱 By phone</div>
+                    <div class="reg-tab" onclick="switchRegTab(this, 'oneclick')">⚡ One-click</div>
                 </div>
                 
-                <div class="reg-form" style="padding: 15px; background: #fff;">
-                    <div style="color:#0055a6; font-size:12px; font-weight:700; margin-bottom:10px;">By phone</div>
-                    <div style="font-size:11px; color:#666; margin-bottom:10px; line-height:1.2;">To register on the website, enter your phone number and choose how you want to receive the code.</div>
+                <div class="reg-form" id="reg-form-phone">
+                    <div class="reg-form-title">By phone</div>
+                    <div class="reg-form-sub">To register on the website, enter your phone number and choose how you want to receive the code.</div>
                     
                     <div class="reg-input-group">
                         <div class="reg-flag">🇵🇰 +92</div>
-                        <input type="text" id="reg-phone" class="reg-input" placeholder="301 2345678">
+                        <input type="text" class="reg-input" placeholder="301 2345678">
                     </div>
                     
-                    <button class="btn-sms" onclick="alert('SMS sent to your phone number!')" style="margin-top:10px;">SEND IN AN SMS</button>
+                    <button class="btn-sms" onclick="addNotification('SMS Code Sent!')">SEND IN AN SMS</button>
                     
-                    <div class="reg-input-group" style="margin-top:15px;">
-                        <input type="text" class="reg-input" value="Pakistani rupee (PKR)" readonly style="background:#f7f9fc; cursor:not-allowed;">
+                    <div class="reg-input-group" style="margin-top:5px;">
+                        <input type="text" class="reg-input" value="Pakistani rupee (PKR)" readonly style="background:#f1f5f9; cursor:not-allowed;">
                     </div>
                     
-                    <div class="reg-input-group" style="margin-top:10px;">
+                    <div class="reg-input-group">
                         <input type="text" class="reg-input" placeholder="Confirmation code">
-                        <div style="background:#8b9eb5; color:#fff; display:flex; align-items:center; padding:0 15px; cursor:pointer;">✓</div>
+                        <div style="background:#8b9eb5; color:#fff; display:flex; align-items:center; padding:0 15px; cursor:pointer;" onclick="addNotification('Code verified')">✓</div>
                     </div>
                     
-                    <div class="reg-input-group" style="margin-top:10px;">
+                    <div class="reg-input-group">
                         <input type="text" class="reg-input" placeholder="Promo code (if you have one)">
                     </div>
                     
-                    <button class="btn-register" onclick="window.location.href='register.html'" style="margin-top:15px;">REGISTER</button>
+                    <button class="btn-register" onclick="window.location.href='register.html'">REGISTER</button>
                     
-                    <div style="margin-top:15px; display:flex; gap:8px; align-items:flex-start;">
+                    <div style="display:flex; gap:8px; align-items:flex-start;">
                         <input type="checkbox" checked style="margin-top:2px;">
-                        <div class="reg-terms">By clicking this button you confirm that you have read and agree to the <a href="#" style="color:#0055a6; text-decoration:underline;">Terms and Conditions</a> and <a href="#" style="color:#0055a6; text-decoration:underline;">Privacy Policy</a> of the company and confirm that you are of legal age.</div>
+                        <div class="reg-terms">By clicking this button you confirm that you have read and agree to the <a href="#" style="color:#154e8e">Terms and Conditions</a> and <a href="#" style="color:#154e8e">Privacy Policy</a> of the company and confirm that you are of legal age.</div>
+                    </div>
+                </div>
+
+                <div class="reg-form d-none" id="reg-form-oneclick">
+                    <div class="reg-form-title">One-click</div>
+                    <div class="reg-form-sub">Instant registration. Just click Register.</div>
+                    <div class="reg-input-group"><input type="text" class="reg-input" value="Pakistan" readonly style="background:#f1f5f9; cursor:not-allowed;"></div>
+                    <div class="reg-input-group"><input type="text" class="reg-input" value="Pakistani rupee (PKR)" readonly style="background:#f1f5f9; cursor:not-allowed;"></div>
+                    <button class="btn-register" onclick="window.location.href='register.html'">REGISTER</button>
+                    <div style="display:flex; gap:8px; align-items:flex-start;">
+                        <input type="checkbox" checked style="margin-top:2px;">
+                        <div class="reg-terms">Confirm terms and conditions to proceed.</div>
                     </div>
                 </div>
             </div>
             
-            <!-- Bet Slip Placeholder -->
-            <div class="reg-widget" style="margin-top:10px;">
-                <div class="reg-tabs" style="background:#154e8e; border-bottom:none;">
-                    <div class="reg-tab active" style="background:#154e8e; color:#fff; font-weight:700;">BET SLIP</div>
-                    <div class="reg-tab" style="background:#113a69; color:#c3cedd;">MY BETS</div>
+            <!-- Bet Slip -->
+            <div class="bet-slip-widget">
+                <div class="bs-header">
+                    <div class="bs-tab active">BET SLIP</div>
+                    <div class="bs-tab" style="background:#113a69; color:#c3cedd;">MY BETS</div>
                 </div>
-                <div style="padding:40px 20px; text-align:center; color:#666; font-size:12px; background:#f7f9fc;">
+                <div class="bs-body" id="bet-slip-empty">
                     Please click on the odds to add events to the bet slip.
+                </div>
+                <div class="bs-body d-none" id="bet-slip-active" style="padding:0; background:#fff;">
+                    <div class="bs-list" id="bet-slip-list" style="padding:10px; flex:1;"></div>
+                    <div>
+                        <div class="bs-total">
+                            <span>Total Odds:</span>
+                            <span id="bs-total-odds">1.00</span>
+                        </div>
+                        <div class="bs-btn" onclick="placeBet()">PLACE BET</div>
+                    </div>
                 </div>
             </div>
 
@@ -203,141 +259,248 @@
             <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Esports_logo.svg/1200px-Esports_logo.svg.png" alt="ESL">
         </div>
         <div class="footer-copy">
-            Copyright © 2026 «SportXBet». <br>
-            SportXBet uses cookies to ensure the best user experience. By remaining on the website, you consent to the use of your cookie files.
+            Copyright © 2026 «1xBET». <br>
+            1xBet uses cookies to ensure the best user experience. By remaining on the website, you consent to the use of your cookie files on 1xBet.
         </div>
     </footer>
 
 
     <script src="js/admin.js"></script>
     <script>
+        // State
+        let betSlip = [];
+        const liveMatchesData = [];
+
+        // Utilities
+        function randomScore() {
+            return `${Math.floor(Math.random()*150 + 20)}/${Math.floor(Math.random()*6)} (${Math.floor(Math.random()*20)}.${Math.floor(Math.random()*6)})`;
+        }
+        function randomScoreFootball() {
+            return `${Math.floor(Math.random()*5)} : ${Math.floor(Math.random()*5)}`;
+        }
+        function updateTime() {
+            const d = new Date();
+            document.getElementById('nav-time').textContent = d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        function addNotification(msg) {
+            alert(msg);
+        }
+
+        // Tabs
+        window.switchRegTab = function(btn, type) {
+            document.querySelectorAll('.reg-tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('reg-form-phone').classList.add('d-none');
+            document.getElementById('reg-form-oneclick').classList.add('d-none');
+            document.getElementById('reg-form-' + type).classList.remove('d-none');
+        }
+
+        // Betting Logic
+        window.toggleBet = function(btn, matchId, pick, odds) {
+            const idx = betSlip.findIndex(b => b.matchId === matchId && b.pick === pick);
+            if (idx > -1) {
+                betSlip.splice(idx, 1);
+                btn.classList.remove('selected');
+            } else {
+                // remove existing pick for same match
+                const existingSameMatch = betSlip.findIndex(b => b.matchId === matchId);
+                if(existingSameMatch > -1) {
+                    betSlip.splice(existingSameMatch, 1);
+                    // visually remove selection from other buttons in same row
+                    const parent = btn.parentElement;
+                    parent.querySelectorAll('.odd-btn').forEach(b => b.classList.remove('selected'));
+                }
+                betSlip.push({ matchId, pick, odds });
+                btn.classList.add('selected');
+            }
+            renderBetSlip();
+        }
+
+        function renderBetSlip() {
+            const empty = document.getElementById('bet-slip-empty');
+            const active = document.getElementById('bet-slip-active');
+            const list = document.getElementById('bet-slip-list');
+            const total = document.getElementById('bs-total-odds');
+
+            if(betSlip.length === 0) {
+                empty.classList.remove('d-none');
+                active.classList.add('d-none');
+            } else {
+                empty.classList.add('d-none');
+                active.classList.remove('d-none');
+                
+                list.innerHTML = '';
+                let t_odds = 1.0;
+                betSlip.forEach((b, i) => {
+                    t_odds *= parseFloat(b.odds);
+                    const m = liveMatchesData.find(m => m.id === b.matchId);
+                    list.innerHTML += `
+                        <div class="bs-item">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                <b>${b.pick}</b> <span style="font-weight:700; color:#1f2228">${b.odds}</span>
+                            </div>
+                            <div style="color:#666">${m ? (m.teamA + ' vs ' + m.teamB) : 'Match'}</div>
+                            <div style="text-align:right; color:#e74c3c; cursor:pointer; margin-top:5px;" onclick="removeBet(${i})">Remove ✕</div>
+                        </div>
+                    `;
+                });
+                total.textContent = t_odds.toFixed(2);
+            }
+        }
+
+        window.removeBet = function(idx) {
+            const b = betSlip[idx];
+            betSlip.splice(idx, 1);
+            // unselect button globally (poor man's sync)
+            document.querySelectorAll(`.odd-btn[data-match="${b.matchId}"][data-pick="${b.pick}"]`).forEach(btn => btn.classList.remove('selected'));
+            renderBetSlip();
+        }
+
+        window.placeBet = function() {
+            alert(`Bet Placed Successfully! Total Odds: ${document.getElementById('bs-total-odds').textContent}`);
+            betSlip = [];
+            document.querySelectorAll('.odd-btn').forEach(b => b.classList.remove('selected'));
+            renderBetSlip();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Fetch Matches
             const allMatches = Admin.getMatches().filter(m => m.status !== 'finished');
             
-            // Populate Left Sidebar Leagues
-            const leaguesBlock = document.getElementById('left-sidebar-leagues');
-            const uniqueTeams = [...new Set(allMatches.flatMap(m => [m.teamA, m.teamB]))];
-            
-            let sidebarHTML = '';
-            for(let i=0; i<Math.min(6, allMatches.length); i++) {
-                sidebarHTML += `
-                <a href="#" class="sidebar-item">
-                    <span style="font-size:14px">${i%2===0?'🏏':'⚽'}</span> 
-                    ${allMatches[i].teamA} vs ${allMatches[i].teamB}
+            // Setup live data references
+            allMatches.forEach((m, i) => {
+                const liveM = {...m, id: 'm'+i};
+                // generate some random names if they are short
+                if(liveM.teamA.length < 5) liveM.teamA += " Kings";
+                if(liveM.teamB.length < 5) liveM.teamB += " Stars";
+                liveM.dynScore = liveM.sport === 'Football' ? randomScoreFootball() : randomScore();
+                liveMatchesData.push(liveM);
+            });
+
+            // Populate Sidebar
+            const sbHTML = liveMatchesData.slice(0, 8).map(m => `
+                <div class="sidebar-item">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Star_icon_1.svg/1024px-Star_icon_1.svg.png" width="10" style="opacity:0.5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/330/330425.png" width="14" style="border-radius:50%">
+                    <img src="https://cdn-icons-png.flaticon.com/512/330/330459.png" width="14" style="border-radius:50%">
+                    <span>${m.teamA} vs ${m.teamB}</span>
                     <span class="cnt">(1)</span>
-                </a>`;
-            }
-            leaguesBlock.innerHTML = sidebarHTML;
+                </div>
+            `).join('');
+            document.getElementById('left-sidebar-leagues').innerHTML = sbHTML;
 
-
-            // Render Match HTML Block
-            function renderMatchBlockCard(match) {
-                const sportIcon = match.sport === 'Football' ? '⚽' : (match.sport === 'Tennis' ? '🎾' : '🏏');
-                const isLive = Math.random() > 0.5 ? '<span class="live-badge">LIVE</span>' : '';
+            // Render Renderers
+            function renderTopCard(m) {
+                const odd1 = m.oddsA, oddX = (parseFloat(m.oddsA)+1.1).toFixed(2), odd2 = m.oddsB;
+                let sel1 = betSlip.find(b=>b.matchId===m.id&&b.pick==='W1')?'selected':'';
+                let selX = betSlip.find(b=>b.matchId===m.id&&b.pick==='X')?'selected':'';
+                let sel2 = betSlip.find(b=>b.matchId===m.id&&b.pick==='W2')?'selected':'';
+                let badge = `<span style="background:#154e8e; color:#fff; padding:1px 4px; border-radius:2px; font-weight:700; font-size:9px;">SPORTS</span>`;
+                if(Math.random()>0.5) badge = `<span class="live-badge">LIVE</span>`;
                 return `
                 <div class="game-block-card">
                     <div class="gb-top">
-                        <div style="display:flex; align-items:center; gap:5px;">
-                            ${sportIcon} ${match.teamA} vs ${match.teamB}
-                        </div>
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            ${isLive}
-                            <span class="score">${Math.floor(Math.random()*150)}/${Math.floor(Math.random()*5)}</span>
-                        </div>
+                        <div style="display:flex; align-items:center; gap:5px;"><span style="color:#2e6db5">🏏</span> Bangladesh vs Pakistan ${badge}</div>
+                        <div class="gb-star">☆</div>
                     </div>
                     <div class="gb-teams">
                         <div class="team">
-                            <div class="team-logo">${match.teamA.charAt(0)}</div>
-                            <div class="team-name">${match.teamA}</div>
+                            <img class="team-logo" src="https://cdn-icons-png.flaticon.com/512/330/330425.png">
+                            <div class="team-name">${m.teamA}</div>
                         </div>
-                        <div class="vs">VS</div>
+                        <div class="gb-score-box">
+                            <span class="score" id="score-t-${m.id}">${m.dynScore}</span>
+                            <span>Event in progress</span>
+                        </div>
                         <div class="team">
-                            <div class="team-logo">${match.teamB.charAt(0)}</div>
-                            <div class="team-name">${match.teamB}</div>
+                            <img class="team-logo" src="https://cdn-icons-png.flaticon.com/512/330/330459.png">
+                            <div class="team-name">${m.teamB}</div>
                         </div>
                     </div>
+                    <div class="gb-action">GO TO EVENT</div>
                     <div class="gb-odds">
-                        <button class="odd-btn" onclick="alert('Added ${match.teamA} win to slip')">
-                            <span class="lbl">W1</span>
-                            <span class="val">${match.oddsA}</span>
+                        <button class="odd-btn ${sel1}" data-match="${m.id}" data-pick="W1" onclick="toggleBet(this, '${m.id}', 'W1', '${odd1}')">
+                            <span class="lbl">W1</span><span class="val">${odd1}</span>
                         </button>
-                        <button class="odd-btn" onclick="alert('Added Draw to slip')">
-                            <span class="lbl">X</span>
-                            <span class="val">${(parseFloat(match.oddsA) + 1.2).toFixed(2)}</span>
+                        <button class="odd-btn ${selX}" data-match="${m.id}" data-pick="X" onclick="toggleBet(this, '${m.id}', 'X', '${oddX}')">
+                            <span class="lbl">Draw</span><span class="val">${oddX}</span>
                         </button>
-                        <button class="odd-btn" onclick="alert('Added ${match.teamB} win to slip')">
-                            <span class="lbl">W2</span>
-                            <span class="val">${match.oddsB}</span>
+                        <button class="odd-btn ${sel2}" data-match="${m.id}" data-pick="W2" onclick="toggleBet(this, '${m.id}', 'W2', '${odd2}')">
+                            <span class="lbl">W2</span><span class="val">${odd2}</span>
                         </button>
                     </div>
                 </div>
                 `;
             }
 
-            // Render Event Row
-            function renderEventRow(match) {
-                const sportIcon = match.sport === 'Football' ? '⚽' : (match.sport === 'Tennis' ? '🎾' : '🏏');
-                const isLive = Math.random() > 0.5 ? '<span style="background:var(--accent-green); color:#000; padding:1px 4px; border-radius:2px; font-weight:700;">LIVE</span>' : '';
-                
+            function renderListRow(m) {
+                const odd1 = m.oddsA, oddX = (parseFloat(m.oddsA)+1.1).toFixed(2), odd2 = m.oddsB;
+                let sel1 = betSlip.find(b=>b.matchId===m.id&&b.pick==='W1')?'selected':'';
+                let selX = betSlip.find(b=>b.matchId===m.id&&b.pick==='X')?'selected':'';
+                let sel2 = betSlip.find(b=>b.matchId===m.id&&b.pick==='W2')?'selected':'';
                 return `
                 <div class="event-row">
                     <div class="er-header">
-                        <div style="display:flex; align-items:center; gap:5px;">
-                            ${sportIcon} India. Ayodhya Premier League ${isLive}
-                        </div>
+                        <div style="display:flex; align-items:center; gap:5px;"><span style="color:#2e6db5">🏏</span> India. Ayodhya Premier League <span style="background:var(--accent-green); color:#000; padding:1px 4px; border-radius:2px; font-weight:700; font-size:9px;">LIVE</span></div>
                         <div style="color:var(--accent-yellow); font-size:16px;">☆</div>
                     </div>
                     <div class="er-body">
                         <div class="er-teams">
                             <div class="er-team">
-                                <div style="width:24px; height:24px; border-radius:50%; background:#fff; color:#000; text-align:center; line-height:24px;">${match.teamA.charAt(0)}</div>
-                                <div>${match.teamA}</div>
+                                <img src="https://cdn-icons-png.flaticon.com/512/330/330425.png" width="20" style="border-radius:50%">
+                                <div>${m.teamA}</div>
                             </div>
                             <div class="er-score">
-                                <span class="val">${Math.floor(Math.random()*200)}/${Math.floor(Math.random()*10)}</span>
-                                <span class="time">Event in progress</span>
+                                <span class="val" id="score-l-${m.id}">${m.dynScore}</span>
+                                <span class="time">Event in progress / T20</span>
                             </div>
-                            <div class="er-team" style="flex-direction:row-reverse;">
-                                <div style="width:24px; height:24px; border-radius:50%; background:#fff; color:#000; text-align:center; line-height:24px;">${match.teamB.charAt(0)}</div>
-                                <div>${match.teamB}</div>
+                            <div class="er-team" style="flex-direction:row-reverse; text-align:right;">
+                                <img src="https://cdn-icons-png.flaticon.com/512/330/330459.png" width="20" style="border-radius:50%">
+                                <div>${m.teamB}</div>
                             </div>
                         </div>
                         <div class="er-odds">
-                            <button class="odd-btn" style="background:#152840;">
-                                <span class="lbl">W1</span>
-                                <span class="val">${match.oddsA}</span>
-                            </button>
-                            <button class="odd-btn" style="background:#152840;">
-                                <span class="lbl">Draw</span>
-                                <span class="val">${(parseFloat(match.oddsA) + 0.8).toFixed(2)}</span>
-                            </button>
-                            <button class="odd-btn" style="background:#152840;">
-                                <span class="lbl">W2</span>
-                                <span class="val">${match.oddsB}</span>
-                            </button>
+                            <button class="odd-btn ${sel1}" data-match="${m.id}" data-pick="W1" onclick="toggleBet(this, '${m.id}', 'W1', '${odd1}')"><span class="lbl">W1</span><span class="val">${odd1}</span></button>
+                            <button class="odd-btn ${selX}" data-match="${m.id}" data-pick="X" onclick="toggleBet(this, '${m.id}', 'X', '${oddX}')"><span class="lbl">Draw</span><span class="val">${oddX}</span></button>
+                            <button class="odd-btn ${sel2}" data-match="${m.id}" data-pick="W2" onclick="toggleBet(this, '${m.id}', 'W2', '${odd2}')"><span class="lbl">W2</span><span class="val">${odd2}</span></button>
                         </div>
                     </div>
                 </div>
                 `;
             }
 
-
-            // Populate
+            // Populate Grids
             const topGrid = document.getElementById('top-games-grid');
             const allList = document.getElementById('all-games-list');
 
-            let topHTML = '';
-            for(let i=0; i<Math.min(3, allMatches.length); i++) {
-                topHTML += renderMatchBlockCard(allMatches[i]);
-            }
-            topGrid.innerHTML = topHTML;
+            function refreshViews() {
+                let t_html = '';
+                for(let i=0; i<Math.min(3, liveMatchesData.length); i++) t_html += renderTopCard(liveMatchesData[i]);
+                topGrid.innerHTML = t_html;
 
-            let allHTML = '';
-            for(let i=0; i<allMatches.length; i++) {
-                allHTML += renderEventRow(allMatches[i]);
+                let l_html = '';
+                for(let i=0; i<liveMatchesData.length; i++) l_html += renderListRow(liveMatchesData[i]);
+                allList.innerHTML = l_html;
             }
-            allList.innerHTML = allHTML;
+
+            refreshViews();
+
+            // Setup a live score simulation interval
+            setInterval(() => {
+                liveMatchesData.forEach(m => {
+                    // Randomly update score sometimes
+                    if(Math.random() > 0.7) {
+                        m.dynScore = m.sport === 'Football' ? randomScoreFootball() : randomScore();
+                        const st = document.getElementById('score-t-' + m.id);
+                        const sl = document.getElementById('score-l-' + m.id);
+                        if(st) { st.textContent = m.dynScore; st.style.color = '#e74c3c'; setTimeout(()=>st.style.color='#2e7d32', 800); }
+                        if(sl) { sl.textContent = m.dynScore; sl.style.color = '#e74c3c'; setTimeout(()=>sl.style.color='#2e7d32', 800); }
+                    }
+                });
+            }, 3000);
+
         });
     </script>
 </body>
