@@ -1931,3 +1931,229 @@ footer {
         min-width: 120px;
     }
 }
+
+/* ── VIP + SportXBet Combined Section ── */
+.vip-sports-combined-section {
+    padding: 20px 0 60px;
+    position: relative;
+}
+
+.vip-corner-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+}
+
+.vip-corner-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, rgba(57,255,20,0.12), rgba(57,255,20,0.04));
+    border: 1px solid rgba(57,255,20,0.4);
+    color: var(--primary-neon);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(57,255,20,0.1);
+}
+
+.vip-corner-btn:hover {
+    background: rgba(57,255,20,0.2);
+    box-shadow: 0 0 25px rgba(57,255,20,0.3);
+    transform: translateY(-2px);
+}
+
+.vip-corner-text { font-size: 0.9rem; }
+
+.vip-corner-badge {
+    background: var(--primary-neon);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* SportXBet Home Section */
+.sxb-home-section {
+    background: linear-gradient(135deg, rgba(255,170,0,0.06) 0%, rgba(255,85,0,0.04) 50%, rgba(10,11,30,0) 100%);
+    border: 1px solid rgba(255,170,0,0.2);
+    border-radius: 24px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.sxb-home-section::before {
+    content: '🏅';
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    font-size: 6rem;
+    opacity: 0.07;
+    pointer-events: none;
+}
+
+.sxb-home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.sxb-home-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffaa00;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.sxb-home-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffaa00, #ff6600);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+
+.sxb-home-sub {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    max-width: 500px;
+}
+
+.sxb-home-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ffaa00, #ff6600);
+    color: #000;
+    font-weight: 700;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 4px 20px rgba(255,170,0,0.3);
+}
+
+.sxb-home-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255,170,0,0.5);
+}
+
+.sxb-home-cats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+}
+
+.sxb-cat-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-white);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.sxb-cat-card:hover {
+    background: rgba(255,170,0,0.08);
+    border-color: rgba(255,170,0,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(255,170,0,0.15);
+}
+
+.sxb-cat-icon { font-size: 2.2rem; margin-bottom: 4px; }
+.sxb-cat-name { font-weight: 700; font-size: 0.95rem; }
+.sxb-cat-desc { font-size: 0.72rem; color: var(--text-muted); }
+
+.sxb-live-badge {
+    margin-top: 4px;
+    background: rgba(255,0,0,0.15);
+    color: #ff4d4d;
+    border: 1px solid rgba(255,0,0,0.3);
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.8px;
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,0,0,0.3); }
+    50% { box-shadow: 0 0 0 4px rgba(255,0,0,0); }
+}
+
+.sxb-upcoming-badge {
+    margin-top: 4px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-muted);
+    border: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.sxb-go-badge {
+    margin-top: 4px;
+    background: linear-gradient(135deg, #ffaa00, #ff6600);
+    color: #000;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: 20px;
+}
+
+.sxb-cat-promo {
+    background: linear-gradient(135deg, rgba(255,170,0,0.1), rgba(255,100,0,0.06));
+    border-color: rgba(255,170,0,0.3);
+}
+
+.sxb-cat-promo:hover { border-color: #ffaa00; }
+
+/* Withdrawal Fee Notice */
+.withdrawal-fee-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: rgba(255,170,0,0.06);
+    border: 1px solid rgba(255,170,0,0.3);
+    border-radius: 12px;
+    border-left: 4px solid #ffaa00;
+}
+
+.withdrawal-fee-notice .fee-icon { font-size: 1.3rem; flex-shrink: 0; }
+.withdrawal-fee-notice p { font-size: 0.9rem; color: #ffcc66; margin: 0; }
+.withdrawal-fee-notice strong { color: #ffaa00; }
+
+@media (max-width: 768px) {
+    .vip-corner-wrapper { justify-content: center; }
+    .sxb-home-section { padding: 24px 20px; }
+    .sxb-home-title { font-size: 1.6rem; }
+    .sxb-home-header { flex-direction: column; align-items: flex-start; }
+    .sxb-home-cta { align-self: stretch; justify-content: center; }
+    .sxb-home-cats { grid-template-columns: repeat(2, 1fr); }
+}
