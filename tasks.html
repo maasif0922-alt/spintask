@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -228,6 +228,12 @@
                     // Update real balance
                     Auth.updateBalance(reward);
                     Auth.updateEarnings(reward);
+
+                    // Fire admin alert
+                    if (typeof Admin !== 'undefined') {
+                        Admin.addAdminAlert('task', `📋 Task: ${user.name} completed a task and earned +$${reward.toFixed(2)} USDT`);
+                        Admin.logAction(`${user.email} completed task for $${reward}`);
+                    }
 
                     alert('Task completed! ' + reward + ' USDT added to your balance.');
 

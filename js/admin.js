@@ -951,6 +951,7 @@ const Admin = {
         localStorage.setItem('spintask_trading_investments', JSON.stringify(investments));
         const message = `Successfully credited ${credited} users in ${planId} plan @ ${rate}%`;
         this.logAction(message);
+        this.addAdminAlert('task', `📈 Trading: ${message}`);
         return { success: true, message, credited };
     },
 
@@ -1066,6 +1067,7 @@ const Admin = {
         bets.unshift(newBet);
         this.saveDb(this.DB_SPORTXBET_BETS, bets);
         this.logAction(`User ${user.email} placed $${betAmount} bet on ${team}`);
+        this.addAdminAlert('task', `📉 SportXBet: ${user.name} placed $${betAmount} bet on ${team}`);
 
         return { success: true, message: 'Bet placed successfully!', newBalance: user.balance };
     },
@@ -1104,6 +1106,7 @@ const Admin = {
         this.saveDb(this.DB_SPORTXBET_BETS, bets);
         localStorage.setItem('spintask_users', JSON.stringify(users));
         this.logAction(`Processed results for match ${matchId}. Paid out $${totalPayout} to ${winnersCount} winners.`);
+        this.addAdminAlert('task', `🏆 SportXBet: Processed results for match ${matchId}. Paid $${totalPayout.toFixed(2)} to ${winnersCount} winners.`);
         
         return { success: true, message: `Processed results. Paid out $${totalPayout.toFixed(2)} to ${winnersCount} winners.` };
     }

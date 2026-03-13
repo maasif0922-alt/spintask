@@ -285,6 +285,8 @@ const Auth = {
 
             if (typeof Admin !== 'undefined') {
                 Admin.addTransferRecord(transferRecord);
+                Admin.addAdminAlert('transfer', `🎁 Transfer: ${sender.name} sent $${amount} to ${receiver.name}`);
+                Admin.logAction(`${sender.email} transferred $${amount} to ${receiver.email}`);
             }
 
             // Sync sender's UI if they are logged in currently
@@ -369,8 +371,93 @@ const Auth = {
     }
 };
 
+// --- NEW: Traffic & Visitor Tracking ---
+const Traffic = {
+    STORAGE_KEY: 'spintask_traffic_stats',
+
+    init() {
+        this.trackVisitor();
+        this.trackClick();
+        // Add global listener for all clicks to track general activity
+        document.addEventListener('click', () => this.trackClick());
+    },
+
+    getStats() {
+        const stats = localStorage.getItem(this.STORAGE_KEY);
+        const today = new Date().toDateString();
+        const defaultStats = {
+            totalClicks: 0,
+            dailyStats: {}, // { "DateString": clicks }
+            uniqueVisitors: {}, // { "DateString": [userIds] }
+            totalVisitors: 0,
+            visitorLog: [] // last 100 IPs/IDs for "activity"
+        };
+        return stats ? JSON.parse(stats) : defaultStats;
+    },
+
+    saveStats(stats) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(stats));
+        // Trigger storage event for real-time updates in admin dash
+        window.dispatchEvent(new Event('storage'));
+    },
+
+    trackClick() {
+        const stats = this.getStats();
+        const today = new Date().toDateString();
+
+        stats.totalClicks = (stats.totalClicks || 0) + 1;
+        stats.dailyStats[today] = (stats.dailyStats[today] || 0) + 1;
+
+        this.saveStats(stats);
+
+        // Legacy compatibility for existing dashboard field
+        const legacyClicks = { date: today, count: stats.dailyStats[today] };
+        localStorage.setItem('spintask_clicks', JSON.stringify(legacyClicks));
+    },
+
+    trackVisitor() {
+        const stats = this.getStats();
+        const today = new Date().toDateString();
+        const user = Auth.getCurrentUser();
+        const visitorId = user ? user.id : 'guest_' + this.getFingerprint();
+
+        if (!stats.uniqueVisitors[today]) {
+            stats.uniqueVisitors[today] = [];
+        }
+
+        if (!stats.uniqueVisitors[today].includes(visitorId)) {
+            stats.uniqueVisitors[today].push(visitorId);
+            stats.totalVisitors = (stats.totalVisitors || 0) + 1;
+            
+            // Add to activity log
+            stats.visitorLog.unshift({
+                id: visitorId,
+                name: user ? user.name : 'Guest',
+                time: new Date().toISOString(),
+                type: 'visit'
+            });
+            if (stats.visitorLog.length > 100) stats.visitorLog.pop();
+
+            // Log to System Logs for real-time visibility
+            if (typeof Admin !== 'undefined') {
+                Admin.logAction(`New visitor arrival: ${user ? user.email : 'Guest (' + visitorId + ')'}`);
+            }
+        }
+
+        this.saveStats(stats);
+    },
+
+    getFingerprint() {
+        // Simple fingerprint for guests
+        return btoa(navigator.userAgent).substring(0, 16);
+    }
+};
+
 // Auto-run guard and UI population on load
 document.addEventListener('DOMContentLoaded', async () => {
+    // Initialize Traffic Tracking
+    Traffic.init();
+
     const isAuthPage = window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html');
     const isLandingPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('about.html') || window.location.pathname.endsWith('support.html') || window.location.pathname.endsWith('terms.html');
 

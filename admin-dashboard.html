@@ -636,9 +636,21 @@
                                 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">$0.00</div>
                         </div>
                         <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #b339ff;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Website
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Today's
                                 Clicks</div>
                             <div id="h-clicks"
+                                style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
+                        </div>
+                        <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #6c5ce7;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total
+                                Clicks</div>
+                            <div id="h-total-clicks"
+                                style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
+                        </div>
+                        <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #00cec9;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total
+                                Visitors</div>
+                            <div id="h-total-visitors"
                                 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
                         </div>
                     </div>
@@ -1314,10 +1326,17 @@
             const payoutsToday = txs.filter(t => t.type === 'withdraw' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
             document.getElementById('h-payouts').textContent = fmt(payoutsToday);
 
-            // Website Clicks Today
+            // Website Clicks & Traffic Stats
+            let traffic = JSON.parse(localStorage.getItem('spintask_traffic_stats') || '{"totalClicks":0, "dailyStats":{}, "totalVisitors":0}');
+            let dailyClicks = traffic.dailyStats[today] || 0;
+            animateValue('h-clicks', 0, dailyClicks, 1000);
+            animateValue('h-total-clicks', 0, traffic.totalClicks || 0, 1000);
+            animateValue('h-total-visitors', 0, traffic.totalVisitors || 0, 1000);
+            
+            // Legacy compatibility
             let clicksData = JSON.parse(localStorage.getItem('spintask_clicks') || '{"count":0}');
             if (clicksData.date !== today) clicksData.count = 0;
-            animateValue('h-clicks', 0, clicksData.count, 1000);
+            // (We already updated h-clicks using the better traffic object)
 
             // Today's categorize income & withdrawals
             const tdIncPlans = analytics.categorizedIncome.plan || 0;
@@ -2091,6 +2110,16 @@
             updateAlertBadge();
             // Refresh alert badge every 30s
             setInterval(updateAlertBadge, 30000);
+
+            // REAL-TIME UPDATES: Listen for local storage changes
+            window.addEventListener('storage', function(e) {
+                // If dashboard is visible, refresh it
+                if (document.getElementById('tab-dashboard').style.display !== 'none') {
+                    renderDashboard();
+                }
+                // Always update badge
+                updateAlertBadge();
+            });
         });
     </script>
 </body>
