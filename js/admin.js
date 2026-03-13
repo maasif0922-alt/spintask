@@ -211,6 +211,29 @@ const Admin = {
             if (!localStorage.getItem(this.DB_PLATFORM_INCOME)) {
                 localStorage.setItem(this.DB_PLATFORM_INCOME, '[]');
             }
+
+            if (!localStorage.getItem(this.DB_SPORTXBET_SETTINGS)) {
+                const defaultSportXBetSettings = {
+                    heroBgUrl: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
+                    heroTitle: 'CRICKET FREE BET',
+                    heroSub: 'Guaranteed free bet if your bet loses',
+                    heroBtnText: 'TAKE PART',
+                    promo1Text: 'Accumulator Of The Day >',
+                    promo1Img: 'https://sports.mrbet.com/assets/images/promotion/bonus_accumulator.png',
+                    promo2Text: 'Cricket Free Bet >',
+                    promo2Img: 'https://media.npr.org/assets/img/2024/06/07/gettyimages-2155798939_custom-6345dc7cff0ec843c08cdde59cba6784d1dd6813-s1100-c50.jpg',
+                    comp1Img: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
+                    comp1Title: '🏆 Bangladesh vs Pakistan',
+                    comp1Events: '1 Events',
+                    comp2Img: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
+                    comp2Title: '🏆 Australian Champ. Women',
+                    comp2Events: '1 Events',
+                    comp3Img: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
+                    comp3Title: '🏆 Pro50 Championship',
+                    comp3Events: '2 Events'
+                };
+                localStorage.setItem(this.DB_SPORTXBET_SETTINGS, JSON.stringify(defaultSportXBetSettings));
+            }
         }
     },
 

@@ -110,32 +110,32 @@
             </div>
             <div class="games-grid" style="grid-template-columns: repeat(3, 1fr);">
                 <!-- comp card 1 -->
-                <div class="comp-card" style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover;">
+                <div class="comp-card" id="ui-comp1-bg">
                     <div class="comp-card-content">
                         <div class="comp-events" style="background:#e74c3c">LIVE</div>
                         <div>
-                            <div class="comp-title">🏆 Bangladesh vs Pakistan</div>
-                            <div class="comp-events" style="background:#154e8e">1 Events</div>
+                            <div class="comp-title" id="ui-comp1-title">...</div>
+                            <div class="comp-events" style="background:#154e8e" id="ui-comp1-events">...</div>
                         </div>
                     </div>
                 </div>
                 <!-- comp card 2 -->
-                <div class="comp-card" style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover;">
+                <div class="comp-card" id="ui-comp2-bg">
                     <div class="comp-card-content">
                         <div class="comp-events" style="background:#e74c3c">LIVE</div>
                         <div>
-                            <div class="comp-title">🏆 Australian Champ. Women</div>
-                            <div class="comp-events" style="background:#154e8e">1 Events</div>
+                            <div class="comp-title" id="ui-comp2-title">...</div>
+                            <div class="comp-events" style="background:#154e8e" id="ui-comp2-events">...</div>
                         </div>
                     </div>
                 </div>
                 <!-- comp card 3 -->
-                <div class="comp-card" style="background: url('https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg') center/cover;">
+                <div class="comp-card" id="ui-comp3-bg">
                     <div class="comp-card-content">
                         <div class="comp-events" style="background:#e74c3c">LIVE</div>
                         <div>
-                            <div class="comp-title">🏆 Pro50 Championship</div>
-                            <div class="comp-events" style="background:#154e8e">2 Events</div>
+                            <div class="comp-title" id="ui-comp3-title">...</div>
+                            <div class="comp-events" style="background:#154e8e" id="ui-comp3-events">...</div>
                         </div>
                     </div>
                 </div>
@@ -389,6 +389,17 @@
             document.getElementById('ui-promo1-img').src = sxb.promo1Img;
             document.getElementById('ui-promo2-text').textContent = sxb.promo2Text;
             document.getElementById('ui-promo2-img').src = sxb.promo2Img;
+
+            // Render Top Competitions
+            document.getElementById('ui-comp1-bg').style.backgroundImage = `url('${sxb.comp1Img}')`;
+            document.getElementById('ui-comp1-title').textContent = sxb.comp1Title;
+            document.getElementById('ui-comp1-events').textContent = sxb.comp1Events;
+            document.getElementById('ui-comp2-bg').style.backgroundImage = `url('${sxb.comp2Img}')`;
+            document.getElementById('ui-comp2-title').textContent = sxb.comp2Title;
+            document.getElementById('ui-comp2-events').textContent = sxb.comp2Events;
+            document.getElementById('ui-comp3-bg').style.backgroundImage = `url('${sxb.comp3Img}')`;
+            document.getElementById('ui-comp3-title').textContent = sxb.comp3Title;
+            document.getElementById('ui-comp3-events').textContent = sxb.comp3Events;
 
             // Setup live data references
             allMatches.forEach((m) => {

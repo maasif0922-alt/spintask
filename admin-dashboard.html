@@ -1007,7 +1007,31 @@
                         <div class="form-group"><label>Banner 2 Text</label><input id="sxb-promo2-text" class="form-input"></div>
                         <div class="form-group"><label>Banner 2 Image URL</label><input id="sxb-promo2-img" class="form-input"></div>
                     </div>
-                    <button class="btn btn-primary" style="margin-top:15px;" onclick="saveSportXBetConfig()">💾 Save Design Settings</button>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Top Competitions Banners</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;">
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 10px; color: var(--primary-neon);">Card 1</label>
+                            <div class="form-group"><label>Title</label><input id="sxb-comp1-title" class="form-input"></div>
+                            <div class="form-group"><label>Image URL</label><input id="sxb-comp1-img" class="form-input"></div>
+                            <div class="form-group"><label>Events Info</label><input id="sxb-comp1-events" class="form-input"></div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 10px; color: var(--primary-neon);">Card 2</label>
+                            <div class="form-group"><label>Title</label><input id="sxb-comp2-title" class="form-input"></div>
+                            <div class="form-group"><label>Image URL</label><input id="sxb-comp2-img" class="form-input"></div>
+                            <div class="form-group"><label>Events Info</label><input id="sxb-comp2-events" class="form-input"></div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
+                            <label style="font-weight: bold; display: block; margin-bottom: 10px; color: var(--primary-neon);">Card 3</label>
+                            <div class="form-group"><label>Title</label><input id="sxb-comp3-title" class="form-input"></div>
+                            <div class="form-group"><label>Image URL</label><input id="sxb-comp3-img" class="form-input"></div>
+                            <div class="form-group"><label>Events Info</label><input id="sxb-comp3-events" class="form-input"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:15px;" onclick="saveSportXBetConfig()">💾 Save All Settings</button>
                     <span id="sxb-save-msg" style="color:var(--primary-neon); margin-left:10px; display:none;">Saved successfully!</span>
                 </div>
 
@@ -2081,6 +2105,16 @@
             document.getElementById('sxb-promo2-text').value = sxb.promo2Text || '';
             document.getElementById('sxb-promo2-img').value = sxb.promo2Img || '';
 
+            document.getElementById('sxb-comp1-title').value = sxb.comp1Title || '';
+            document.getElementById('sxb-comp1-img').value = sxb.comp1Img || '';
+            document.getElementById('sxb-comp1-events').value = sxb.comp1Events || '';
+            document.getElementById('sxb-comp2-title').value = sxb.comp2Title || '';
+            document.getElementById('sxb-comp2-img').value = sxb.comp2Img || '';
+            document.getElementById('sxb-comp2-events').value = sxb.comp2Events || '';
+            document.getElementById('sxb-comp3-title').value = sxb.comp3Title || '';
+            document.getElementById('sxb-comp3-img').value = sxb.comp3Img || '';
+            document.getElementById('sxb-comp3-events').value = sxb.comp3Events || '';
+
             renderSXBMatches();
         }
 
@@ -2093,7 +2127,16 @@
                 promo1Text: document.getElementById('sxb-promo1-text').value,
                 promo1Img: document.getElementById('sxb-promo1-img').value,
                 promo2Text: document.getElementById('sxb-promo2-text').value,
-                promo2Img: document.getElementById('sxb-promo2-img').value
+                promo2Img: document.getElementById('sxb-promo2-img').value,
+                comp1Title: document.getElementById('sxb-comp1-title').value,
+                comp1Img: document.getElementById('sxb-comp1-img').value,
+                comp1Events: document.getElementById('sxb-comp1-events').value,
+                comp2Title: document.getElementById('sxb-comp2-title').value,
+                comp2Img: document.getElementById('sxb-comp2-img').value,
+                comp2Events: document.getElementById('sxb-comp2-events').value,
+                comp3Title: document.getElementById('sxb-comp3-title').value,
+                comp3Img: document.getElementById('sxb-comp3-img').value,
+                comp3Events: document.getElementById('sxb-comp3-events').value
             });
             const msg = document.getElementById('sxb-save-msg');
             msg.style.display = 'inline';
