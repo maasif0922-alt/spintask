@@ -230,7 +230,20 @@ const Admin = {
                     comp2Events: '1 Events',
                     comp3Img: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
                     comp3Title: '🏆 Pro50 Championship',
-                    comp3Events: '2 Events'
+                    comp3Events: '2 Events',
+                    siteLogo: '1XBET',
+                    accentColor: '#154e8e',
+                    topBarLinks: [
+                        { title: '🏆 TOP-EVENTS ▼', url: '#' },
+                        { title: 'CRICKET', url: '#' },
+                        { title: 'SPORTS ▼', url: '#' },
+                        { title: 'LIVE ▼', url: '#' },
+                        { title: '1XGAMES ▼', url: '#' },
+                        { title: 'CASINO ▼', url: 'index.html' },
+                        { title: 'LIVE CASINO ▼', url: 'index.html' }
+                    ],
+                    regWidgetTitle: 'REGISTRATION',
+                    regWidgetSub: 'Get 100% bonus on your first deposit!'
                 };
                 localStorage.setItem(this.DB_SPORTXBET_SETTINGS, JSON.stringify(defaultSportXBetSettings));
             }

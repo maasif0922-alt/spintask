@@ -990,12 +990,40 @@
                 <div class="page-title">🏅 SportXBet Management</div>
                 
                 <div class="card" style="margin-bottom: 20px;">
+                    <h3>Header & Theme Configuration</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+                        <div class="form-group"><label>Site Logo (Text or URL)</label><input id="sxb-logo" class="form-input"></div>
+                        <div class="form-group"><label>Accent Color</label><input id="sxb-accent-color" type="color" class="form-input" style="height:42px; padding:2px;"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Top Navigation Links</h3>
+                    <div id="sxb-nav-links-list" style="margin-bottom:15px;">
+                        <!-- Nav links will be rendered here -->
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <input id="sxb-new-nav-title" placeholder="Link Title" class="form-input" style="flex:1;">
+                        <input id="sxb-new-nav-url" placeholder="URL (e.g. # or index.html)" class="form-input" style="flex:1;">
+                        <button class="btn btn-outline" onclick="addSXBNavLink()">Add Link</button>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
                     <h3>Hero Banner Configuration</h3>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
                         <div class="form-group"><label>Background Image URL</label><input id="sxb-hero-bg" class="form-input"></div>
                         <div class="form-group"><label>Main Title</label><input id="sxb-hero-title" class="form-input"></div>
                         <div class="form-group"><label>Subtitle</label><input id="sxb-hero-sub" class="form-input"></div>
                         <div class="form-group"><label>Button Text</label><input id="sxb-hero-btn" class="form-input"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Registration Widget</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+                        <div class="form-group"><label>Widget Header</label><input id="sxb-reg-title" class="form-input"></div>
+                        <div class="form-group"><label>Instructions Subtext</label><input id="sxb-reg-sub" class="form-input"></div>
                     </div>
                 </div>
 
@@ -2093,8 +2121,20 @@
         }
 
         // ── SportXBet ────────────────────────────────────────────────────────
+        // Global state for nav links in editor
+        let tempSXBNavLinks = [];
+
         function renderSportXBet() {
             var sxb = Admin.getSportXBetSettings();
+            document.getElementById('sxb-logo').value = sxb.siteLogo || '1XBET';
+            document.getElementById('sxb-accent-color').value = sxb.accentColor || '#154e8e';
+            
+            tempSXBNavLinks = sxb.topBarLinks || [];
+            renderSXBNavList();
+
+            document.getElementById('sxb-reg-title').value = sxb.regWidgetTitle || '';
+            document.getElementById('sxb-reg-sub').value = sxb.regWidgetSub || '';
+
             document.getElementById('sxb-hero-bg').value = sxb.heroBgUrl || '';
             document.getElementById('sxb-hero-title').value = sxb.heroTitle || '';
             document.getElementById('sxb-hero-sub').value = sxb.heroSub || '';
@@ -2118,8 +2158,39 @@
             renderSXBMatches();
         }
 
+        function renderSXBNavList() {
+            const list = document.getElementById('sxb-nav-links-list');
+            list.innerHTML = tempSXBNavLinks.map((link, idx) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:4px; margin-bottom:5px;">
+                    <div><strong>${link.title}</strong> <span style="font-size:12px; color:#888;">(${link.url})</span></div>
+                    <button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d; padding:2px 8px;" onclick="removeSXBNavLink(${idx})">✕</button>
+                </div>
+            `).join('');
+            if(tempSXBNavLinks.length === 0) list.innerHTML = '<div style="color:#666; font-style:italic;">No navigation links added.</div>';
+        }
+
+        function addSXBNavLink() {
+            const title = document.getElementById('sxb-new-nav-title').value;
+            const url = document.getElementById('sxb-new-nav-url').value;
+            if(!title || !url) return alert('Please enter both title and URL');
+            tempSXBNavLinks.push({ title, url });
+            document.getElementById('sxb-new-nav-title').value = '';
+            document.getElementById('sxb-new-nav-url').value = '';
+            renderSXBNavList();
+        }
+
+        function removeSXBNavLink(idx) {
+            tempSXBNavLinks.splice(idx, 1);
+            renderSXBNavList();
+        }
+
         function saveSportXBetConfig() {
             Admin.saveSportXBetSettings({
+                siteLogo: document.getElementById('sxb-logo').value,
+                accentColor: document.getElementById('sxb-accent-color').value,
+                topBarLinks: tempSXBNavLinks,
+                regWidgetTitle: document.getElementById('sxb-reg-title').value,
+                regWidgetSub: document.getElementById('sxb-reg-sub').value,
                 heroBgUrl: document.getElementById('sxb-hero-bg').value,
                 heroTitle: document.getElementById('sxb-hero-title').value,
                 heroSub: document.getElementById('sxb-hero-sub').value,

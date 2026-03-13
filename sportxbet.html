@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>1XBET Clone | SportXBet</title>
     <link rel="stylesheet" href="css/sportxbet.css">
+    <style id="sxb-dynamic-theme"></style>
 </head>
 <body>
 
     <!-- Top Header -->
     <header class="top-header">
         <div class="top-header-left">
-            <a href="index.html" class="sxb-logo">
+            <a href="index.html" class="sxb-logo" id="ui-logo-container">
                 <span class="one">1</span><span class="x">X</span><span class="bet">BET</span>
             </a>
         </div>
@@ -174,7 +175,7 @@
         <aside class="sidebar-right">
             <!-- Registration -->
             <div class="reg-widget">
-                <div class="reg-header">REGISTRATION</div>
+                <div class="reg-header" id="ui-reg-header">REGISTRATION</div>
                 <div class="reg-tabs">
                     <div class="reg-tab active" onclick="switchRegTab(this, 'phone')">📱 By phone</div>
                     <div class="reg-tab" onclick="switchRegTab(this, 'oneclick')">⚡ One-click</div>
@@ -182,7 +183,7 @@
                 
                 <div class="reg-form" id="reg-form-phone">
                     <div class="reg-form-title">By phone</div>
-                    <div class="reg-form-sub">To register on the website, enter your phone number and choose how you want to receive the code.</div>
+                    <div class="reg-form-sub" id="ui-reg-sub">To register on the website, enter your phone number and choose how you want to receive the code.</div>
                     
                     <div class="reg-input-group">
                         <div class="reg-flag">🇵🇰 +92</div>
@@ -385,10 +386,48 @@
             document.getElementById('ui-hero-sub').textContent = sxb.heroSub;
             document.getElementById('ui-hero-btn').textContent = sxb.heroBtnText;
             
-            document.getElementById('ui-promo1-text').textContent = sxb.promo1Text;
-            document.getElementById('ui-promo1-img').src = sxb.promo1Img;
             document.getElementById('ui-promo2-text').textContent = sxb.promo2Text;
             document.getElementById('ui-promo2-img').src = sxb.promo2Img;
+
+            // Apply Dynamic Theme
+            if (sxb.accentColor) {
+                document.getElementById('sxb-dynamic-theme').innerHTML = `
+                    :root {
+                        --accent-light-blue: ${sxb.accentColor} !important;
+                        --primary-neon: ${sxb.accentColor} !important;
+                    }
+                    .btn-register, .btn-sms, .btn-header-reg, .reg-header, .bs-header {
+                        background: ${sxb.accentColor} !important;
+                    }
+                    .nav-links a.active {
+                        border-bottom-color: ${sxb.accentColor} !important;
+                        color: ${sxb.accentColor} !important;
+                    }
+                    .gb-top span { color: ${sxb.accentColor} !important; }
+                `;
+            }
+
+            // Render Logo
+            if (sxb.siteLogo) {
+                const logoEl = document.getElementById('ui-logo-container');
+                if (sxb.siteLogo.startsWith('http')) {
+                    logoEl.innerHTML = `<img src="${sxb.siteLogo}" height="32" style="display:block;">`;
+                } else {
+                    logoEl.innerHTML = `<span style="font-weight:900; font-size:24px; color:#fff; letter-spacing:-1px;">${sxb.siteLogo}</span>`;
+                }
+            }
+
+            // Render Nav
+            if (sxb.topBarLinks && sxb.topBarLinks.length > 0) {
+                const navUl = document.getElementById('main-nav-ul');
+                navUl.innerHTML = sxb.topBarLinks.map((link, idx) => `
+                    <li><a href="${link.url}" class="nav-item ${idx===1?'active':''}" onclick="switchNavTab(this, '${link.title}')">${link.title.toUpperCase()}</a></li>
+                `).join('');
+            }
+
+            // Registration Widget
+            if (sxb.regWidgetTitle) document.getElementById('ui-reg-header').textContent = sxb.regWidgetTitle;
+            if (sxb.regWidgetSub) document.getElementById('ui-reg-sub').textContent = sxb.regWidgetSub;
 
             // Render Top Competitions
             document.getElementById('ui-comp1-bg').style.backgroundImage = `url('${sxb.comp1Img}')`;
