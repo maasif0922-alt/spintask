@@ -985,6 +985,55 @@
                 </div>
             </div>
 
+            <!-- SPORTXBET -->
+            <div id="tab-sportxbet" class="admin-section">
+                <div class="page-title">🏅 SportXBet Management</div>
+                
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Hero Banner Configuration</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+                        <div class="form-group"><label>Background Image URL</label><input id="sxb-hero-bg" class="form-input"></div>
+                        <div class="form-group"><label>Main Title</label><input id="sxb-hero-title" class="form-input"></div>
+                        <div class="form-group"><label>Subtitle</label><input id="sxb-hero-sub" class="form-input"></div>
+                        <div class="form-group"><label>Button Text</label><input id="sxb-hero-btn" class="form-input"></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3>Promotional Banners</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+                        <div class="form-group"><label>Banner 1 Text</label><input id="sxb-promo1-text" class="form-input"></div>
+                        <div class="form-group"><label>Banner 1 Image URL</label><input id="sxb-promo1-img" class="form-input"></div>
+                        <div class="form-group"><label>Banner 2 Text</label><input id="sxb-promo2-text" class="form-input"></div>
+                        <div class="form-group"><label>Banner 2 Image URL</label><input id="sxb-promo2-img" class="form-input"></div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:15px;" onclick="saveSportXBetConfig()">💾 Save Design Settings</button>
+                    <span id="sxb-save-msg" style="color:var(--primary-neon); margin-left:10px; display:none;">Saved successfully!</span>
+                </div>
+
+                <div class="card">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                        <h3>Active Matches</h3>
+                        <button class="btn btn-outline" onclick="openAddMatchModal()">➕ Add New Match</button>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sport</th>
+                                    <th>Teams</th>
+                                    <th>Odds (A / B)</th>
+                                    <th>Live?</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sxb-matches-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- LUCKY DRAW -->
             <div id="tab-luckydraw" class="admin-section">
                 <div class="page-title">🎉 Lucky Draw</div>
@@ -2021,8 +2070,34 @@
 
         // ── SportXBet ────────────────────────────────────────────────────────
         function renderSportXBet() {
+            var sxb = Admin.getSportXBetSettings();
+            document.getElementById('sxb-hero-bg').value = sxb.heroBgUrl || '';
+            document.getElementById('sxb-hero-title').value = sxb.heroTitle || '';
+            document.getElementById('sxb-hero-sub').value = sxb.heroSub || '';
+            document.getElementById('sxb-hero-btn').value = sxb.heroBtnText || '';
+            
+            document.getElementById('sxb-promo1-text').value = sxb.promo1Text || '';
+            document.getElementById('sxb-promo1-img').value = sxb.promo1Img || '';
+            document.getElementById('sxb-promo2-text').value = sxb.promo2Text || '';
+            document.getElementById('sxb-promo2-img').value = sxb.promo2Img || '';
+
             renderSXBMatches();
-            renderSXBBets();
+        }
+
+        function saveSportXBetConfig() {
+            Admin.saveSportXBetSettings({
+                heroBgUrl: document.getElementById('sxb-hero-bg').value,
+                heroTitle: document.getElementById('sxb-hero-title').value,
+                heroSub: document.getElementById('sxb-hero-sub').value,
+                heroBtnText: document.getElementById('sxb-hero-btn').value,
+                promo1Text: document.getElementById('sxb-promo1-text').value,
+                promo1Img: document.getElementById('sxb-promo1-img').value,
+                promo2Text: document.getElementById('sxb-promo2-text').value,
+                promo2Img: document.getElementById('sxb-promo2-img').value
+            });
+            const msg = document.getElementById('sxb-save-msg');
+            msg.style.display = 'inline';
+            setTimeout(() => msg.style.display = 'none', 3000);
         }
 
         function renderSXBMatches() {
@@ -2033,54 +2108,38 @@
                 <tr>
                     <td>${m.sport}</td>
                     <td><strong>${m.teamA}</strong> vs <strong>${m.teamB}</strong></td>
-                    <td>${new Date(m.matchTime).toLocaleString()}</td>
                     <td>${m.oddsA} / ${m.oddsB}</td>
+                    <td><span class="badge badge-${m.isLive ? 'approved' : 'pending'}">${m.isLive ? 'YES' : 'NO'}</span></td>
                     <td><span class="badge badge-${m.status === 'finished' ? 'rejected' : 'approved'}">${m.status}</span></td>
                     <td class="tr-actions">
-                        ${m.status !== 'finished' ? `
-                            <button class="btn btn-outline" style="color:var(--primary-neon)" onclick="finishMatch('${m.id}', '${m.teamA}')">Winner A</button>
-                            <button class="btn btn-outline" style="color:var(--primary-neon)" onclick="finishMatch('${m.id}', '${m.teamB}')">Winner B</button>
-                        ` : ''}
+                        <button class="btn btn-outline" style="color:#ffcc00" onclick="editMatchStatus('${m.id}')">Toggle Live</button>
                         <button class="btn btn-outline" style="color:#ff4d4d" onclick="deleteMatch('${m.id}')">Delete</button>
                     </td>
                 </tr>
             `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No matches added</td></tr>';
         }
 
-        function renderSXBBets() {
-            const bets = Admin.getBets();
-            const tbody = document.getElementById('sxb-bets-body');
-            if(!tbody) return;
-            tbody.innerHTML = bets.map(b => `
-                <tr>
-                    <td>${b.userName}<br><span style="font-size:0.75rem;color:var(--text-muted)">${b.userEmail}</span></td>
-                    <td>Bet on <strong>${b.team}</strong></td>
-                    <td style="color:var(--primary-neon)">${fmt(b.amount)}</td>
-                    <td style="color:#ffaa00">${fmt(b.potentialPayout)}</td>
-                    <td><span class="badge badge-${b.status === 'won' ? 'approved' : b.status === 'lost' ? 'rejected' : 'pending'}">${b.status}</span></td>
-                    <td>-</td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No bets placed yet</td></tr>';
+        function openAddMatchModal() {
+            const teamA = prompt("Enter Team 1 Name:");
+            if(!teamA) return;
+            const teamB = prompt("Enter Team 2 Name:");
+            if(!teamB) return;
+            const oddsA = prompt("Enter Team 1 Odds (e.g. 1.5):", "1.5");
+            const oddsB = prompt("Enter Team 2 Odds (e.g. 2.1):", "2.1");
+            const isLiveChoice = confirm("Is this match LIVE right now?");
+            
+            Admin.addMatch('Cricket', teamA, teamB, oddsA || 1.1, oddsB || 1.1, isLiveChoice);
+            renderSXBMatches();
         }
 
-        function addSXBMatch() {
-            const sport = document.getElementById('sxb-sport').value;
-            const teamA = document.getElementById('sxb-teamA').value;
-            const teamB = document.getElementById('sxb-teamB').value;
-            const time = document.getElementById('sxb-time').value;
-            const oddsA = document.getElementById('sxb-oddsA').value;
-            const oddsB = document.getElementById('sxb-oddsB').value;
-
-            if (!teamA || !teamB || !time || !oddsA || !oddsB) {
-                alert('All fields are required!');
-                return;
+        function editMatchStatus(matchId) {
+            const matches = Admin.getMatches();
+            const m = matches.find(x => x.id === matchId);
+            if(m) {
+                m.isLive = !m.isLive;
+                Admin.saveDb(Admin.DB_SPORTXBET_MATCHES, matches);
+                renderSXBMatches();
             }
-
-            Admin.addMatch(sport, teamA, teamB, time, oddsA, oddsB);
-            alert('Match added!');
-            renderSXBMatches();
-            // Clear fields
-            ['sxb-teamA', 'sxb-teamB', 'sxb-time', 'sxb-oddsA', 'sxb-oddsB'].forEach(id => document.getElementById(id).value = '');
         }
 
         function finishMatch(matchId, winningTeam) {

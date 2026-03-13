@@ -76,21 +76,21 @@
         <main class="center-feed">
             
             <!-- Dual Hero Area -->
-            <div class="hero-top">
+            <div class="hero-top" id="ui-hero-bg">
                 <div class="hero-content">
-                    <h2>CRICKET FREE BET</h2>
-                    <p>Guaranteed free bet if your bet loses</p>
-                    <button class="btn-hero" onclick="addNotification('Opted in for Free Bet!')">TAKE PART</button>
+                    <h2 id="ui-hero-title">...</h2>
+                    <p id="ui-hero-sub">...</p>
+                    <button class="btn-hero" id="ui-hero-btn" onclick="addNotification('Opted in!')">...</button>
                 </div>
             </div>
             <div class="hero-bottom-banners">
                 <div class="h-banner">
-                    <span>Accumulator Of The Day ></span>
-                    <img src="https://sports.mrbet.com/assets/images/promotion/bonus_accumulator.png" alt="">
+                    <span id="ui-promo1-text">...</span>
+                    <img id="ui-promo1-img" src="" alt="">
                 </div>
                 <div class="h-banner" style="background:#205e49;">
-                    <span>Cricket Free Bet ></span>
-                    <img src="https://media.npr.org/assets/img/2024/06/07/gettyimages-2155798939_custom-6345dc7cff0ec843c08cdde59cba6784d1dd6813-s1100-c50.jpg" alt="">
+                    <span id="ui-promo2-text">...</span>
+                    <img id="ui-promo2-img" src="" alt="">
                 </div>
             </div>
 
@@ -377,14 +377,23 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const allMatches = Admin.getMatches().filter(m => m.status !== 'finished');
+            const sxb = Admin.getSportXBetSettings();
+
+            // Render Hero & Promos
+            document.getElementById('ui-hero-bg').style.backgroundImage = `url('${sxb.heroBgUrl}')`;
+            document.getElementById('ui-hero-title').textContent = sxb.heroTitle;
+            document.getElementById('ui-hero-sub').textContent = sxb.heroSub;
+            document.getElementById('ui-hero-btn').textContent = sxb.heroBtnText;
             
+            document.getElementById('ui-promo1-text').textContent = sxb.promo1Text;
+            document.getElementById('ui-promo1-img').src = sxb.promo1Img;
+            document.getElementById('ui-promo2-text').textContent = sxb.promo2Text;
+            document.getElementById('ui-promo2-img').src = sxb.promo2Img;
+
             // Setup live data references
-            allMatches.forEach((m, i) => {
-                const liveM = {...m, id: 'm'+i};
-                // generate some random names if they are short
-                if(liveM.teamA.length < 5) liveM.teamA += " Kings";
-                if(liveM.teamB.length < 5) liveM.teamB += " Stars";
-                liveM.dynScore = liveM.sport === 'Football' ? randomScoreFootball() : randomScore();
+            allMatches.forEach((m) => {
+                const liveM = {...m};
+                liveM.dynScore = liveM.sport === 'Football' ? "0 : 0" : "0/0 (0.0)";
                 liveMatchesData.push(liveM);
             });
 
@@ -407,11 +416,11 @@
                 let selX = betSlip.find(b=>b.matchId===m.id&&b.pick==='X')?'selected':'';
                 let sel2 = betSlip.find(b=>b.matchId===m.id&&b.pick==='W2')?'selected':'';
                 let badge = `<span style="background:#154e8e; color:#fff; padding:1px 4px; border-radius:2px; font-weight:700; font-size:9px;">SPORTS</span>`;
-                if(Math.random()>0.5) badge = `<span class="live-badge">LIVE</span>`;
+                if(m.isLive) badge = `<span class="live-badge">LIVE</span>`;
                 return `
                 <div class="game-block-card">
                     <div class="gb-top">
-                        <div style="display:flex; align-items:center; gap:5px;"><span style="color:#2e6db5">🏏</span> Bangladesh vs Pakistan ${badge}</div>
+                        <div style="display:flex; align-items:center; gap:5px;"><span style="color:#2e6db5">${m.sport === 'Cricket' ? '🏏' : '⚽'}</span> ${m.teamA} vs ${m.teamB} ${badge}</div>
                         <div class="gb-star">☆</div>
                     </div>
                     <div class="gb-teams">
@@ -452,7 +461,7 @@
                 return `
                 <div class="event-row">
                     <div class="er-header">
-                        <div style="display:flex; align-items:center; gap:5px;"><span style="color:#2e6db5">🏏</span> India. Ayodhya Premier League <span style="background:var(--accent-green); color:#000; padding:1px 4px; border-radius:2px; font-weight:700; font-size:9px;">LIVE</span></div>
+                        <div style="display:flex; align-items:center; gap:5px;"><span style="color:#2e6db5">${m.sport === 'Cricket' ? '🏏' : '⚽'}</span> India. Ayodhya Premier League ${m.isLive ? `<span style="background:var(--accent-green); color:#000; padding:1px 4px; border-radius:2px; font-weight:700; font-size:9px;">LIVE</span>` : ''}</div>
                         <div style="color:var(--accent-yellow); font-size:16px;">☆</div>
                     </div>
                     <div class="er-body">
@@ -499,8 +508,7 @@
             // Setup a live score simulation interval
             setInterval(() => {
                 liveMatchesData.forEach(m => {
-                    // Randomly update score sometimes
-                    if(Math.random() > 0.7) {
+                    if (m.isLive && Math.random() > 0.6) {
                         m.dynScore = m.sport === 'Football' ? randomScoreFootball() : randomScore();
                         const st = document.getElementById('score-t-' + m.id);
                         const sl = document.getElementById('score-l-' + m.id);

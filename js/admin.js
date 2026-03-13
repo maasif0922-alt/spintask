@@ -24,6 +24,7 @@ const Admin = {
     DB_SUPPORT_MESSAGES: 'spintask_support_messages',
     DB_SPORTXBET_MATCHES: 'spintask_sportxbet_matches',
     DB_SPORTXBET_BETS: 'spintask_sportxbet_bets',
+    DB_SPORTXBET_SETTINGS: 'spintask_sportxbet_settings',
 
     // Default Settings Initialization
     init() {
@@ -1004,18 +1005,27 @@ const Admin = {
 
     // ─── SportXBet ────────────────────────────────────────────────────────
 
+    getSportXBetSettings() {
+        return this.getObjDb(this.DB_SPORTXBET_SETTINGS) || {};
+    },
+
+    saveSportXBetSettings(data) {
+        this.saveDb(this.DB_SPORTXBET_SETTINGS, data);
+        this.logAction('Admin updated SportXBet UI Settings');
+    },
+
     getMatches() {
         return this.getDb(this.DB_SPORTXBET_MATCHES) || [];
     },
 
-    addMatch(sport, teamA, teamB, matchTime, oddsA, oddsB) {
+    addMatch(sport, teamA, teamB, oddsA, oddsB, isLive) {
         const matches = this.getMatches();
         const newMatch = {
             id: 'm_' + Date.now(),
             sport, teamA, teamB,
-            matchTime: new Date(matchTime).toISOString(),
             oddsA: parseFloat(oddsA),
             oddsB: parseFloat(oddsB),
+            isLive: !!isLive,
             status: 'upcoming',
             winner: null
         };
@@ -1023,6 +1033,22 @@ const Admin = {
         this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
         this.logAction(`Admin added SportXBet match: ${teamA} vs ${teamB}`);
         return newMatch;
+    },
+
+    updateMatch(matchId, sport, teamA, teamB, oddsA, oddsB, isLive, status) {
+        const matches = this.getMatches();
+        const m = matches.find(x => x.id === matchId);
+        if(m) {
+            m.sport = sport;
+            m.teamA = teamA;
+            m.teamB = teamB;
+            m.oddsA = parseFloat(oddsA);
+            m.oddsB = parseFloat(oddsB);
+            m.isLive = !!isLive;
+            m.status = status;
+            this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
+            this.logAction(`Admin updated SportXBet match: ${teamA} vs ${teamB}`);
+        }
     },
 
     updateMatchStatus(matchId, status) {
