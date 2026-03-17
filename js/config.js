@@ -168,6 +168,6 @@ const GLOBAL_CONFIG = {
             }
         ]
     },
-    "version": "1.0.4557",
-    "lastUpdated": "2026-03-18T02:17:37.343Z"
+    "version": "1.0.3345",
+    "lastUpdated": "2026-03-18T02:33:45.343Z"
 };
