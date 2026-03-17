@@ -79,6 +79,17 @@ const GLOBAL_CONFIG = {
             "remainingTickets": 100,
             "drawDate": "2016-04-01T00:00:00.000Z",
             "status": "active"
+        },
+        {
+            "id": "ld_1773783452954",
+            "title": "asif ",
+            "prize": "loptop",
+            "image": "https://www.google.com/imgres?q=mobile%20phone&imgurl=https%3A%2F%2Fcellmart.pk%2Fwp-content%2Fuploads%2F2025%2F10%2Fvivo-y21d-red-cellmart-350x350.png&imgrefurl=https%3A%2F%2Fcellmart.pk%2Fmobile-phones%2F&docid=P0szs0yQ0KWRzM&tbnid=I7gVvrzlr_okGM&vet=12ahUKEwjQ97WPk6mTAxV_VKQEHa6tOa0QnPAOegQIIBAB..i&w=350&h=350&hcb=2&ved=2ahUKEwjQ97WPk6mTAxV_VKQEHa6tOa0QnPAOegQIIBAB",
+            "price": 456,
+            "totalTickets": 544,
+            "remainingTickets": 544,
+            "drawDate": "2026-03-03T00:00:00.000Z",
+            "status": "active"
         }
     ],
     "signal": {
@@ -168,6 +179,6 @@ const GLOBAL_CONFIG = {
             }
         ]
     },
-    "version": "1.0.3345",
-    "lastUpdated": "2026-03-18T02:33:45.343Z"
+    "version": "1.0.3750",
+    "lastUpdated": "2026-03-18T02:37:50.265Z"
 };
