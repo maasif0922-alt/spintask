@@ -186,6 +186,60 @@ const Admin = {
             };
             localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
         }
+
+        // --- NEW: Global Configuration Sync ---
+        this.syncFromConfig();
+    },
+
+    /**
+     * Syncs localStorage with GLOBAL_CONFIG if it exists.
+     * This allows the AI Assistant to push global updates that take effect for all users.
+     */
+    syncFromConfig() {
+        if (typeof GLOBAL_CONFIG === 'undefined') return;
+
+        console.log('Syncing from GLOBAL_CONFIG (v' + (GLOBAL_CONFIG.version || 'unknown') + ')...');
+
+        if (GLOBAL_CONFIG.settings) {
+            const current = this.getObjDb(this.DB_SETTINGS);
+            this.saveDb(this.DB_SETTINGS, { ...current, ...GLOBAL_CONFIG.settings });
+        }
+
+        if (GLOBAL_CONFIG.tasks) {
+            this.saveDb(this.DB_TASKS, GLOBAL_CONFIG.tasks);
+        }
+
+        if (GLOBAL_CONFIG.announcement) {
+            this.saveDb(this.DB_ANNOUNCEMENTS, GLOBAL_CONFIG.announcement);
+        }
+
+        if (GLOBAL_CONFIG.luckydraws) {
+            this.saveDb(this.DB_LUCKYDRAWS, GLOBAL_CONFIG.luckydraws);
+        }
+
+        if (GLOBAL_CONFIG.signal) {
+            this.saveDb(this.DB_SIGNAL, GLOBAL_CONFIG.signal);
+        }
+
+        if (GLOBAL_CONFIG.community_links) {
+            this.saveDb(this.DB_COMMUNITY_LINKS, GLOBAL_CONFIG.community_links);
+        }
+
+        if (GLOBAL_CONFIG.social_media) {
+            this.saveDb(this.DB_SOCIAL_MEDIA, GLOBAL_CONFIG.social_media);
+        }
+
+        if (GLOBAL_CONFIG.spin_settings) {
+            this.saveDb(this.DB_SPIN_SETTINGS, GLOBAL_CONFIG.spin_settings);
+        }
+
+        if (GLOBAL_CONFIG.content) {
+            const current = this.getObjDb(this.DB_CONTENT);
+            this.saveDb(this.DB_CONTENT, { ...current, ...GLOBAL_CONFIG.content });
+        }
+
+        localStorage.setItem('spintask_config_version', GLOBAL_CONFIG.version || Date.now());
+        localStorage.setItem('spintask_last_sync', new Date().toISOString());
     },
 
     // Retrieve full dataset
