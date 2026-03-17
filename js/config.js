@@ -47,6 +47,6 @@ const GLOBAL_CONFIG = {
         "text": "🎉 Big News! Mobile Lucky Draw ",
         "enabled": true
     },
-    "version": "1.0.4555",
-    "lastUpdated": "2026-03-07T05:28:44.555Z"
+    "version": "1.0.4556",
+    "lastUpdated": "2026-03-17T07:15:00.000Z"
 };
