@@ -20,233 +20,161 @@ const Admin = {
     DB_SPIN_SETTINGS: 'spintask_spin_settings',
     DB_TRANSFERS: 'spintask_transfers',
     DB_TRADING_SETTINGS: 'spintask_trading_settings',
-    DB_PLATFORM_INCOME: 'spintask_platform_income',
-    DB_SUPPORT_MESSAGES: 'spintask_support_messages',
-    DB_SPORTXBET_MATCHES: 'spintask_sportxbet_matches',
-    DB_SPORTXBET_BETS: 'spintask_sportxbet_bets',
-    DB_SPORTXBET_SETTINGS: 'spintask_sportxbet_settings',
 
     // Default Settings Initialization
     init() {
-        // --- Merge Global Config (Initial/Forced Sync) ---
-        if (typeof GLOBAL_CONFIG !== 'undefined') {
-            const config = GLOBAL_CONFIG;
-            if (config.settings) {
-                // Only overwrite if not exists or if we want to force a global reset
-                // For "Live Sync", we overwrite key settings from the live config file
-                const currentSettings = this.getObjDb(this.DB_SETTINGS);
-                const mergedSettings = { ...currentSettings, ...config.settings };
-                localStorage.setItem(this.DB_SETTINGS, JSON.stringify(mergedSettings));
-            }
-            if (config.signal) {
-                localStorage.setItem(this.DB_SIGNAL, JSON.stringify(config.signal));
-            }
-            if (config.tasks) {
-                localStorage.setItem(this.DB_TASKS, JSON.stringify(config.tasks));
-            }
-            if (config.announcement) {
-                localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(config.announcement));
-            }
-        }
-
         if (!localStorage.getItem(this.DB_SETTINGS)) {
-            // ... fallback to old defaults if GLOBAL_CONFIG is somehow missing
-
-            // Ensure critical settings have defaults if missing (for older localStorage versions)
-            const settings = this.getObjDb(this.DB_SETTINGS);
-            let needsSave = false;
-
-            const defaultKeys = {
+            const defaultSettings = {
                 siteName: 'SpinTask',
                 supportEmail: 'support@spintask.com',
                 depositAddress: 'TRC20_DEFAULT_ADDRESS_HERE',
                 btcAddress: 'BTC_DEFAULT_ADDRESS_HERE',
                 minDeposit: 10,
                 minWithdraw: 20,
-                refLvl1: 5,
-                refLvl2: 3,
+                refLvl1: 10,
+                refLvl2: 5,
                 allowTransfers: true,
                 ti_basic_rate: 5,
                 ti_standard_rate: 6,
                 ti_gold_rate: 7
             };
+            localStorage.setItem(this.DB_SETTINGS, JSON.stringify(defaultSettings));
+        }
 
-            for (const [key, val] of Object.entries(defaultKeys)) {
-                if (settings[key] === undefined) {
-                    settings[key] = val;
-                    needsSave = true;
+        // Ensure trading rate settings have defaults if missing
+        const settings = this.getObjDb(this.DB_SETTINGS);
+        let needsSave = false;
+        if (!settings.ti_basic_rate) { settings.ti_basic_rate = 5; needsSave = true; }
+        if (!settings.ti_standard_rate) { settings.ti_standard_rate = 6; needsSave = true; }
+        if (!settings.ti_gold_rate) { settings.ti_gold_rate = 7; needsSave = true; }
+        if (needsSave) this.saveDb(this.DB_SETTINGS, settings);
+
+        if (!localStorage.getItem(this.DB_SIGNAL)) {
+            const defaultSignal = {
+                enabled: true,
+                telegramUrl: 'https://t.me/your_signal_group',
+                buttonText: '📡 Free Crypto & Forex Signals',
+                subText: 'Join Telegram — Get FREE Daily Signals!'
+            };
+            localStorage.setItem(this.DB_SIGNAL, JSON.stringify(defaultSignal));
+        }
+
+        if (!localStorage.getItem(this.DB_TASKS)) {
+            const defaultTasks = [
+                { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true },
+                { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true }
+            ];
+            localStorage.setItem(this.DB_TASKS, JSON.stringify(defaultTasks));
+        }
+
+        if (!localStorage.getItem(this.DB_CONTENT)) {
+            const defaultContent = {
+                aboutText: 'The most trusted micro-task platform.',
+                termsText: 'These are the default terms and conditions.',
+                privacyText: 'Your privacy is important. We encrypt your data.',
+                contactText: 'Get in touch with us for support and inquiries.',
+                homeHero: 'Earn USDT Online with Simple Tasks and Spins',
+                homeSub: 'Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet.'
+            };
+            localStorage.setItem(this.DB_CONTENT, JSON.stringify(defaultContent));
+        }
+
+        if (!localStorage.getItem(this.DB_LUCKYDRAWS)) {
+            const defaultDraws = [
+                {
+                    id: 'ld1',
+                    title: 'Mobile Phone Draw',
+                    prize: 'iPhone 15 Pro Max',
+                    image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&auto=format&fit=crop&q=60',
+                    price: 1,
+                    totalTickets: 500,
+                    remainingTickets: 500,
+                    drawDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 'ld2',
+                    title: 'Used Car Draw',
+                    prize: 'Toyota Corolla 2018',
+                    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&auto=format&fit=crop&q=60',
+                    price: 2,
+                    totalTickets: 1000,
+                    remainingTickets: 1000,
+                    drawDate: new Date(Date.now() + 86400000 * 14).toISOString(),
+                    status: 'active'
+                },
+                {
+                    id: 'ld3',
+                    title: 'New Car Draw',
+                    prize: 'Tesla Model 3',
+                    image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&auto=format&fit=crop&q=60',
+                    price: 5,
+                    totalTickets: 2000,
+                    remainingTickets: 2000,
+                    drawDate: new Date(Date.now() + 86400000 * 30).toISOString(),
+                    status: 'active'
                 }
-            }
+            ];
+            localStorage.setItem(this.DB_LUCKYDRAWS, JSON.stringify(defaultDraws));
+        }
 
-            if (needsSave) this.saveDb(this.DB_SETTINGS, settings);
+        if (!localStorage.getItem(this.DB_TICKETS)) {
+            localStorage.setItem(this.DB_TICKETS, JSON.stringify([]));
+        }
 
-            if (!localStorage.getItem(this.DB_SIGNAL)) {
-                const defaultSignal = {
-                    enabled: true,
-                    telegramUrl: 'https://t.me/your_signal_group',
-                    buttonText: '📡 Free Crypto & Forex Signals',
-                    subText: 'Join Telegram — Get FREE Daily Signals!'
-                };
-                localStorage.setItem(this.DB_SIGNAL, JSON.stringify(defaultSignal));
-            }
+        if (!localStorage.getItem(this.DB_ANNOUNCEMENTS)) {
+            const defaultAnnouncement = {
+                text: '🎉 Big News! Mobile Lucky Draw has started. Buy tickets now and win amazing prizes.',
+                enabled: true
+            };
+            localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(defaultAnnouncement));
+        }
 
-            if (!localStorage.getItem(this.DB_TASKS)) {
-                const defaultTasks = [
-                    { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true },
-                    { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true }
-                ];
-                localStorage.setItem(this.DB_TASKS, JSON.stringify(defaultTasks));
-            }
+        if (!localStorage.getItem(this.DB_NOTIFICATIONS)) {
+            localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify([]));
+        }
 
-            if (!localStorage.getItem(this.DB_CONTENT)) {
-                const defaultContent = {
-                    aboutText: 'The most trusted micro-task platform.',
-                    termsText: 'These are the default terms and conditions.',
-                    privacyText: 'Your privacy is important. We encrypt your data.',
-                    contactText: 'Get in touch with us for support and inquiries.',
-                    homeHero: 'Earn USDT Online with Simple Tasks and Spins',
-                    homeSub: 'Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet.'
-                };
-                localStorage.setItem(this.DB_CONTENT, JSON.stringify(defaultContent));
-            }
+        if (!localStorage.getItem(this.DB_ADMIN_ALERTS)) {
+            localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify([]));
+        }
 
-            if (!localStorage.getItem(this.DB_LUCKYDRAWS)) {
-                const defaultDraws = [
-                    {
-                        id: 'ld1',
-                        title: 'Mobile Phone Draw',
-                        prize: 'iPhone 15 Pro Max',
-                        image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&auto=format&fit=crop&q=60',
-                        price: 1,
-                        totalTickets: 500,
-                        remainingTickets: 500,
-                        drawDate: new Date(Date.now() + 86400000 * 7).toISOString(),
-                        status: 'active'
-                    },
-                    {
-                        id: 'ld2',
-                        title: 'Used Car Draw',
-                        prize: 'Toyota Corolla 2018',
-                        image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&auto=format&fit=crop&q=60',
-                        price: 2,
-                        totalTickets: 1000,
-                        remainingTickets: 1000,
-                        drawDate: new Date(Date.now() + 86400000 * 14).toISOString(),
-                        status: 'active'
-                    },
-                    {
-                        id: 'ld3',
-                        title: 'New Car Draw',
-                        prize: 'Tesla Model 3',
-                        image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&auto=format&fit=crop&q=60',
-                        price: 5,
-                        totalTickets: 2000,
-                        remainingTickets: 2000,
-                        drawDate: new Date(Date.now() + 86400000 * 30).toISOString(),
-                        status: 'active'
-                    }
-                ];
-                localStorage.setItem(this.DB_LUCKYDRAWS, JSON.stringify(defaultDraws));
-            }
+        if (!localStorage.getItem(this.DB_COMMUNITY_LINKS)) {
+            const defaultCommunity = {
+                telegramLink: 'https://t.me/your_group',
+                whatsappGroupLink: 'https://chat.whatsapp.com/your_group',
+                whatsappCommunityLink: 'https://chat.whatsapp.com/your_community',
+                activeLink: 'telegram'
+            };
+            localStorage.setItem(this.DB_COMMUNITY_LINKS, JSON.stringify(defaultCommunity));
+        }
 
-            if (!localStorage.getItem(this.DB_TICKETS)) {
-                localStorage.setItem(this.DB_TICKETS, JSON.stringify([]));
-            }
+        if (!localStorage.getItem(this.DB_SOCIAL_MEDIA)) {
+            const defaultSocial = {
+                facebook: { url: 'https://facebook.com/', enabled: true },
+                telegram: { url: 'https://t.me/your_channel', enabled: true },
+                whatsapp: { url: 'https://chat.whatsapp.com/your_group', enabled: true },
+                tiktok: { url: 'https://tiktok.com/@your_page', enabled: true },
+                instagram: { url: 'https://instagram.com/your_page', enabled: true },
+                youtube: { url: 'https://youtube.com/@your_channel', enabled: true }
+            };
+            localStorage.setItem(this.DB_SOCIAL_MEDIA, JSON.stringify(defaultSocial));
+        }
 
-            if (!localStorage.getItem(this.DB_ANNOUNCEMENTS)) {
-                const defaultAnnouncement = {
-                    text: '🎉 Big News! Mobile Lucky Draw has started. Buy tickets now and win amazing prizes.',
-                    enabled: true
-                };
-                localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(defaultAnnouncement));
-            }
-
-            if (!localStorage.getItem(this.DB_NOTIFICATIONS)) {
-                localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify([]));
-            }
-
-            if (!localStorage.getItem(this.DB_ADMIN_ALERTS)) {
-                localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify([]));
-            }
-
-            if (!localStorage.getItem(this.DB_COMMUNITY_LINKS)) {
-                const defaultCommunity = {
-                    telegramLink: 'https://t.me/your_group',
-                    whatsappGroupLink: 'https://chat.whatsapp.com/your_group',
-                    whatsappCommunityLink: 'https://chat.whatsapp.com/your_community',
-                    activeLink: 'telegram'
-                };
-                localStorage.setItem(this.DB_COMMUNITY_LINKS, JSON.stringify(defaultCommunity));
-            }
-
-            if (!localStorage.getItem(this.DB_SOCIAL_MEDIA)) {
-                const defaultSocial = {
-                    facebook: { url: 'https://facebook.com/', enabled: true },
-                    telegram: { url: 'https://t.me/your_channel', enabled: true },
-                    whatsapp: { url: 'https://chat.whatsapp.com/your_group', enabled: true },
-                    tiktok: { url: 'https://tiktok.com/@your_page', enabled: true },
-                    instagram: { url: 'https://instagram.com/your_page', enabled: true },
-                    youtube: { url: 'https://youtube.com/@your_channel', enabled: true }
-                };
-                localStorage.setItem(this.DB_SOCIAL_MEDIA, JSON.stringify(defaultSocial));
-            }
-
-            if (!localStorage.getItem(this.DB_SPIN_SETTINGS)) {
-                const defaultSpinSettings = {
-                    enabled: true,
-                    segments: [
-                        { label: '$0.01', value: 0.01, type: 'cash' },
-                        { label: '$0.02', value: 0.02, type: 'cash' },
-                        { label: '$0.05', value: 0.05, type: 'cash' },
-                        { label: '$0.10', value: 0.10, type: 'cash' },
-                        { label: 'Try Again', value: 0, type: 'none' },
-                        { label: '$0.01', value: 0.01, type: 'cash' },
-                        { label: 'Bonus', value: 0, type: 'bonus' },
-                        { label: '$0.02', value: 0.02, type: 'cash' }
-                    ]
-                };
-                localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
-            }
-
-            if (!localStorage.getItem(this.DB_PLATFORM_INCOME)) {
-                localStorage.setItem(this.DB_PLATFORM_INCOME, '[]');
-            }
-
-            if (!localStorage.getItem(this.DB_SPORTXBET_SETTINGS)) {
-                const defaultSportXBetSettings = {
-                    heroBgUrl: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
-                    heroTitle: 'CRICKET FREE BET',
-                    heroSub: 'Guaranteed free bet if your bet loses',
-                    heroBtnText: 'TAKE PART',
-                    promo1Text: 'Accumulator Of The Day >',
-                    promo1Img: 'https://sports.mrbet.com/assets/images/promotion/bonus_accumulator.png',
-                    promo2Text: 'Cricket Free Bet >',
-                    promo2Img: 'https://media.npr.org/assets/img/2024/06/07/gettyimages-2155798939_custom-6345dc7cff0ec843c08cdde59cba6784d1dd6813-s1100-c50.jpg',
-                    comp1Img: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
-                    comp1Title: '🏆 Bangladesh vs Pakistan',
-                    comp1Events: '1 Events',
-                    comp2Img: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
-                    comp2Title: '🏆 Australian Champ. Women',
-                    comp2Events: '1 Events',
-                    comp3Img: 'https://img.freepik.com/premium-photo/3d-cricket-bats-hitting-ball-stump-with-trophy-cup-winning-concept-stadium-blue-background_1302-36262.jpg',
-                    comp3Title: '🏆 Pro50 Championship',
-                    comp3Events: '2 Events',
-                    siteLogo: '1XBET',
-                    accentColor: '#154e8e',
-                    topBarLinks: [
-                        { title: '🏆 TOP-EVENTS ▼', url: '#' },
-                        { title: 'CRICKET', url: '#' },
-                        { title: 'SPORTS ▼', url: '#' },
-                        { title: 'LIVE ▼', url: '#' },
-                        { title: '1XGAMES ▼', url: '#' },
-                        { title: 'CASINO ▼', url: 'index.html' },
-                        { title: 'LIVE CASINO ▼', url: 'index.html' }
-                    ],
-                    regWidgetTitle: 'REGISTRATION',
-                    regWidgetSub: 'Get 100% bonus on your first deposit!'
-                };
-                localStorage.setItem(this.DB_SPORTXBET_SETTINGS, JSON.stringify(defaultSportXBetSettings));
-            }
+        if (!localStorage.getItem(this.DB_SPIN_SETTINGS)) {
+            const defaultSpinSettings = {
+                enabled: true,
+                segments: [
+                    { label: '$0.01', value: 0.01, type: 'cash' },
+                    { label: '$0.02', value: 0.02, type: 'cash' },
+                    { label: '$0.05', value: 0.05, type: 'cash' },
+                    { label: '$0.10', value: 0.10, type: 'cash' },
+                    { label: 'Try Again', value: 0, type: 'none' },
+                    { label: '$0.01', value: 0.01, type: 'cash' },
+                    { label: 'Bonus', value: 0, type: 'bonus' },
+                    { label: '$0.02', value: 0.02, type: 'cash' }
+                ]
+            };
+            localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
         }
     },
 
@@ -296,44 +224,6 @@ const Admin = {
         this.saveDb(this.DB_ADMIN_ALERTS, alerts);
     },
 
-    /**
-     * Distribute referral commissions for a plan purchase
-     */
-    distributeReferralCommissions(userId, amount) {
-        const users = this.getAllUsers();
-        const settings = this.getObjDb(this.DB_SETTINGS);
-
-        const ref1Percent = parseFloat(settings.refLvl1) || 5;
-        const ref2Percent = parseFloat(settings.refLvl2) || 3;
-
-        const currentUser = users.find(u => u.id === userId);
-        if (!currentUser || !currentUser.referredBy) return;
-
-        // Level 1 Referrer
-        const ref1 = users.find(u => u.referralCode === currentUser.referredBy);
-        if (ref1) {
-            const comm1 = parseFloat(((amount * ref1Percent) / 100).toFixed(2));
-            ref1.balance = parseFloat(((ref1.balance || 0) + comm1).toFixed(2));
-            ref1.earnings = parseFloat(((ref1.earnings || 0) + comm1).toFixed(2));
-
-            this.addAdminAlert('task', `🔗 Referral Comm: ${ref1.name} earned $${comm1} (Level 1) from ${currentUser.name}'s plan activation`);
-
-            // Level 2 Referrer
-            if (ref1.referredBy) {
-                const ref2 = users.find(u => u.referralCode === ref1.referredBy);
-                if (ref2) {
-                    const comm2 = parseFloat(((amount * ref2Percent) / 100).toFixed(2));
-                    ref2.balance = parseFloat(((ref2.balance || 0) + comm2).toFixed(2));
-                    ref2.earnings = parseFloat(((ref2.earnings || 0) + comm2).toFixed(2));
-
-                    this.addAdminAlert('task', `🔗 Referral Comm: ${ref2.name} earned $${comm2} (Level 2) from ${currentUser.name}'s plan activation`);
-                }
-            }
-        }
-
-        localStorage.setItem('spintask_users', JSON.stringify(users));
-    },
-
     getAdminAlerts() {
         return this.getDb(this.DB_ADMIN_ALERTS);
     },
@@ -363,84 +253,6 @@ const Admin = {
         settings[key] = val;
         this.saveDb(this.DB_SETTINGS, settings);
         this.logAction(`Updated setting: ${key}`);
-    },
-
-    // ─── Platform Income Tracking ─────────────────────────────────────────
-
-    recordPlatformIncome(category, amount, userId) {
-        // category: 'plan' | 'luckydraw' | 'verification'
-        const incomeLogs = this.getDb(this.DB_PLATFORM_INCOME);
-        incomeLogs.push({
-            id: 'inc_' + Date.now() + Math.random().toString(36).substr(2, 5),
-            category,
-            amount: parseFloat(amount),
-            userId,
-            date: new Date().toISOString()
-        });
-        this.saveDb(this.DB_PLATFORM_INCOME, incomeLogs);
-    },
-
-    // ─── Support Messaging ────────────────────────────────────────────────
-    sendSupportMessage(userId, message, senderType = 'user') {
-        const msgs = this.getDb(this.DB_SUPPORT_MESSAGES) || [];
-        const msg = {
-            id: 'msg_' + Date.now(),
-            userId,
-            message,
-            senderType,
-            time: new Date().toISOString(),
-            read: false
-        };
-        msgs.push(msg);
-        this.saveDb(this.DB_SUPPORT_MESSAGES, msgs);
-
-        if (senderType === 'user') {
-            this.addAdminAlert('task', `💬 New support message from user ID: ${userId}`);
-        } else {
-            this.sendNotificationToUser(userId, 'Support Reply', `Admin: ${message}`);
-        }
-        return msg;
-    },
-
-    getSupportMessages(userId) {
-        const msgs = this.getDb(this.DB_SUPPORT_MESSAGES) || [];
-        return msgs.filter(m => m.userId === userId);
-    },
-
-    getAllSupportMessages() {
-        return this.getDb(this.DB_SUPPORT_MESSAGES) || [];
-    },
-
-    // ─── User Notifications (Bell Center) ──────────────────────────────────
-    sendNotificationToUser(userId, subject, message) {
-        const notes = this.getDb(this.DB_NOTIFICATIONS) || [];
-        const note = {
-            id: 'notif_' + Date.now(),
-            userId,
-            subject,
-            message,
-            date: new Date().toISOString(),
-            readBy: []
-        };
-        notes.push(note);
-        this.saveDb(this.DB_NOTIFICATIONS, notes);
-        return note;
-    },
-
-    getUserNotifications(userId) {
-        const all = this.getDb(this.DB_NOTIFICATIONS) || [];
-        return all.filter(n => n.userId === userId || n.userId === 'all');
-    },
-
-    markNotificationRead(noteId, userId) {
-        const all = this.getDb(this.DB_NOTIFICATIONS) || [];
-        const idx = all.findIndex(n => n.id === noteId);
-        if (idx !== -1) {
-            if (!all[idx].readBy.includes(userId)) {
-                all[idx].readBy.push(userId);
-                this.saveDb(this.DB_NOTIFICATIONS, all);
-            }
-        }
     },
 
     // ─── Transfers ────────────────────────────────────────────────────────
@@ -673,10 +485,6 @@ const Admin = {
         this.saveDb(this.DB_TICKETS, tickets);
         localStorage.setItem('spintask_users', JSON.stringify(users));
         this.logAction(`User ${user.email} purchased ticket #${ticketNumber} for ${draw.title}`);
-        this.recordPlatformIncome('luckydraw', draw.price, user.id);
-
-        // Fire admin alert
-        this.addAdminAlert('task', `🎉 Lucky Draw: ${user.name} bought a ticket for ${draw.title}`);
 
         return { success: true, ticketNumber };
     },
@@ -843,15 +651,6 @@ const Admin = {
         // Date-filtered metrics
         let deposits = 0, withdrawals = 0, registrations = 0, refEarnings = 0;
 
-        // Categorized custom income
-        let incomePlan = 0, incomeDraw = 0, incomeVerify = 0;
-        const incomeLogs = this.getDb(this.DB_PLATFORM_INCOME) || [];
-        incomeLogs.filter(i => filterDate(i.date)).forEach(i => {
-            if (i.category === 'plan') incomePlan += i.amount;
-            if (i.category === 'luckydraw') incomeDraw += i.amount;
-            if (i.category === 'verification') incomeVerify += i.amount;
-        });
-
         txs.filter(t => filterDate(t.date)).forEach(t => {
             if (t.type === 'deposit' && t.status === 'approved') deposits += t.amount || 0;
             if (t.type === 'withdraw' && t.status === 'approved') withdrawals += t.amount || 0;
@@ -917,8 +716,7 @@ const Admin = {
             profit: { today: profit, month: monthProfit, allTime: allTimeProfit },
             summary: { totalDep: allTimeDep, totalWith: allTimeWith, pendingDep, pendingWith },
             users: { online: onlineUsers, active: activeUsersCount, total: users.length },
-            leaderboards: { topEarner, topInvestor, topReferrer },
-            categorizedIncome: { plan: incomePlan, luckydraw: incomeDraw, verification: incomeVerify }
+            leaderboards: { topEarner, topInvestor, topReferrer }
         };
     },
 
@@ -986,10 +784,8 @@ const Admin = {
 
         localStorage.setItem('spintask_users', JSON.stringify(users));
         localStorage.setItem('spintask_trading_investments', JSON.stringify(investments));
-        const message = `Successfully credited ${credited} users in ${planId} plan @ ${rate}%`;
-        this.logAction(message);
-        this.addAdminAlert('task', `📈 Trading: ${message}`);
-        return { success: true, message, credited };
+        this.logAction(`Admin manually credited ${planId} plan — ${credited} users @ ${rate}%`);
+        return credited;
     },
 
     getChartData() {
@@ -1041,50 +837,30 @@ const Admin = {
 
     // ─── SportXBet ────────────────────────────────────────────────────────
 
-    getSportXBetSettings() {
-        return this.getObjDb(this.DB_SPORTXBET_SETTINGS) || {};
-    },
-
-    saveSportXBetSettings(data) {
-        this.saveDb(this.DB_SPORTXBET_SETTINGS, data);
-        this.logAction('Admin updated SportXBet UI Settings');
-    },
+    DB_SPORTXBET_MATCHES: 'spintask_sportxbet_matches',
+    DB_SPORTXBET_BETS: 'spintask_sportxbet_bets',
 
     getMatches() {
         return this.getDb(this.DB_SPORTXBET_MATCHES) || [];
     },
 
-    addMatch(sport, teamA, teamB, oddsA, oddsB, isLive) {
+    addMatch(sport, teamA, teamB, matchTime, oddsA, oddsB) {
         const matches = this.getMatches();
         const newMatch = {
             id: 'm_' + Date.now(),
-            sport, teamA, teamB,
+            sport,
+            teamA,
+            teamB,
+            matchTime: new Date(matchTime).toISOString(),
             oddsA: parseFloat(oddsA),
             oddsB: parseFloat(oddsB),
-            isLive: !!isLive,
-            status: 'upcoming',
+            status: 'upcoming', // upcoming, live, finished
             winner: null
         };
         matches.push(newMatch);
         this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
         this.logAction(`Admin added SportXBet match: ${teamA} vs ${teamB}`);
         return newMatch;
-    },
-
-    updateMatch(matchId, sport, teamA, teamB, oddsA, oddsB, isLive, status) {
-        const matches = this.getMatches();
-        const m = matches.find(x => x.id === matchId);
-        if(m) {
-            m.sport = sport;
-            m.teamA = teamA;
-            m.teamB = teamB;
-            m.oddsA = parseFloat(oddsA);
-            m.oddsB = parseFloat(oddsB);
-            m.isLive = !!isLive;
-            m.status = status;
-            this.saveDb(this.DB_SPORTXBET_MATCHES, matches);
-            this.logAction(`Admin updated SportXBet match: ${teamA} vs ${teamB}`);
-        }
     },
 
     updateMatchStatus(matchId, status) {
@@ -1113,6 +889,7 @@ const Admin = {
 
         const user = users[uIndex];
         const betAmount = parseFloat(amount);
+
         if (user.balance < betAmount) return { success: false, message: 'Insufficient balance' };
 
         user.balance -= betAmount;
@@ -1121,15 +898,20 @@ const Admin = {
         const bets = this.getBets();
         const newBet = {
             id: 'b_' + Date.now(),
-            userId, userName: user.name, userEmail: user.email,
-            matchId, team, amount: betAmount, odds: parseFloat(odds),
+            userId,
+            userName: user.name,
+            userEmail: user.email,
+            matchId,
+            team,
+            amount: betAmount,
+            odds: parseFloat(odds),
             potentialPayout: betAmount * parseFloat(odds),
-            status: 'pending', date: new Date().toISOString()
+            status: 'pending', // pending, won, lost
+            date: new Date().toISOString()
         };
         bets.unshift(newBet);
         this.saveDb(this.DB_SPORTXBET_BETS, bets);
         this.logAction(`User ${user.email} placed $${betAmount} bet on ${team}`);
-        this.addAdminAlert('task', `📉 SportXBet: ${user.name} placed $${betAmount} bet on ${team}`);
 
         return { success: true, message: 'Bet placed successfully!', newBalance: user.balance };
     },
@@ -1155,7 +937,7 @@ const Admin = {
                     const uIndex = users.findIndex(u => u.id === bet.userId);
                     if (uIndex !== -1) {
                         users[uIndex].balance = parseFloat((users[uIndex].balance + bet.potentialPayout).toFixed(2));
-                        users[uIndex].earnings = parseFloat(((users[uIndex].earnings || 0) + (bet.potentialPayout - bet.amount)).toFixed(2));
+                        users[uIndex].earnings = parseFloat(((users[uIndex].earnings || 0) + (bet.potentialPayout - bet.amount)).toFixed(2)); // Net profit
                         totalPayout += bet.potentialPayout;
                         winnersCount++;
                     }
@@ -1168,9 +950,61 @@ const Admin = {
         this.saveDb(this.DB_SPORTXBET_BETS, bets);
         localStorage.setItem('spintask_users', JSON.stringify(users));
         this.logAction(`Processed results for match ${matchId}. Paid out $${totalPayout} to ${winnersCount} winners.`);
-        this.addAdminAlert('task', `🏆 SportXBet: Processed results for match ${matchId}. Paid $${totalPayout.toFixed(2)} to ${winnersCount} winners.`);
         
         return { success: true, message: `Processed results. Paid out $${totalPayout.toFixed(2)} to ${winnersCount} winners.` };
+    },
+
+    // ─── Deployment Code Generation ───────────────────────────────────────
+
+    /**
+     * Aggregates all system data from localStorage into a single deployment block.
+     */
+    generateDeploymentCode() {
+        const dbKeys = [
+            'spintask_settings',
+            'spintask_tasks',
+            'spintask_content',
+            'spintask_luckydraws',
+            'spintask_signal_button',
+            'spintask_community_links',
+            'spintask_social_media',
+            'spintask_announcements',
+            'spintask_spin_settings',
+            'spintask_trading_settings',
+            'spintask_sportxbet_matches'
+        ];
+
+        let exportData = {};
+        dbKeys.forEach(key => {
+            const val = localStorage.getItem(key);
+            if (val) {
+                try {
+                    exportData[key] = JSON.parse(val);
+                } catch (e) {
+                    console.error(`Error parsing ${key}:`, e);
+                }
+            }
+        });
+
+        // Add a timestamp and versioning if needed
+        exportData._exportTime = new Date().toISOString();
+        exportData._version = "1.0.0";
+
+        const jsonString = JSON.stringify(exportData, null, 2);
+        
+        return `/**
+ * SPIN EARN WEBSITE - DEPLOYMENT DATA BUNDLE
+ * Captured at: ${new Date().toLocaleString()}
+ * 
+ * INSTRUCTIONS:
+ * 1. Copy everything below this line.
+ * 2. Send it to your AI assistant (Antigravity).
+ * 3. Say "Please push these changes live."
+ */
+
+const DEPLOYMENT_DATA = ${jsonString};
+
+// END OF DATA BUNDLE`;
     }
 };
 

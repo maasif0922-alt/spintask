@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/config.js"></script>
     <script src="js/admin.js"></script>
     <style>
         :root {
@@ -532,15 +531,15 @@
                                 id="alert-badge-nav" class="alert-badge" style="display:none">0</span></a></li>
                     <li><a href="#" onclick="switchTab('tasks',event)">&#x1F4CB; Tasks</a></li>
                     <li><a href="#" onclick="switchTab('spinsettings',event)">&#x1F3A1; Spin Settings</a></li>
+                    <li><a href="#" onclick="switchTab('sportxbet',event)">🏅 SportXBet</a></li>
                     <li><a href="#" onclick="switchTab('trading',event)">&#x1F4C8; Trading Investment</a></li>
-                    <li><a href="#" onclick="switchTab('sportxbet',event)">&#x1F3C5; SportXBet</a></li>
                     <li><a href="#" onclick="switchTab('luckydraw',event)">&#x1F389; Lucky Draw</a></li>
-                    <li><a href="#" onclick="switchTab('support',event)">&#x1F4AC; Support Center</a></li>
                     <li><a href="#" onclick="switchTab('notifications',event)">&#x1F4E3; Broadcast</a></li>
                     <li><a href="#" onclick="switchTab('communitylinks',event)">&#x1F680; Community Links</a></li>
                     <li><a href="#" onclick="switchTab('socialmedia',event)">&#x1F4F1; Social Media</a></li>
                     <li><a href="#" onclick="switchTab('settings',event)">&#x2699;&#xFE0F; Settings</a></li>
                     <li><a href="#" onclick="switchTab('content',event)">&#x1F4DD; Content</a></li>
+                    <li><a href="#" onclick="switchTab('pushtolive',event)">🚀 PUSH TO LIVE</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -636,96 +635,11 @@
                                 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">$0.00</div>
                         </div>
                         <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #b339ff;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Today's
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Website
                                 Clicks</div>
                             <div id="h-clicks"
                                 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
                         </div>
-                        <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #6c5ce7;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total
-                                Clicks</div>
-                            <div id="h-total-clicks"
-                                style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
-                        </div>
-                        <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #00cec9;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total
-                                Visitors</div>
-                            <div id="h-total-visitors"
-                                style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Today's Financial Summary -->
-                <div style="margin-top: 24px; margin-bottom: 24px;">
-                    <h3 style="font-size: 1.1rem; color: #fff; margin-bottom: 16px;">Today's Income & Withdrawals
-                        Breakdown</h3>
-                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #39ff14;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">📈
-                                Trading Plans Income</div>
-                            <div id="h-inc-plans"
-                                style="font-size: 1.4rem; font-weight: 700; color: #39ff14; margin-top: 6px;">$0.00
-                            </div>
-                        </div>
-                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #ffaa00;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">🎉
-                                Lucky Draw Income</div>
-                            <div id="h-inc-draw"
-                                style="font-size: 1.4rem; font-weight: 700; color: #ffaa00; margin-top: 6px;">$0.00
-                            </div>
-                        </div>
-                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #4d7cff;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">✅
-                                Verification Fees</div>
-                            <div id="h-inc-verify"
-                                style="font-size: 1.4rem; font-weight: 700; color: #4d7cff; margin-top: 6px;">$0.00
-                            </div>
-                        </div>
-                        <div class="card" style="margin-bottom: 0; padding: 18px; border-top: 3px solid #fff;">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">💰
-                                Total Received Today</div>
-                            <div id="h-inc-total"
-                                style="font-size: 1.4rem; font-weight: 700; color: #fff; margin-top: 6px;">$0.00</div>
-                            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">Includes standard
-                                deposits</div>
-                        </div>
-                        <div class="card"
-                            style="margin-bottom: 0; padding: 18px; border-top: 3px solid #ff4d4d; background: rgba(255, 77, 77, 0.05);">
-                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">💸
-                                Total Withdrawals Today</div>
-                            <div id="h-out-total"
-                                style="font-size: 1.4rem; font-weight: 700; color: #ff4d4d; margin-top: 6px;">$0.00
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Today's Income Ledger -->
-                <div class="card" style="margin-bottom: 24px; padding: 24px;">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-                        <h3 style="margin-bottom: 0;">📋 Today's Income Ledger</h3>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Real-time itemized payments</div>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table class="user-table">
-                            <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>User</th>
-                                    <th>Category</th>
-                                    <th>Amount</th>
-                                </tr>
-                            </thead>
-                            <tbody id="ledger-body">
-                                <tr>
-                                    <td colspan="4" style="text-align:center; color:var(--text-muted); padding: 40px;">
-                                        Loading today's ledger...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
 
@@ -851,6 +765,29 @@
                 <div class="card">
                     <h3>Recent Transfers</h3>
                     <div id="sp-history" style="margin-top:10px;"></div>
+                </div>
+            </div>
+
+            <!-- PUSH TO LIVE -->
+            <div id="tab-pushtolive" class="admin-section">
+                <div class="page-title">🚀 Push Updates to Live</div>
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <h3 style="color: var(--primary-neon);">Export System Data</h3>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                        Use this tool to generate a deployment code snippet. Copy this code and provide it to your AI
+                        assistant (Antigravity) to push your changes live to both the website and mobile apps.
+                    </p>
+
+                    <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+                        <button class="btn btn-primary" onclick="generateDeploymentCode()">Generate Deployment Code</button>
+                        <button class="btn btn-outline" onclick="copyDeploymentCode()">Copy to Clipboard</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Generated Deployment Code</label>
+                        <textarea id="deployment-code-area" class="form-input" readonly
+                            style="height: 400px; font-family: 'Courier New', Courier, monospace; font-size: 0.8rem; background: #000; border-color: var(--primary-neon);"></textarea>
+                    </div>
                 </div>
             </div>
 
@@ -985,107 +922,6 @@
                 </div>
             </div>
 
-            <!-- SPORTXBET -->
-            <div id="tab-sportxbet" class="admin-section">
-                <div class="page-title">🏅 SportXBet Management</div>
-                
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3>Header & Theme Configuration</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
-                        <div class="form-group"><label>Site Logo (Text or URL)</label><input id="sxb-logo" class="form-input"></div>
-                        <div class="form-group"><label>Accent Color</label><input id="sxb-accent-color" type="color" class="form-input" style="height:42px; padding:2px;"></div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3>Top Navigation Links</h3>
-                    <div id="sxb-nav-links-list" style="margin-bottom:15px;">
-                        <!-- Nav links will be rendered here -->
-                    </div>
-                    <div style="display:flex; gap:10px;">
-                        <input id="sxb-new-nav-title" placeholder="Link Title" class="form-input" style="flex:1;">
-                        <input id="sxb-new-nav-url" placeholder="URL (e.g. # or index.html)" class="form-input" style="flex:1;">
-                        <button class="btn btn-outline" onclick="addSXBNavLink()">Add Link</button>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3>Hero Banner Configuration</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
-                        <div class="form-group"><label>Background Image URL</label><input id="sxb-hero-bg" class="form-input"></div>
-                        <div class="form-group"><label>Main Title</label><input id="sxb-hero-title" class="form-input"></div>
-                        <div class="form-group"><label>Subtitle</label><input id="sxb-hero-sub" class="form-input"></div>
-                        <div class="form-group"><label>Button Text</label><input id="sxb-hero-btn" class="form-input"></div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3>Registration Widget</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
-                        <div class="form-group"><label>Widget Header</label><input id="sxb-reg-title" class="form-input"></div>
-                        <div class="form-group"><label>Instructions Subtext</label><input id="sxb-reg-sub" class="form-input"></div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3>Promotional Banners</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
-                        <div class="form-group"><label>Banner 1 Text</label><input id="sxb-promo1-text" class="form-input"></div>
-                        <div class="form-group"><label>Banner 1 Image URL</label><input id="sxb-promo1-img" class="form-input"></div>
-                        <div class="form-group"><label>Banner 2 Text</label><input id="sxb-promo2-text" class="form-input"></div>
-                        <div class="form-group"><label>Banner 2 Image URL</label><input id="sxb-promo2-img" class="form-input"></div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-bottom: 20px;">
-                    <h3>Top Competitions Banners</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;">
-                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-                            <label style="font-weight: bold; display: block; margin-bottom: 10px; color: var(--primary-neon);">Card 1</label>
-                            <div class="form-group"><label>Title</label><input id="sxb-comp1-title" class="form-input"></div>
-                            <div class="form-group"><label>Image URL</label><input id="sxb-comp1-img" class="form-input"></div>
-                            <div class="form-group"><label>Events Info</label><input id="sxb-comp1-events" class="form-input"></div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-                            <label style="font-weight: bold; display: block; margin-bottom: 10px; color: var(--primary-neon);">Card 2</label>
-                            <div class="form-group"><label>Title</label><input id="sxb-comp2-title" class="form-input"></div>
-                            <div class="form-group"><label>Image URL</label><input id="sxb-comp2-img" class="form-input"></div>
-                            <div class="form-group"><label>Events Info</label><input id="sxb-comp2-events" class="form-input"></div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px;">
-                            <label style="font-weight: bold; display: block; margin-bottom: 10px; color: var(--primary-neon);">Card 3</label>
-                            <div class="form-group"><label>Title</label><input id="sxb-comp3-title" class="form-input"></div>
-                            <div class="form-group"><label>Image URL</label><input id="sxb-comp3-img" class="form-input"></div>
-                            <div class="form-group"><label>Events Info</label><input id="sxb-comp3-events" class="form-input"></div>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" style="margin-top:15px;" onclick="saveSportXBetConfig()">💾 Save All Settings</button>
-                    <span id="sxb-save-msg" style="color:var(--primary-neon); margin-left:10px; display:none;">Saved successfully!</span>
-                </div>
-
-                <div class="card">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                        <h3>Active Matches</h3>
-                        <button class="btn btn-outline" onclick="openAddMatchModal()">➕ Add New Match</button>
-                    </div>
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Sport</th>
-                                    <th>Teams</th>
-                                    <th>Odds (A / B)</th>
-                                    <th>Live?</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sxb-matches-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
             <!-- LUCKY DRAW -->
             <div id="tab-luckydraw" class="admin-section">
                 <div class="page-title">🎉 Lucky Draw</div>
@@ -1110,41 +946,6 @@
                 <div class="card">
                     <h3>Active Draws</h3>
                     <div id="draws-list" style="margin-top:12px;"></div>
-                </div>
-            </div>
-
-            <!-- SUPPORT CENTER -->
-            <div id="tab-support" class="admin-section">
-                <div class="page-title">💬 User Support Center</div>
-                <div class="dashboard-layout" style="grid-template-columns: 280px 1fr; height: 70vh;">
-                    <!-- User List -->
-                    <div class="card" style="margin-bottom:0; overflow-y: auto; padding: 15px;">
-                        <h4 style="margin-bottom: 15px; font-size: 0.9rem; color: var(--text-muted);">Conversations</h4>
-                        <div id="support-user-list">
-                            <!-- Populated by JS -->
-                        </div>
-                    </div>
-                    <!-- Chat Window -->
-                    <div class="card"
-                        style="margin-bottom:0; display:flex; flex-direction: column; padding: 0; overflow: hidden;">
-                        <div id="chat-header"
-                            style="padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); font-weight: 600;">
-                            Select a user to start chatting
-                        </div>
-                        <div id="admin-chat-messages"
-                            style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
-                            <div style="text-align: center; color: var(--text-muted); margin-top: 100px;">
-                                <div style="font-size: 3rem; margin-bottom: 10px;">💬</div>
-                                Click on a user from the left to view messages
-                            </div>
-                        </div>
-                        <div id="admin-chat-input-area"
-                            style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); display: none; gap: 10px;">
-                            <input type="text" id="admin-support-input" placeholder="Type your reply..."
-                                class="form-input" style="flex: 1; margin-bottom: 0;">
-                            <button onclick="sendAdminReply()" class="btn btn-primary">Reply</button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -1191,68 +992,6 @@
                 </div>
             </div>
 
-            <!-- SPORTXBET -->
-            <div id="tab-sportxbet" class="admin-section">
-                <div class="page-title">🏅 SportXBet Management</div>
-                <div class="card" style="margin-bottom:20px;">
-                    <h3>Add New Match</h3>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-top:15px;">
-                        <div class="form-group">
-                            <label>Sport</label>
-                            <select id="sxb-sport" class="form-input">
-                                <option value="Cricket">Cricket</option>
-                                <option value="Football">Football</option>
-                                <option value="Tennis">Tennis</option>
-                                <option value="Basketball">Basketball</option>
-                                <option value="eSports">eSports</option>
-                            </select>
-                        </div>
-                        <div class="form-group"><label>Team A</label><input id="sxb-teamA" class="form-input" placeholder="e.g. India"></div>
-                        <div class="form-group"><label>Team B</label><input id="sxb-teamB" class="form-input" placeholder="e.g. Australia"></div>
-                        <div class="form-group"><label>Odds (Team A)</label><input id="sxb-oddsA" class="form-input" type="number" step="0.01" value="1.90"></div>
-                        <div class="form-group"><label>Odds (Team B)</label><input id="sxb-oddsB" class="form-input" type="number" step="0.01" value="1.90"></div>
-                        <div class="form-group"><label>Match Time</label><input id="sxb-time" class="form-input" type="datetime-local"></div>
-                    </div>
-                    <button class="btn btn-primary" onclick="addSXBMatch()">➕ Add Match</button>
-                </div>
-                <div class="card" style="margin-bottom:20px;">
-                    <h3>Active Matches</h3>
-                    <div style="overflow-x:auto; margin-top:15px;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Sport</th>
-                                    <th>Event</th>
-                                    <th>Time</th>
-                                    <th>Odds</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sxb-matches-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>Betting History & Payouts</h3>
-                    <div style="overflow-x:auto; margin-top:15px;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Selection</th>
-                                    <th>Stake</th>
-                                    <th>Payout</th>
-                                    <th>Status</th>
-                                    <th>-</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sxb-bets-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
             <!-- SOCIAL MEDIA -->
             <div id="tab-socialmedia" class="admin-section">
                 <div class="page-title">📱 Social Media</div>
@@ -1267,8 +1006,6 @@
                 <div class="card" style="max-width:560px;">
                     <div class="form-group"><label>USDT TRC20 Deposit Address</label><input id="set-usdt"
                             class="form-input" placeholder="TRC20 address"></div>
-                    <div class="form-group"><label>Bitcoin (BTC) Deposit Address</label><input id="set-btc"
-                            class="form-input" placeholder="BTC address"></div>
                     <div class="form-group"><label>Min Deposit (USDT)</label><input id="set-mindep" type="number"
                             class="form-input" step="0.01"></div>
                     <div class="form-group"><label>Min Withdrawal (USDT)</label><input id="set-minwith" type="number"
@@ -1288,25 +1025,72 @@
                             Enabled</label><input type="checkbox" id="set-sig-en" style="width:18px;height:18px;"></div>
                     <button class="btn btn-primary" onclick="saveAllSettings()">Save All Settings</button>
                 </div>
+            </div>
 
-                <!-- NEW: SYNC TO LIVE SECTION -->
-                <div class="card" style="max-width:560px; margin-top:20px; border: 1px solid var(--primary-neon);">
-                    <h3 style="color: var(--primary-neon); margin-bottom: 10px;">🌐 Sync to All Users (Live Push)</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">
-                        After clicking "Save All Settings" above, use this button to generate a sync code.
-                        <b>Send this code to the AI Assistant</b> to update the site for all users.
-                    </p>
-                    <button class="btn btn-outline" onclick="generateSyncCode()"
-                        style="border-color: var(--primary-neon); color: var(--primary-neon);">🔄 Generate Sync Code for
-                        Assistant</button>
+            <!-- SPORTXBET -->
+            <div id="tab-sportxbet" class="admin-section">
+                <div class="page-title">🏅 SportXBet Management</div>
+                
+                <!-- Add Match Form -->
+                <div class="card" style="margin-bottom:20px;">
+                    <h3>Add New Match</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;">
+                        <div class="form-group">
+                            <label>Sport Category</label>
+                            <select id="sxb-sport" class="form-input">
+                                <option value="Cricket">Cricket</option>
+                                <option value="Football">Football</option>
+                                <option value="Tennis">Tennis</option>
+                                <option value="Basketball">Basketball</option>
+                                <option value="eSports">eSports</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Team A</label><input id="sxb-teamA" class="form-input" placeholder="Team A Name"></div>
+                        <div class="form-group"><label>Team B</label><input id="sxb-teamB" class="form-input" placeholder="Team B Name"></div>
+                        <div class="form-group"><label>Match Time</label><input id="sxb-time" type="datetime-local" class="form-input"></div>
+                        <div class="form-group"><label>Odds Team A</label><input id="sxb-oddsA" type="number" step="0.01" class="form-input" placeholder="1.85"></div>
+                        <div class="form-group"><label>Odds Team B</label><input id="sxb-oddsB" type="number" step="0.01" class="form-input" placeholder="2.10"></div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addSXBMatch()">➕ Add Match</button>
+                </div>
 
-                    <div id="sync-code-area" style="display:none; margin-top:15px;">
-                        <label style="font-size: 0.8rem; color: var(--primary-neon);">Copy this code and give it to the
-                            AI Assistant:</label>
-                        <textarea id="sync-code-output" class="form-input" rows="4" readonly
-                            style="font-family: monospace; font-size: 0.75rem; background: rgba(0,0,0,0.3); margin-top:5px;"></textarea>
-                        <button class="btn btn-outline" onclick="copySyncCode()"
-                            style="margin-top:5px; font-size: 0.8rem;">📋 Copy Code</button>
+                <!-- Matches List -->
+                <div class="card" style="margin-bottom:20px;">
+                    <h3>Active Matches</h3>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sport</th>
+                                    <th>Teams</th>
+                                    <th>Time</th>
+                                    <th>Odds (A/B)</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sxb-matches-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Betting History -->
+                <div class="card">
+                    <h3>Betting History & Payouts</h3>
+                    <div style="overflow-x:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Bet Detail</th>
+                                    <th>Amount</th>
+                                    <th>Potential Payout</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sxb-bets-body"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -1355,13 +1139,14 @@
             if (id === 'tasks') renderTasks();
             if (id === 'spinsettings') renderSpinSettings();
             if (id === 'trading') renderTrading();
-            if (id === 'sportxbet') renderSportXBet();
             if (id === 'luckydraw') renderDraws();
             if (id === 'notifications') renderBroadcast();
             if (id === 'communitylinks') renderCommunityLinks();
             if (id === 'socialmedia') renderSocialMedia();
             if (id === 'settings') renderSettings();
+            if (id === 'sportxbet') renderSportXBet();
             if (id === 'content') renderContent();
+            if (id === 'pushtolive') renderPushToLive();
             updateAlertBadge();
         }
 
@@ -1380,7 +1165,6 @@
         function renderDashboard() {
             var users = getUsers().filter(u => u.role !== 'admin');
             var txs = getTxs();
-            var analytics = Admin.getDashboardAnalytics('today'); // New: analytics for income categorization
             var dep = txs.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
             var wit = txs.filter(t => t.type === 'withdraw' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
             var pd = txs.filter(t => t.type === 'deposit' && t.status === 'pending').length;
@@ -1427,33 +1211,10 @@
             const payoutsToday = txs.filter(t => t.type === 'withdraw' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
             document.getElementById('h-payouts').textContent = fmt(payoutsToday);
 
-            // Website Clicks & Traffic Stats
-            let traffic = JSON.parse(localStorage.getItem('spintask_traffic_stats') || '{"totalClicks":0, "dailyStats":{}, "totalVisitors":0}');
-            let dailyClicks = traffic.dailyStats[today] || 0;
-            animateValue('h-clicks', 0, dailyClicks, 1000);
-            animateValue('h-total-clicks', 0, traffic.totalClicks || 0, 1000);
-            animateValue('h-total-visitors', 0, traffic.totalVisitors || 0, 1000);
-            
-            // Legacy compatibility
+            // Website Clicks Today
             let clicksData = JSON.parse(localStorage.getItem('spintask_clicks') || '{"count":0}');
             if (clicksData.date !== today) clicksData.count = 0;
-            // (We already updated h-clicks using the better traffic object)
-
-            // Today's categorize income & withdrawals
-            const tdIncPlans = analytics.categorizedIncome.plan || 0;
-            const tdIncDraw = analytics.categorizedIncome.luckydraw || 0;
-            const tdIncVerify = analytics.categorizedIncome.verification || 0;
-            const tdIncStandardDep = (analytics.filtered.deposits || 0);
-            const tdIncTotal = tdIncPlans + tdIncDraw + tdIncVerify + tdIncStandardDep;
-            const tdOutTotal = (analytics.filtered.withdrawals || 0);
-
-            document.getElementById('h-inc-plans').textContent = fmt(tdIncPlans);
-            document.getElementById('h-inc-draw').textContent = fmt(tdIncDraw);
-            document.getElementById('h-inc-verify').textContent = fmt(tdIncVerify);
-            document.getElementById('h-inc-total').textContent = fmt(tdIncTotal);
-            document.getElementById('h-out-total').textContent = fmt(tdOutTotal);
-
-            renderDailyLedger();
+            animateValue('h-clicks', 0, clicksData.count, 1000);
 
             // Render Logs
             var logs = Admin.getDb(Admin.DB_LOGS).reverse().slice(0, 30);
@@ -1466,31 +1227,6 @@
             }).join('') : 'No logs yet.';
 
             renderFinanceChart(txs);
-        }
-
-        function renderDailyLedger() {
-            const today = new Date().toDateString();
-            const ledger = Admin.getDailyIncomeLedger(today);
-            const body = document.getElementById('ledger-body');
-            if (!body) return;
-
-            if (ledger.length === 0) {
-                body.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding: 40px;">No payments recorded for today yet.</td></tr>';
-                return;
-            }
-
-            body.innerHTML = ledger.map(item => {
-                const timeStr = new Date(item.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                return `<tr>
-                    <td><span style="color:var(--text-muted); font-size:0.85rem;">${timeStr}</span></td>
-                    <td>
-                        <div style="font-weight:600;">${item.user}</div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">${item.userEmail}</div>
-                    </td>
-                    <td><span class="badge" style="background:rgba(255,255,255,0.05); color:#fff; border:1px solid rgba(255,255,255,0.1);">${item.type}</span></td>
-                    <td><strong style="color:var(--primary-neon);">+${fmt(item.amount)}</strong></td>
-                </tr>`;
-            }).join('');
         }
 
         function animateValue(id, start, end, duration) {
@@ -1901,104 +1637,13 @@
         function sendBroadcast() {
             var target = document.getElementById('bc-target').value, sub = document.getElementById('bc-subject').value, msg = document.getElementById('bc-message').value;
             if (!sub || !msg) { alert('Subject and message required.'); return; }
-
-            // Send as individual notifications to satisfy user request for bell icon alerts
-            var users = getUsers();
-            if (target === 'active') users = users.filter(u => !u.suspended);
-            if (target === 'depositors') {
-                var txs = getTxs();
-                var depUserIds = [...new Set(txs.filter(t => t.type === 'deposit' && t.status === 'approved').map(t => t.userId))];
-                users = users.filter(u => depUserIds.includes(u.id));
-            }
-
-            // Using Admin.sendNotificationToUser with 'all' for simplicity if the method exists
-            Admin.sendNotificationToUser('all', sub, msg);
-
-            alert('Broadcast sent & notification bell triggered for all users!');
+            var r = Admin.sendBroadcast(target, sub, msg);
+            alert('Sent to ' + r.count + ' users!');
             document.getElementById('bc-subject').value = ''; document.getElementById('bc-message').value = '';
         }
         function saveAnnouncement() {
             Admin.updateAnnouncement(document.getElementById('ann-text').value, document.getElementById('ann-enabled').checked);
             alert('Announcement updated!');
-        }
-
-        // ── Support Center Logic ───────────────────────────────────────────────
-        let activeChatUserId = null;
-
-        function renderSupportCenter() {
-            const allMsgs = Admin.getAllSupportMessages();
-            const users = getUsers();
-            const userList = document.getElementById('support-user-list');
-
-            // Get unique user IDs who have sent messages
-            const userIds = [...new Set(allMsgs.map(m => m.userId))];
-
-            if (userIds.length === 0) {
-                userList.innerHTML = '<p style="text-align:center; color:var(--text-muted); margin-top:20px;">No support messages yet.</p>';
-                return;
-            }
-
-            userList.innerHTML = userIds.map(uid => {
-                const u = users.find(user => user.id === uid);
-                const uMsgs = allMsgs.filter(m => m.userId === uid);
-                const lastMsg = uMsgs[uMsgs.length - 1];
-                const unreadCount = uMsgs.filter(m => !m.read && m.senderType === 'user').length;
-
-                return `
-                    <div onclick="selectChat('${uid}')" style="padding: 12px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; background: ${activeChatUserId === uid ? 'rgba(57,255,20,0.1)' : 'rgba(255,255,255,0.03)'}; border: 1px solid ${activeChatUserId === uid ? 'var(--primary-neon)' : 'transparent'}; transition: all 0.2s;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <strong style="font-size:0.85rem;">${u ? (u.name || u.email) : 'Unknown User'}</strong>
-                            ${unreadCount > 0 ? `<span style="background:var(--primary-neon); color:#000; font-size:0.65rem; padding: 2px 6px; border-radius: 10px; font-weight:700;">${unreadCount}</span>` : ''}
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px;">
-                            ${lastMsg ? lastMsg.message : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function selectChat(userId) {
-            activeChatUserId = userId;
-            const users = getUsers();
-            const u = users.find(user => user.id === userId);
-
-            document.getElementById('chat-header').innerText = `Chatting with: ${u ? (u.name || u.email) : userId}`;
-            document.getElementById('admin-chat-input-area').style.display = 'flex';
-
-            renderAdminMessages();
-            renderSupportCenter(); // Refresh list to show active state
-        }
-
-        function renderAdminMessages() {
-            if (!activeChatUserId) return;
-            const msgs = Admin.getSupportMessages(activeChatUserId);
-            const container = document.getElementById('admin-chat-messages');
-
-            container.innerHTML = msgs.map(m => {
-                const isAdmin = m.senderType === 'admin';
-                const time = new Date(m.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                return `
-                    <div style="align-self: ${isAdmin ? 'flex-end' : 'flex-start'}; max-width: 80%;">
-                        <div style="background: ${isAdmin ? 'var(--primary-neon)' : 'rgba(255,255,255,0.1)'}; color: ${isAdmin ? '#000' : '#fff'}; padding: 10px 15px; border-radius: 15px; border-bottom-${isAdmin ? 'right' : 'left'}-radius: 2px;">
-                            ${m.message}
-                        </div>
-                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 4px; text-align: ${isAdmin ? 'right' : 'left'}">${time}</div>
-                    </div>
-                `;
-            }).join('');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function sendAdminReply() {
-            const input = document.getElementById('admin-support-input');
-            const msg = input.value.trim();
-            if (!msg || !activeChatUserId) return;
-
-            Admin.sendSupportMessage(activeChatUserId, msg, 'admin');
-            input.value = '';
-            renderAdminMessages();
-            renderSupportCenter();
         }
 
         // ── Community Links ───────────────────────────────────────────────────────────
@@ -2040,11 +1685,10 @@
         function renderSettings() {
             var s = Admin.getObjDb(Admin.DB_SETTINGS);
             document.getElementById('set-usdt').value = s.depositAddress || '';
-            document.getElementById('set-btc').value = s.btcAddress || '';
             document.getElementById('set-mindep').value = s.minDeposit || 10;
             document.getElementById('set-minwith').value = s.minWithdraw || 20;
-            document.getElementById('set-ref1').value = s.refLvl1 || 5;
-            document.getElementById('set-ref2').value = s.refLvl2 || 3;
+            document.getElementById('set-ref1').value = s.refLvl1 || 10;
+            document.getElementById('set-ref2').value = s.refLvl2 || 5;
             document.getElementById('set-transfers').checked = s.allowTransfers !== false;
             var sig = Admin.getObjDb(Admin.DB_SIGNAL);
             document.getElementById('set-sig-url').value = sig.telegramUrl || '';
@@ -2054,51 +1698,19 @@
         function saveAllSettings() {
             var s = Admin.getObjDb(Admin.DB_SETTINGS);
             s.depositAddress = document.getElementById('set-usdt').value;
-            s.btcAddress = document.getElementById('set-btc').value;
-            s.minDeposit = parseFloat(document.getElementById('set-mindep').value);
-            s.minWithdraw = parseFloat(document.getElementById('set-minwith').value);
-            s.refLvl1 = parseInt(document.getElementById('set-ref1').value);
-            s.refLvl2 = parseInt(document.getElementById('set-ref2').value);
+            s.minDeposit = parseFloat(document.getElementById('set-mindep').value) || 10;
+            s.minWithdraw = parseFloat(document.getElementById('set-minwith').value) || 20;
+            s.refLvl1 = parseInt(document.getElementById('set-ref1').value) || 10;
+            s.refLvl2 = parseInt(document.getElementById('set-ref2').value) || 5;
             s.allowTransfers = document.getElementById('set-transfers').checked;
-
-            // Signal button
+            Admin.saveDb(Admin.DB_SETTINGS, s);
             var sig = Admin.getObjDb(Admin.DB_SIGNAL);
-            sig.enabled = document.getElementById('set-sig-en').checked;
             sig.telegramUrl = document.getElementById('set-sig-url').value;
             sig.buttonText = document.getElementById('set-sig-text').value;
-
-            Admin.saveDb(Admin.DB_SETTINGS, s);
+            sig.enabled = document.getElementById('set-sig-en').checked;
             Admin.saveDb(Admin.DB_SIGNAL, sig);
-            alert('Settings saved locally. Use "Generate Sync Code" below to push live to all users!');
-        }
-
-        // --- NEW: SYNC LOGIC ---
-        function generateSyncCode() {
-            const settings = Admin.getObjDb(Admin.DB_SETTINGS);
-            const signal = Admin.getObjDb(Admin.DB_SIGNAL);
-            const tasks = Admin.getDb(Admin.DB_TASKS);
-            const announcement = Admin.getAnnouncement();
-
-            const syncData = {
-                settings,
-                signal,
-                tasks,
-                announcement,
-                version: "1.0." + Date.now().toString().slice(-4),
-                lastUpdated: new Date().toISOString()
-            };
-
-            const output = document.getElementById('sync-code-output');
-            output.value = JSON.stringify(syncData, null, 2);
-            document.getElementById('sync-code-area').style.display = 'block';
-        }
-
-        function copySyncCode() {
-            const copyText = document.getElementById("sync-code-output");
-            copyText.select();
-            copyText.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(copyText.value);
-            alert("Sync Code Copied! Now paste it to the AI Assistant.");
+            Admin.logAction('Admin updated platform settings');
+            alert('Settings saved!');
         }
 
         // ── Content ───────────────────────────────────────────────────────────────────
@@ -2121,139 +1733,65 @@
         }
 
         // ── SportXBet ────────────────────────────────────────────────────────
-        // Global state for nav links in editor
-        let tempSXBNavLinks = [];
-
         function renderSportXBet() {
-            var sxb = Admin.getSportXBetSettings();
-            document.getElementById('sxb-logo').value = sxb.siteLogo || '1XBET';
-            document.getElementById('sxb-accent-color').value = sxb.accentColor || '#154e8e';
-            
-            tempSXBNavLinks = sxb.topBarLinks || [];
-            renderSXBNavList();
-
-            document.getElementById('sxb-reg-title').value = sxb.regWidgetTitle || '';
-            document.getElementById('sxb-reg-sub').value = sxb.regWidgetSub || '';
-
-            document.getElementById('sxb-hero-bg').value = sxb.heroBgUrl || '';
-            document.getElementById('sxb-hero-title').value = sxb.heroTitle || '';
-            document.getElementById('sxb-hero-sub').value = sxb.heroSub || '';
-            document.getElementById('sxb-hero-btn').value = sxb.heroBtnText || '';
-            
-            document.getElementById('sxb-promo1-text').value = sxb.promo1Text || '';
-            document.getElementById('sxb-promo1-img').value = sxb.promo1Img || '';
-            document.getElementById('sxb-promo2-text').value = sxb.promo2Text || '';
-            document.getElementById('sxb-promo2-img').value = sxb.promo2Img || '';
-
-            document.getElementById('sxb-comp1-title').value = sxb.comp1Title || '';
-            document.getElementById('sxb-comp1-img').value = sxb.comp1Img || '';
-            document.getElementById('sxb-comp1-events').value = sxb.comp1Events || '';
-            document.getElementById('sxb-comp2-title').value = sxb.comp2Title || '';
-            document.getElementById('sxb-comp2-img').value = sxb.comp2Img || '';
-            document.getElementById('sxb-comp2-events').value = sxb.comp2Events || '';
-            document.getElementById('sxb-comp3-title').value = sxb.comp3Title || '';
-            document.getElementById('sxb-comp3-img').value = sxb.comp3Img || '';
-            document.getElementById('sxb-comp3-events').value = sxb.comp3Events || '';
-
             renderSXBMatches();
-        }
-
-        function renderSXBNavList() {
-            const list = document.getElementById('sxb-nav-links-list');
-            list.innerHTML = tempSXBNavLinks.map((link, idx) => `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.05); padding:8px 12px; border-radius:4px; margin-bottom:5px;">
-                    <div><strong>${link.title}</strong> <span style="font-size:12px; color:#888;">(${link.url})</span></div>
-                    <button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d; padding:2px 8px;" onclick="removeSXBNavLink(${idx})">✕</button>
-                </div>
-            `).join('');
-            if(tempSXBNavLinks.length === 0) list.innerHTML = '<div style="color:#666; font-style:italic;">No navigation links added.</div>';
-        }
-
-        function addSXBNavLink() {
-            const title = document.getElementById('sxb-new-nav-title').value;
-            const url = document.getElementById('sxb-new-nav-url').value;
-            if(!title || !url) return alert('Please enter both title and URL');
-            tempSXBNavLinks.push({ title, url });
-            document.getElementById('sxb-new-nav-title').value = '';
-            document.getElementById('sxb-new-nav-url').value = '';
-            renderSXBNavList();
-        }
-
-        function removeSXBNavLink(idx) {
-            tempSXBNavLinks.splice(idx, 1);
-            renderSXBNavList();
-        }
-
-        function saveSportXBetConfig() {
-            Admin.saveSportXBetSettings({
-                siteLogo: document.getElementById('sxb-logo').value,
-                accentColor: document.getElementById('sxb-accent-color').value,
-                topBarLinks: tempSXBNavLinks,
-                regWidgetTitle: document.getElementById('sxb-reg-title').value,
-                regWidgetSub: document.getElementById('sxb-reg-sub').value,
-                heroBgUrl: document.getElementById('sxb-hero-bg').value,
-                heroTitle: document.getElementById('sxb-hero-title').value,
-                heroSub: document.getElementById('sxb-hero-sub').value,
-                heroBtnText: document.getElementById('sxb-hero-btn').value,
-                promo1Text: document.getElementById('sxb-promo1-text').value,
-                promo1Img: document.getElementById('sxb-promo1-img').value,
-                promo2Text: document.getElementById('sxb-promo2-text').value,
-                promo2Img: document.getElementById('sxb-promo2-img').value,
-                comp1Title: document.getElementById('sxb-comp1-title').value,
-                comp1Img: document.getElementById('sxb-comp1-img').value,
-                comp1Events: document.getElementById('sxb-comp1-events').value,
-                comp2Title: document.getElementById('sxb-comp2-title').value,
-                comp2Img: document.getElementById('sxb-comp2-img').value,
-                comp2Events: document.getElementById('sxb-comp2-events').value,
-                comp3Title: document.getElementById('sxb-comp3-title').value,
-                comp3Img: document.getElementById('sxb-comp3-img').value,
-                comp3Events: document.getElementById('sxb-comp3-events').value
-            });
-            const msg = document.getElementById('sxb-save-msg');
-            msg.style.display = 'inline';
-            setTimeout(() => msg.style.display = 'none', 3000);
+            renderSXBBets();
         }
 
         function renderSXBMatches() {
             const matches = Admin.getMatches();
             const tbody = document.getElementById('sxb-matches-body');
-            if(!tbody) return;
             tbody.innerHTML = matches.map(m => `
                 <tr>
                     <td>${m.sport}</td>
                     <td><strong>${m.teamA}</strong> vs <strong>${m.teamB}</strong></td>
+                    <td>${new Date(m.matchTime).toLocaleString()}</td>
                     <td>${m.oddsA} / ${m.oddsB}</td>
-                    <td><span class="badge badge-${m.isLive ? 'approved' : 'pending'}">${m.isLive ? 'YES' : 'NO'}</span></td>
                     <td><span class="badge badge-${m.status === 'finished' ? 'rejected' : 'approved'}">${m.status}</span></td>
                     <td class="tr-actions">
-                        <button class="btn btn-outline" style="color:#ffcc00" onclick="editMatchStatus('${m.id}')">Toggle Live</button>
+                        ${m.status !== 'finished' ? `
+                            <button class="btn btn-outline" style="color:var(--primary-neon)" onclick="finishMatch('${m.id}', '${m.teamA}')">Winner A</button>
+                            <button class="btn btn-outline" style="color:var(--primary-neon)" onclick="finishMatch('${m.id}', '${m.teamB}')">Winner B</button>
+                        ` : ''}
                         <button class="btn btn-outline" style="color:#ff4d4d" onclick="deleteMatch('${m.id}')">Delete</button>
                     </td>
                 </tr>
             `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No matches added</td></tr>';
         }
 
-        function openAddMatchModal() {
-            const teamA = prompt("Enter Team 1 Name:");
-            if(!teamA) return;
-            const teamB = prompt("Enter Team 2 Name:");
-            if(!teamB) return;
-            const oddsA = prompt("Enter Team 1 Odds (e.g. 1.5):", "1.5");
-            const oddsB = prompt("Enter Team 2 Odds (e.g. 2.1):", "2.1");
-            const isLiveChoice = confirm("Is this match LIVE right now?");
-            
-            Admin.addMatch('Cricket', teamA, teamB, oddsA || 1.1, oddsB || 1.1, isLiveChoice);
-            renderSXBMatches();
+        function renderSXBBets() {
+            const bets = Admin.getBets();
+            const tbody = document.getElementById('sxb-bets-body');
+            tbody.innerHTML = bets.map(b => `
+                <tr>
+                    <td>${b.userName}<br><span style="font-size:0.75rem;color:var(--text-muted)">${b.userEmail}</span></td>
+                    <td>Bet on <strong>${b.team}</strong></td>
+                    <td style="color:var(--primary-neon)">${fmt(b.amount)}</td>
+                    <td style="color:#ffaa00">${fmt(b.potentialPayout)}</td>
+                    <td><span class="badge badge-${b.status === 'won' ? 'approved' : b.status === 'lost' ? 'rejected' : 'pending'}">${b.status}</span></td>
+                    <td>-</td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No bets placed yet</td></tr>';
         }
 
-        function editMatchStatus(matchId) {
-            const matches = Admin.getMatches();
-            const m = matches.find(x => x.id === matchId);
-            if(m) {
-                m.isLive = !m.isLive;
-                Admin.saveDb(Admin.DB_SPORTXBET_MATCHES, matches);
-                renderSXBMatches();
+        function addSXBMatch() {
+            const sport = document.getElementById('sxb-sport').value;
+            const teamA = document.getElementById('sxb-teamA').value;
+            const teamB = document.getElementById('sxb-teamB').value;
+            const time = document.getElementById('sxb-time').value;
+            const oddsA = document.getElementById('sxb-oddsA').value;
+            const oddsB = document.getElementById('sxb-oddsB').value;
+
+            if (!teamA || !teamB || !time || !oddsA || !oddsB) {
+                alert('All fields are required!');
+                return;
             }
+
+            Admin.addMatch(sport, teamA, teamB, time, oddsA, oddsB);
+            alert('Match added!');
+            renderSXBMatches();
+            // Clear fields
+            ['sxb-teamA', 'sxb-teamB', 'sxb-time', 'sxb-oddsA', 'sxb-oddsB'].forEach(id => document.getElementById(id).value = '');
         }
 
         function finishMatch(matchId, winningTeam) {
@@ -2283,17 +1821,28 @@
             updateAlertBadge();
             // Refresh alert badge every 30s
             setInterval(updateAlertBadge, 30000);
-
-            // REAL-TIME UPDATES: Listen for local storage changes
-            window.addEventListener('storage', function(e) {
-                // If dashboard is visible, refresh it
-                if (document.getElementById('tab-dashboard').style.display !== 'none') {
-                    renderDashboard();
-                }
-                // Always update badge
-                updateAlertBadge();
-            });
         });
+
+        // ── Push to Live ────────────────────────────────────────────────────────
+        function renderPushToLive() {
+            document.getElementById('deployment-code-area').value = '';
+        }
+
+        function generateDeploymentCode() {
+            const code = Admin.generateDeploymentCode();
+            document.getElementById('deployment-code-area').value = code;
+        }
+
+        function copyDeploymentCode() {
+            const area = document.getElementById('deployment-code-area');
+            if (!area.value) {
+                alert('Please generate the code first!');
+                return;
+            }
+            area.select();
+            document.execCommand('copy');
+            alert('Deployment code copied to clipboard! Please send it to Antigravity.');
+        }
     </script>
 </body>
 
