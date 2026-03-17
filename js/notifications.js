@@ -19,6 +19,12 @@ const Notifications = {
 
             const bar = document.createElement('div');
             bar.id = 'global-announcement-bar';
+            
+            // Responsive left offset based on sidebar visibility
+            const isMobile = window.innerWidth <= 992;
+            const leftOffset = isMobile ? '0' : '280px';
+            const barTop = '70px';
+
             bar.style.cssText = `
                 background: linear-gradient(90deg, var(--primary-neon), #00d4ff);
                 color: #000;
@@ -29,22 +35,28 @@ const Notifications = {
                 border-radius: 0 0 12px 12px;
                 box-shadow: 0 4px 15px rgba(57, 255, 20, 0.3);
                 position: fixed;
-                top: 70px;
-                left: 280px;
+                top: ${barTop};
+                left: ${leftOffset};
                 right: 0;
                 z-index: 999;
             `;
             bar.innerHTML = announcement.text;
 
-            // Insert into body; it's fixed so DOM position doesn't matter
+            // Insert into body
             document.body.appendChild(bar);
 
             // Add top padding to main-content so content isn't hidden behind the bar
             const mainContent = document.querySelector('.main-content');
             if (mainContent) {
-                const barHeight = 42; // approx height
+                const barHeight = bar.offsetHeight || 42; 
                 mainContent.style.paddingTop = (40 + barHeight) + 'px';
             }
+
+            // Update on resize
+            window.addEventListener('resize', () => {
+                const newIsMobile = window.innerWidth <= 992;
+                bar.style.left = newIsMobile ? '0' : '280px';
+            });
         }
     },
 
@@ -52,26 +64,27 @@ const Notifications = {
         const user = Auth.getCurrentUser();
         if (!user) return;
 
-        const container = document.getElementById('support-bell-container') || document.querySelector('.top-bar');
-        if (!container) return;
+        const topBar = document.querySelector('.top-bar');
+        if (!topBar) return;
 
         // Check if bell already exists
         if (document.getElementById('notif-bell-container')) return;
 
-        const bellDiv = document.createElement('div');
-        bellDiv.id = 'notif-bell-container';
-        bellDiv.style.cssText = 'position: relative; cursor: pointer;';
+        const container = document.createElement('div');
+        container.id = 'notif-bell-container';
+        container.style.cssText = 'position: relative; cursor: pointer; margin-right: 20px;';
 
         const unreadCount = this.getUnreadCount(user.id);
 
-        bellDiv.innerHTML = `
+        container.innerHTML = `
             <div id="notif-bell" style="font-size: 1.5rem;">🔔</div>
             ${unreadCount > 0 ? `<span id="notif-badge" style="position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">${unreadCount}</span>` : ''}
         `;
 
-        container.appendChild(bellDiv);
+        // Insert before the balance or user info in top-bar
+        topBar.appendChild(container);
 
-        bellDiv.onclick = () => this.showNotificationModal(user.id);
+        container.onclick = () => this.showNotificationModal(user.id);
     },
 
     getUnreadCount(userId) {
