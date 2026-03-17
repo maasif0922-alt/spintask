@@ -61,8 +61,7 @@ const Admin = {
 
         if (!localStorage.getItem(this.DB_TASKS)) {
             const defaultTasks = [
-                { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true, duration: 30 },
-                { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true, duration: 60 }
+                { id: 't_1773782243127', title: 'earn money', desc: 'visit and like vedio', reward: 3, type: 'visit', active: true }
             ];
             localStorage.setItem(this.DB_TASKS, JSON.stringify(defaultTasks));
         }
