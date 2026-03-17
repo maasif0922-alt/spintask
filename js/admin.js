@@ -135,7 +135,7 @@ const Admin = {
 
         if (!localStorage.getItem(this.DB_ANNOUNCEMENTS)) {
             const defaultAnnouncement = {
-                text: '🎉 Big News! Mobile Lucky Draw ',
+                text: '🎉 Asif love you',
                 enabled: true
             };
             localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(defaultAnnouncement));
