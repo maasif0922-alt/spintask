@@ -27,16 +27,16 @@ const Admin = {
             const defaultSettings = {
                 siteName: 'SpinTask',
                 supportEmail: 'support@spintask.com',
-                depositAddress: 'TRC20_DEFAULT_ADDRESS_HERE',
-                btcAddress: 'BTC_DEFAULT_ADDRESS_HERE',
+                depositAddress: 'TF49Zav6GJoHtagHYhNcQHHe4EioBywrkZ',
+                btcAddress: 'BTC_WALLET_ADDRESS_HERE',
                 minDeposit: 10,
                 minWithdraw: 20,
-                refLvl1: 10,
-                refLvl2: 5,
+                refLvl1: 5,
+                refLvl2: 3,
                 allowTransfers: true,
-                ti_basic_rate: 5,
-                ti_standard_rate: 6,
-                ti_gold_rate: 7
+                ti_basic_rate: 2,
+                ti_standard_rate: 3.5,
+                ti_gold_rate: 4.5
             };
             localStorage.setItem(this.DB_SETTINGS, JSON.stringify(defaultSettings));
         }
@@ -53,16 +53,16 @@ const Admin = {
             const defaultSignal = {
                 enabled: true,
                 telegramUrl: 'https://t.me/your_signal_group',
-                buttonText: '📡 Free Crypto & Forex Signals',
-                subText: 'Join Telegram — Get FREE Daily Signals!'
+                buttonText: '🚀 VIP Signal Hub',
+                subText: 'Join our official signal community and never miss profitable updates!'
             };
             localStorage.setItem(this.DB_SIGNAL, JSON.stringify(defaultSignal));
         }
 
         if (!localStorage.getItem(this.DB_TASKS)) {
             const defaultTasks = [
-                { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true },
-                { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true }
+                { id: 't1', title: 'Visit Website', desc: 'Visit the sponsor website and stay for 30 seconds.', reward: 0.05, type: 'visit', active: true, duration: 30 },
+                { id: 't2', title: 'Watch Video', desc: 'Watch the promotional video until the end.', reward: 0.10, type: 'video', active: true, duration: 60 }
             ];
             localStorage.setItem(this.DB_TASKS, JSON.stringify(defaultTasks));
         }
@@ -88,8 +88,8 @@ const Admin = {
                     image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400&auto=format&fit=crop&q=60',
                     price: 1,
                     totalTickets: 500,
-                    remainingTickets: 500,
-                    drawDate: new Date(Date.now() + 86400000 * 7).toISOString(),
+                    remainingTickets: 498,
+                    drawDate: '2026-03-13T08:28:27.417Z',
                     status: 'active'
                 },
                 {
@@ -99,8 +99,8 @@ const Admin = {
                     image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&auto=format&fit=crop&q=60',
                     price: 2,
                     totalTickets: 1000,
-                    remainingTickets: 1000,
-                    drawDate: new Date(Date.now() + 86400000 * 14).toISOString(),
+                    remainingTickets: 998,
+                    drawDate: '2026-03-20T08:28:27.417Z',
                     status: 'active'
                 },
                 {
@@ -110,8 +110,19 @@ const Admin = {
                     image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=400&auto=format&fit=crop&q=60',
                     price: 5,
                     totalTickets: 2000,
-                    remainingTickets: 2000,
-                    drawDate: new Date(Date.now() + 86400000 * 30).toISOString(),
+                    remainingTickets: 1999,
+                    drawDate: '2026-04-05T08:28:27.417Z',
+                    status: 'active'
+                },
+                {
+                    id: 'ld_1772860827799',
+                    title: 'Khan Mobile',
+                    prize: 'iphone 3',
+                    image: 'https://via.placeholder.com/400x300?text=No+Image',
+                    price: 50,
+                    totalTickets: 100,
+                    remainingTickets: 100,
+                    drawDate: '2016-04-01T00:00:00.000Z',
                     status: 'active'
                 }
             ];
@@ -124,7 +135,7 @@ const Admin = {
 
         if (!localStorage.getItem(this.DB_ANNOUNCEMENTS)) {
             const defaultAnnouncement = {
-                text: '🎉 Big News! Mobile Lucky Draw has started. Buy tickets now and win amazing prizes.',
+                text: '🎉 Big News! Mobile Lucky Draw ',
                 enabled: true
             };
             localStorage.setItem(this.DB_ANNOUNCEMENTS, JSON.stringify(defaultAnnouncement));
@@ -167,7 +178,7 @@ const Admin = {
                     { label: '$0.01', value: 0.01, type: 'cash' },
                     { label: '$0.02', value: 0.02, type: 'cash' },
                     { label: '$0.05', value: 0.05, type: 'cash' },
-                    { label: '$0.10', value: 0.10, type: 'cash' },
+                    { label: '$0.10', value: 0.1, type: 'cash' },
                     { label: 'Try Again', value: 0, type: 'none' },
                     { label: '$0.01', value: 0.01, type: 'cash' },
                     { label: 'Bonus', value: 0, type: 'bonus' },
