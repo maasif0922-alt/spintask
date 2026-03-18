@@ -192,6 +192,7 @@
                     <li><a onclick="showSection('content')" data-section="content"><span>✍️</span> Website Content</a>
                     </li>
                     <li><a onclick="showSection('settings')" data-section="settings"><span>⚙️</span> Settings</a></li>
+                    <li><a onclick="showSection('sports')" data-section="sports"><span>🏅</span> Sports Mgmt</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -412,12 +413,143 @@
                     </div>
                 </div>
             </div>
+
+            <!-- SECTION: SPORTS MANAGEMENT -->
+            <div id="section-sports" class="admin-section">
+                <!-- Stats Strip -->
+                <div class="dash-grid" style="margin-bottom:25px;">
+                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-live">0</div><span class="label">Live Matches</span></div>
+                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-up">0</div><span class="label">Upcoming</span></div>
+                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-leagues">0</div><span class="label">Leagues</span></div>
+                </div>
+
+                <!-- Add / Edit Match Form -->
+                <div class="glass" style="padding:30px;border-radius:20px;margin-bottom:25px;">
+                    <h3>➕ Add / Edit Match</h3>
+                    <input type="hidden" id="sp-match-id">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px;">
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Sport</label>
+                            <select id="sp-sport" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                <option value="cricket">🏏 Cricket</option>
+                                <option value="football">⚽ Football</option>
+                                <option value="tennis">🎾 Tennis</option>
+                                <option value="basketball">🏀 Basketball</option>
+                                <option value="esports">🎮 eSports</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Status</label>
+                            <select id="sp-status" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                <option value="upcoming">📅 Upcoming</option>
+                                <option value="live">🔴 Live</option>
+                                <option value="finished">✅ Finished</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Team A Name</label>
+                            <input type="text" id="sp-teamA" placeholder="India" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Team A Flag/Icon</label>
+                            <input type="text" id="sp-flagA" placeholder="🇮🇳" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Team B Name</label>
+                            <input type="text" id="sp-teamB" placeholder="Pakistan" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Team B Flag/Icon</label>
+                            <input type="text" id="sp-flagB" placeholder="🇵🇰" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">League / Tournament</label>
+                            <input type="text" id="sp-league" placeholder="ICC T20 World Cup" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Format</label>
+                            <input type="text" id="sp-format" placeholder="T20 / 90 min / BO3" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Odds A</label>
+                            <input type="number" id="sp-oddsA" placeholder="1.85" step="0.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Odds Draw (optional)</label>
+                            <input type="number" id="sp-oddsDraw" placeholder="5.00" step="0.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Odds B</label>
+                            <input type="number" id="sp-oddsB" placeholder="2.10" step="0.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Start Time</label>
+                            <input type="datetime-local" id="sp-startTime" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                    </div>
+                    <div style="margin-top:20px;display:flex;gap:12px;">
+                        <button class="btn btn-primary" onclick="saveMatchForm()">💾 Save Match</button>
+                        <button class="btn glass" onclick="clearMatchForm()">✕ Clear</button>
+                    </div>
+                </div>
+
+                <!-- Score Updater -->
+                <div class="glass" style="padding:25px;border-radius:20px;margin-bottom:25px;">
+                    <h3>⚡ Quick Score Update</h3>
+                    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-top:15px;align-items:end;">
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Select Match</label>
+                            <select id="sp-score-match" class="search-input" style="width:100%;max-width:none;margin-top:5px;"></select>
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Score A</label>
+                            <input type="text" id="sp-score-a" placeholder="156/4" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Score B</label>
+                            <input type="text" id="sp-score-b" placeholder="143/8" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                        <div>
+                            <label style="font-size:.8rem;color:var(--text-muted);">Detail</label>
+                            <input type="text" id="sp-score-detail" placeholder="18.2 Overs" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                        </div>
+                    </div>
+                    <div style="margin-top:12px;">
+                        <label style="font-size:.8rem;color:var(--text-muted);">Commentary Line</label>
+                        <input type="text" id="sp-commentary-line" placeholder="18.5 — Bumrah takes a wicket! OUT!" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:15px;" onclick="updateScoreForm()">📡 Publish Score</button>
+                </div>
+
+                <!-- All Matches List -->
+                <div class="glass" style="padding:25px;border-radius:20px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <h3>📋 All Matches</h3>
+                        <select id="sp-filter-sport" onchange="renderSportMatches()" class="search-input" style="max-width:160px;">
+                            <option value="all">All Sports</option>
+                            <option value="cricket">Cricket</option>
+                            <option value="football">Football</option>
+                            <option value="tennis">Tennis</option>
+                            <option value="basketball">Basketball</option>
+                            <option value="esports">eSports</option>
+                        </select>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="admin-table">
+                            <thead><tr><th>Sport</th><th>Match</th><th>League</th><th>Score</th><th>Status</th><th>Actions</th></tr></thead>
+                            <tbody id="sp-matches-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
     <script src="js/auth.js"></script>
     <script src="js/config.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
     <script>
         // PAGE STATE MANAGEMENT
         document.addEventListener('DOMContentLoaded', () => {
@@ -472,10 +604,13 @@
                 luckydraw: { h1: 'Lucky Draws', p: 'Manage lottery events and winners.' },
                 content: { h1: 'Website Content', p: 'Edit dynamic site text effortlessly.' },
                 notifications: { h1: 'Broadcasts', p: 'Communicate with global notifications.' },
-                settings: { h1: 'Platform Settings', p: 'Configure global system variables.' }
+                settings: { h1: 'Platform Settings', p: 'Configure global system variables.' },
+                sports: { h1: 'Sports Management', p: 'Add matches, update live scores, manage leagues.' }
             };
+            if (!titles[sectionId]) return;
             document.getElementById('main-title').innerText = titles[sectionId].h1;
             document.getElementById('main-subtitle').innerText = titles[sectionId].p;
+            if (sectionId === 'sports') initSportsSection();
         }
 
         // INITIALIZATION
@@ -669,6 +804,142 @@
                 const txt = r.innerText.toLowerCase();
                 r.style.display = txt.includes(q) ? '' : 'none';
             });
+        }
+
+        // ─── SPORTS MANAGEMENT ────────────────────────────────────────────
+
+        function initSportsSection() {
+            SportsDB.seedDefaults();
+            renderSportMatches();
+            populateSportStats();
+            populateScoreMatchSelect();
+        }
+
+        function populateSportStats() {
+            const all = SportsDB.getMatches();
+            document.getElementById('sp-stat-live').textContent = all.filter(m => m.status === 'live').length;
+            document.getElementById('sp-stat-up').textContent = all.filter(m => m.status === 'upcoming').length;
+            document.getElementById('sp-stat-leagues').textContent = SportsDB.getLeagues().length;
+        }
+
+        function populateScoreMatchSelect() {
+            const sel = document.getElementById('sp-score-match');
+            const live = SportsDB.getMatches().filter(m => m.status === 'live');
+            sel.innerHTML = live.length
+                ? live.map(m => `<option value="${m.id}">${m.teamA} vs ${m.teamB} (${m.sport})</option>`).join('')
+                : '<option>No live matches</option>';
+        }
+
+        function renderSportMatches() {
+            const filter = document.getElementById('sp-filter-sport').value;
+            const matches = filter === 'all' ? SportsDB.getMatches() : SportsDB.getMatches(filter);
+            const tbody = document.getElementById('sp-matches-body');
+            tbody.innerHTML = '';
+            matches.forEach(m => {
+                const tr = document.createElement('tr');
+                const statusColor = m.status === 'live' ? '#ff4d4d' : (m.status === 'upcoming' ? '#ffc107' : '#39ff14');
+                tr.innerHTML = `
+                    <td><span style="font-size:1.2rem;">${{cricket:'🏏',football:'⚽',tennis:'🎾',basketball:'🏀',esports:'🎮'}[m.sport]||'🏅'}</span></td>
+                    <td><strong>${m.teamA} vs ${m.teamB}</strong></td>
+                    <td style="font-size:.8rem;color:rgba(255,255,255,.5);">${m.league || '—'}</td>
+                    <td style="font-family:monospace;font-size:.85rem;">${m.status==='live' ? `${m.scoreA} - ${m.scoreB}` : '—'}</td>
+                    <td><span class="status-badge" style="background:${statusColor}22;color:${statusColor};">${m.status.toUpperCase()}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn glass" style="padding:5px 10px;font-size:.7rem;" onclick="editMatchForm('${m.id}')">Edit</button>
+                            <button class="btn glass" style="padding:5px 10px;font-size:.7rem;color:#ff4d4d;" onclick="deleteMatchAdmin('${m.id}')">Del</button>
+                        </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+            if (!matches.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:rgba(255,255,255,.3);padding:30px;">No matches found.</td></tr>';
+            }
+        }
+
+        function saveMatchForm() {
+            const id = document.getElementById('sp-match-id').value;
+            const startTimeVal = document.getElementById('sp-startTime').value;
+            const matchData = {
+                id: id || ('match_' + Date.now()),
+                sport: document.getElementById('sp-sport').value,
+                status: document.getElementById('sp-status').value,
+                teamA: document.getElementById('sp-teamA').value.trim(),
+                flagA: document.getElementById('sp-flagA').value.trim(),
+                teamB: document.getElementById('sp-teamB').value.trim(),
+                flagB: document.getElementById('sp-flagB').value.trim(),
+                league: document.getElementById('sp-league').value.trim(),
+                format: document.getElementById('sp-format').value.trim(),
+                oddsA: document.getElementById('sp-oddsA').value,
+                oddsDraw: document.getElementById('sp-oddsDraw').value,
+                oddsB: document.getElementById('sp-oddsB').value,
+                startTime: startTimeVal ? new Date(startTimeVal).toISOString() : new Date().toISOString(),
+                scoreA: '-', scoreB: '-', detail: '', commentary: [], stats: {}
+            };
+            if (!matchData.teamA || !matchData.teamB) { alert('Please enter both team names.'); return; }
+            SportsDB.saveMatch(matchData);
+            clearMatchForm();
+            renderSportMatches();
+            populateSportStats();
+            populateScoreMatchSelect();
+            alert(`✅ Match "${matchData.teamA} vs ${matchData.teamB}" saved! It is now live on the website.`);
+        }
+
+        function clearMatchForm() {
+            ['sp-match-id','sp-teamA','sp-flagA','sp-teamB','sp-flagB','sp-league','sp-format','sp-oddsA','sp-oddsDraw','sp-oddsB','sp-startTime'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('sp-sport').value = 'cricket';
+            document.getElementById('sp-status').value = 'upcoming';
+        }
+
+        function editMatchForm(id) {
+            const m = SportsDB.getMatchById(id);
+            if (!m) return;
+            document.getElementById('sp-match-id').value = m.id;
+            document.getElementById('sp-sport').value = m.sport;
+            document.getElementById('sp-status').value = m.status;
+            document.getElementById('sp-teamA').value = m.teamA || '';
+            document.getElementById('sp-flagA').value = m.flagA || '';
+            document.getElementById('sp-teamB').value = m.teamB || '';
+            document.getElementById('sp-flagB').value = m.flagB || '';
+            document.getElementById('sp-league').value = m.league || '';
+            document.getElementById('sp-format').value = m.format || '';
+            document.getElementById('sp-oddsA').value = m.oddsA || '';
+            document.getElementById('sp-oddsDraw').value = m.oddsDraw || '';
+            document.getElementById('sp-oddsB').value = m.oddsB || '';
+            if (m.startTime) {
+                const d = new Date(m.startTime);
+                document.getElementById('sp-startTime').value = d.toISOString().slice(0,16);
+            }
+            document.getElementById('sp-match-id').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function deleteMatchAdmin(id) {
+            const m = SportsDB.getMatchById(id);
+            if (!m) return;
+            if (!confirm(`Delete match: ${m.teamA} vs ${m.teamB}?`)) return;
+            SportsDB.deleteMatch(id);
+            renderSportMatches();
+            populateSportStats();
+            populateScoreMatchSelect();
+        }
+
+        function updateScoreForm() {
+            const id = document.getElementById('sp-score-match').value;
+            const scoreA = document.getElementById('sp-score-a').value.trim();
+            const scoreB = document.getElementById('sp-score-b').value.trim();
+            const detail = document.getElementById('sp-score-detail').value.trim();
+            const commentary = document.getElementById('sp-commentary-line').value.trim();
+            if (!id || id === 'No live matches') { alert('No live match selected.'); return; }
+            SportsDB.updateScore(id, scoreA, scoreB, detail, commentary || null);
+            document.getElementById('sp-score-a').value = '';
+            document.getElementById('sp-score-b').value = '';
+            document.getElementById('sp-score-detail').value = '';
+            document.getElementById('sp-commentary-line').value = '';
+            renderSportMatches();
+            alert('✅ Score published! All devices will see the updated score.');
         }
     </script>
 </body>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Details | SpinTask Sports</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Match Details Page Styles */
+        :root { --accent: #39ff14; --red: #ff4d4d; --yellow: #ffc107; }
+        .match-hero { padding: 40px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .live-badge { background: var(--red); color: #fff; padding: 4px 14px; border-radius: 20px; font-size: .75rem; font-weight: 700; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 5px; animation: pulse 2s infinite; }
+        .live-badge::before { content: '●'; }
+        .upcoming-badge { background: rgba(255,193,7,.15); color: var(--yellow); padding: 4px 14px; border-radius: 20px; font-size: .75rem; font-weight: 700; letter-spacing: 1px; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+        .teams-row { display: flex; align-items: center; justify-content: center; gap: 30px; margin: 30px 0; flex-wrap: wrap; }
+        .team-block { display: flex; flex-direction: column; align-items: center; gap: 10px; flex: 1; min-width: 120px; }
+        .team-flag { font-size: 3rem; }
+        .team-name { font-size: 1.1rem; font-weight: 700; text-align: center; }
+        .score-block { text-align: center; }
+        .score-main { font-size: 2.8rem; font-weight: 800; color: var(--accent); letter-spacing: 3px; }
+        .score-detail { color: rgba(255,255,255,.5); font-size: .85rem; margin-top: 4px; }
+        .vs-text { font-size: 1rem; color: rgba(255,255,255,.3); }
+
+        /* Betting Odds */
+        .odds-section { padding: 30px 0; }
+        .odds-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+        .odds-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07); border-radius: 14px; padding: 18px; text-align: center; cursor: pointer; transition: all .25s; user-select:none; }
+        .odds-card:hover { border-color: var(--accent); background: rgba(57,255,20,.08); transform: translateY(-3px); }
+        .odds-card.selected { border-color: var(--accent); background: rgba(57,255,20,.15); }
+        .odds-label { font-size: .75rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+        .odds-value { font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+        .odds-sub { font-size: .8rem; color: rgba(255,255,255,.6); margin-top: 4px; }
+
+        /* Bet Slip */
+        .bet-slip { background: rgba(255,255,255,.04); border: 1px solid rgba(57,255,20,.2); border-radius: 16px; padding: 22px; margin-top: 20px; }
+        .bet-slip-title { font-weight: 700; margin-bottom: 15px; color: var(--accent); }
+        .bet-stake-row { display: flex; gap: 10px; align-items: center; }
+        .bet-stake-row input { flex: 1; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 8px; padding: 10px 14px; color: #fff; font-size: 1rem; }
+        .potential-win { margin-top: 12px; font-size: .9rem; color: rgba(255,255,255,.6); }
+        .potential-win span { color: var(--accent); font-weight: 700; }
+
+        /* Tabs */
+        .detail-tabs { display: flex; gap: 5px; border-bottom: 1px solid rgba(255,255,255,.07); margin-bottom: 25px; overflow-x: auto; }
+        .detail-tab { padding: 12px 20px; font-size: .85rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: .2s; }
+        .detail-tab.active { border-bottom-color: var(--accent); color: var(--accent); }
+        .detail-tab:hover { color: var(--accent); }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; animation: fadeUp .3s ease; }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Commentary */
+        .commentary-list { list-style: none; padding: 0; max-height: 340px; overflow-y: auto; }
+        .commentary-list li { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: .9rem; color: rgba(255,255,255,.8); }
+        .commentary-list li .over-badge { background: rgba(57,255,20,.1); color: var(--accent); font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 4px; margin-right: 8px; }
+
+        /* Stats */
+        .stat-row { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); }
+        .stat-label { flex: 1; text-align: center; font-size: .8rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .5px; }
+        .stat-bar-container { flex: 3; display: flex; gap: 6px; align-items: center; }
+        .stat-bar-a, .stat-bar-b { height: 6px; border-radius: 3px; }
+        .stat-bar-a { background: var(--accent); }
+        .stat-bar-b { background: #ff9900; }
+        .stat-val { font-weight: 700; font-size: .9rem; min-width: 60px; text-align: center; }
+        .stat-val-a { color: var(--accent); }
+        .stat-val-b { color: #ff9900; }
+
+        /* League info */
+        .detail-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .detail-info-item { background: rgba(255,255,255,.04); border-radius: 10px; padding: 14px; text-align: center; }
+        .detail-info-item .di-label { font-size: .7rem; color: rgba(255,255,255,.4); text-transform: uppercase; margin-bottom: 5px; }
+        .detail-info-item .di-val { font-weight: 700; font-size: .95rem; }
+
+        /* Back button */
+        .back-btn { display: inline-flex; align-items: center; gap: 7px; color: rgba(255,255,255,.5); font-size: .9rem; margin-bottom: 20px; cursor: pointer; text-decoration: none; transition: color .2s; }
+        .back-btn:hover { color: var(--accent); }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .score-main { font-size: 2rem; }
+            .team-flag { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="glass">
+        <div class="container container-nav">
+            <nav>
+                <a href="index.html" class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2"/><circle cx="20" cy="20" r="12" stroke="#39ff14" stroke-width="1" stroke-dasharray="4 4"/><path d="M20 8V12M20 28V32M8 20H12M28 20H32" stroke="#39ff14" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="20" r="4" fill="#39ff14"/></svg>
+                    SpinTask<span>.</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="sportxbet.html" style="color:#ffaa00;font-weight:700;">🏅 SportXBet</a></li>
+                </ul>
+                <div class="auth-btns">
+                    <a href="login.html" class="btn btn-outline">Login</a>
+                    <a href="register.html" class="btn btn-primary">Start Earning</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main style="padding-bottom: 80px;">
+        <div class="container" style="padding-top: 30px;">
+            <a id="back-btn" href="#" onclick="history.back()" class="back-btn">← Back to Matches</a>
+
+            <!-- Match Hero -->
+            <div class="match-hero glass" style="border-radius:20px;padding:35px;">
+                <div style="text-align:center;margin-bottom:15px;">
+                    <span id="match-status-badge" class="live-badge">LIVE</span>
+                    <span id="match-league" style="margin-left:12px;color:rgba(255,255,255,.5);font-size:.85rem;"></span>
+                </div>
+                <div class="teams-row">
+                    <div class="team-block">
+                        <div id="flag-a" class="team-flag">🏏</div>
+                        <div id="team-a" class="team-name">Team A</div>
+                    </div>
+                    <div class="score-block">
+                        <div id="score-display" class="score-main">— vs —</div>
+                        <div id="match-detail" class="score-detail"></div>
+                        <div id="match-time" class="score-detail" style="margin-top:4px;"></div>
+                    </div>
+                    <div class="team-block">
+                        <div id="flag-b" class="team-flag">🏏</div>
+                        <div id="team-b" class="team-name">Team B</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Odds & Bet Slip -->
+            <div class="odds-section">
+                <h3 style="margin-bottom:15px;">🎯 Bet on this Match</h3>
+                <div id="odds-grid" class="odds-grid"></div>
+                <div id="bet-slip" class="bet-slip" style="display:none;">
+                    <div class="bet-slip-title">🧾 Bet Slip</div>
+                    <div id="selected-bet-label" style="margin-bottom:12px;font-size:.9rem;color:rgba(255,255,255,.7);"></div>
+                    <div class="bet-stake-row">
+                        <input type="number" id="stake-input" placeholder="Enter amount (USDT)" min="1" step="0.1" oninput="calcWin()">
+                        <button class="btn btn-primary" onclick="placeBet()">Place Bet</button>
+                    </div>
+                    <div class="potential-win">Potential Return: <span id="potential-win">$0.00</span></div>
+                </div>
+            </div>
+
+            <!-- Detail Tabs -->
+            <div class="detail-tabs">
+                <div class="detail-tab active" onclick="switchTab('commentary')">📝 Commentary</div>
+                <div class="detail-tab" onclick="switchTab('stats')">📊 Stats</div>
+                <div class="detail-tab" onclick="switchTab('info')">ℹ️ Match Info</div>
+            </div>
+
+            <div id="tab-commentary" class="tab-pane active">
+                <ul id="commentary-list" class="commentary-list"></ul>
+            </div>
+            <div id="tab-stats" class="tab-pane">
+                <div id="stats-container"></div>
+            </div>
+            <div id="tab-info" class="tab-pane">
+                <div id="info-container" class="detail-info-grid"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+    <script>
+        let currentMatch = null;
+        let selectedOdds = null;
+
+        function getMatchIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        function formatTime(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function renderMatch(match) {
+            currentMatch = match;
+            if (!match) { document.querySelector('.container').innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:80px 0;">Match not found.</p>'; return; }
+
+            const isLive = match.status === 'live';
+            const badge = document.getElementById('match-status-badge');
+            badge.className = isLive ? 'live-badge' : 'upcoming-badge';
+            badge.textContent = isLive ? '● LIVE' : '● UPCOMING';
+
+            document.getElementById('match-league').textContent = match.league || '';
+            document.getElementById('flag-a').textContent = match.flagA || '';
+            document.getElementById('flag-b').textContent = match.flagB || '';
+            document.getElementById('team-a').textContent = match.teamA || '';
+            document.getElementById('team-b').textContent = match.teamB || '';
+            document.getElementById('match-detail').textContent = match.detail || '';
+            document.getElementById('match-time').textContent = formatTime(match.startTime);
+
+            const sa = isLive ? (match.scoreA || '0') : '-';
+            const sb = isLive ? (match.scoreB || '0') : '-';
+            document.getElementById('score-display').textContent = `${sa} — ${sb}`;
+
+            document.title = `${match.teamA} vs ${match.teamB} | SpinTask Sports`;
+
+            // Odds
+            renderOdds(match);
+            // Commentary
+            renderCommentary(match);
+            // Stats
+            renderStats(match);
+            // Info
+            renderInfo(match);
+        }
+
+        function renderOdds(match) {
+            const container = document.getElementById('odds-grid');
+            const hasDraw = match.sport === 'cricket' || match.sport === 'football';
+            let html = `
+                <div class="odds-card" onclick="selectOdds(this, '${match.teamA} Win', '${match.oddsA}')">
+                    <div class="odds-label">${match.teamA} Win</div>
+                    <div class="odds-value">${match.oddsA || '—'}</div>
+                    <div class="odds-sub">Team A</div>
+                </div>`;
+            if (hasDraw && match.oddsDraw && match.oddsDraw !== '-') {
+                html += `<div class="odds-card" onclick="selectOdds(this, 'Draw', '${match.oddsDraw}')">
+                    <div class="odds-label">Draw</div>
+                    <div class="odds-value">${match.oddsDraw}</div>
+                    <div class="odds-sub">Any result</div>
+                </div>`;
+            }
+            html += `<div class="odds-card" onclick="selectOdds(this, '${match.teamB} Win', '${match.oddsB}')">
+                    <div class="odds-label">${match.teamB} Win</div>
+                    <div class="odds-value">${match.oddsB || '—'}</div>
+                    <div class="odds-sub">Team B</div>
+                </div>`;
+            container.innerHTML = html;
+        }
+
+        function selectOdds(el, label, value) {
+            document.querySelectorAll('.odds-card').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedOdds = { label, value: parseFloat(value) };
+            const slip = document.getElementById('bet-slip');
+            slip.style.display = 'block';
+            document.getElementById('selected-bet-label').textContent = `Selected: ${label} @ ${value}`;
+            calcWin();
+        }
+
+        function calcWin() {
+            if (!selectedOdds) return;
+            const stake = parseFloat(document.getElementById('stake-input').value) || 0;
+            const win = (stake * selectedOdds.value).toFixed(2);
+            document.getElementById('potential-win').textContent = `$${win}`;
+        }
+
+        function placeBet() {
+            const stake = parseFloat(document.getElementById('stake-input').value);
+            if (!stake || stake < 1) { alert('Please enter a valid stake (minimum $1).'); return; }
+            alert(`✅ Bet placed!\n\n${selectedOdds.label} @ ${selectedOdds.value}\nStake: $${stake}\nPotential win: $${(stake * selectedOdds.value).toFixed(2)}\n\n(This is a simulated bet. Connect backend to enable real betting.)`);
+        }
+
+        function renderCommentary(match) {
+            const list = document.getElementById('commentary-list');
+            const lines = match.commentary || [];
+            if (lines.length === 0) {
+                list.innerHTML = '<li style="color:rgba(255,255,255,.3);text-align:center;padding:30px;">No commentary yet. Check back during the match.</li>';
+                return;
+            }
+            list.innerHTML = lines.map((l, i) => {
+                const parts = l.split(' — ');
+                const over = parts.length > 1 ? parts[0] : '';
+                const text = parts.length > 1 ? parts.slice(1).join(' — ') : l;
+                return `<li>${over ? `<span class="over-badge">${over}</span>` : ''}${text}</li>`;
+            }).join('');
+        }
+
+        function renderStats(match) {
+            const container = document.getElementById('stats-container');
+            const stats = match.stats || {};
+            const keys = Object.keys(stats);
+
+            if (!keys.length) {
+                container.innerHTML = '<p style="color:rgba(255,255,255,.3);text-align:center;padding:30px;">Stats not available for this match.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div style="display:flex;justify-content:space-between;font-weight:700;padding:10px 0 5px;margin-bottom:5px;border-bottom:1px solid rgba(255,255,255,.07);">
+                    <span style="color:var(--accent)">${match.teamA}</span>
+                    <span style="color:rgba(255,255,255,.3);font-size:.8rem;">STAT</span>
+                    <span style="color:#ff9900">${match.teamB}</span>
+                </div>
+                ${keys.map(k => {
+                    const val = stats[k];
+                    const parts = val.split(' - ');
+                    if (parts.length !== 2) return `<div class="stat-row"><div class="stat-label">${k}</div><div style="flex:3;text-align:center;">${val}</div></div>`;
+                    const aVal = parseFloat(parts[0]) || 0;
+                    const bVal = parseFloat(parts[1]) || 0;
+                    const total = aVal + bVal || 1;
+                    const aPct = (aVal / total * 100).toFixed(0);
+                    const bPct = (bVal / total * 100).toFixed(0);
+                    return `<div class="stat-row">
+                        <div class="stat-val stat-val-a">${parts[0]}</div>
+                        <div class="stat-bar-container">
+                            <div class="stat-bar-a" style="width:${aPct}%"></div>
+                            <div class="stat-bar-b" style="width:${bPct}%"></div>
+                        </div>
+                        <div class="stat-val stat-val-b">${parts[1]}</div>
+                    </div><div style="text-align:center;font-size:.7rem;color:rgba(255,255,255,.3);margin-top:-8px;margin-bottom:4px;">${k.replace(/([A-Z])/g,' $1').trim()}</div>`;
+                }).join('')}`;
+        }
+
+        function renderInfo(match) {
+            const container = document.getElementById('info-container');
+            container.innerHTML = `
+                <div class="detail-info-item"><div class="di-label">Sport</div><div class="di-val">${(match.sport || '').toUpperCase()}</div></div>
+                <div class="detail-info-item"><div class="di-label">Format</div><div class="di-val">${match.format || '—'}</div></div>
+                <div class="detail-info-item"><div class="di-label">League</div><div class="di-val">${match.league || '—'}</div></div>
+                <div class="detail-info-item"><div class="di-label">Status</div><div class="di-val" style="color:${match.status === 'live' ? 'var(--red)' : 'var(--yellow)'};">${(match.status||'').toUpperCase()}</div></div>
+                <div class="detail-info-item"><div class="di-label">Start Time</div><div class="di-val" style="font-size:.8rem;">${formatTime(match.startTime)}</div></div>
+            `;
+        }
+
+        function switchTab(name) {
+            document.querySelectorAll('.detail-tab').forEach((t, i) => {
+                const names = ['commentary', 'stats', 'info'];
+                t.classList.toggle('active', names[i] === name);
+            });
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+        }
+
+        // Boot
+        document.addEventListener('DOMContentLoaded', () => {
+            const id = getMatchIdFromUrl();
+            if (!id) { window.location.href = 'index.html'; return; }
+
+            // Use firebase-service to listen for real-time updates
+            SportsDB.listenMatchById(id, (match) => {
+                renderMatch(match);
+            });
+        });
+    </script>
+</body>
+</html>
