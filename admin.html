@@ -133,6 +133,7 @@
             padding: 6px 12px;
             font-size: 0.75rem;
         }
+        .sp-label { font-size:.8rem; color:var(--text-muted); display:block; }
     </style>
 </head>
 
@@ -410,138 +411,361 @@
                                 style="font-family: monospace; width: 100%; max-width: none; color: var(--primary-neon);">
                         </div>
                         <button class="btn btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- SECTION: SPORTS MANAGEMENT -->
+                    </div>            <!-- SECTION: SPORTS MANAGEMENT -->
             <div id="section-sports" class="admin-section">
+
+                <!-- Sub-navigation tabs -->
+                <div style="display:flex;gap:8px;margin-bottom:25px;flex-wrap:wrap;">
+                    <button class="btn btn-primary" id="sp-tab-matches" onclick="switchSportTab('matches')" style="font-size:.82rem;">📋 Matches</button>
+                    <button class="btn glass"        id="sp-tab-score"   onclick="switchSportTab('score')"   style="font-size:.82rem;">⚡ Live Score</button>
+                    <button class="btn glass"        id="sp-tab-leagues" onclick="switchSportTab('leagues')" style="font-size:.82rem;">🏆 Leagues</button>
+                </div>
+
                 <!-- Stats Strip -->
                 <div class="dash-grid" style="margin-bottom:25px;">
-                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-live">0</div><span class="label">Live Matches</span></div>
-                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-up">0</div><span class="label">Upcoming</span></div>
+                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-live">0</div><span class="label">🔴 Live</span></div>
+                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-up">0</div><span class="label">📅 Upcoming</span></div>
+                    <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-total">0</div><span class="label">Total Matches</span></div>
                     <div class="admin-card glass admin-stat-card"><div class="value" id="sp-stat-leagues">0</div><span class="label">Leagues</span></div>
                 </div>
 
-                <!-- Add / Edit Match Form -->
-                <div class="glass" style="padding:30px;border-radius:20px;margin-bottom:25px;">
-                    <h3>➕ Add / Edit Match</h3>
-                    <input type="hidden" id="sp-match-id">
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px;">
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Sport</label>
-                            <select id="sp-sport" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
-                                <option value="cricket">🏏 Cricket</option>
-                                <option value="football">⚽ Football</option>
-                                <option value="tennis">🎾 Tennis</option>
-                                <option value="basketball">🏀 Basketball</option>
-                                <option value="esports">🎮 eSports</option>
-                            </select>
+                <!-- ═══ TAB: MATCHES ═══ -->
+                <div id="sp-pane-matches">
+
+                    <!-- Add / Edit Match Form -->
+                    <div class="glass" style="padding:30px;border-radius:20px;margin-bottom:25px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                            <h3 id="sp-form-title">➕ Add New Match</h3>
+                            <button class="btn glass" onclick="clearMatchForm()" style="font-size:.75rem;">✕ New / Clear Form</button>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Status</label>
-                            <select id="sp-status" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
-                                <option value="upcoming">📅 Upcoming</option>
-                                <option value="live">🔴 Live</option>
-                                <option value="finished">✅ Finished</option>
-                            </select>
+                        <input type="hidden" id="sp-match-id">
+
+                        <!-- Section: Basic Info -->
+                        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:18px;margin-bottom:18px;">
+                            <div style="font-size:.75rem;color:var(--primary-neon);font-weight:700;letter-spacing:1px;margin-bottom:14px;">BASIC INFORMATION</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                                <div>
+                                    <label class="sp-label">Sport</label>
+                                    <select id="sp-sport" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                        <option value="cricket">🏏 Cricket</option>
+                                        <option value="football">⚽ Football</option>
+                                        <option value="tennis">🎾 Tennis</option>
+                                        <option value="basketball">🏀 Basketball</option>
+                                        <option value="esports">🎮 eSports</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sp-label">Status</label>
+                                    <select id="sp-status" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                        <option value="upcoming">📅 Upcoming</option>
+                                        <option value="live">🔴 Live</option>
+                                        <option value="finished">✅ Finished</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="sp-label">League / Tournament</label>
+                                    <input type="text" id="sp-league" placeholder="ICC T20 World Cup" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Format</label>
+                                    <input type="text" id="sp-format" placeholder="T20 / 90 min / BO3" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Start Date & Time</label>
+                                    <input type="datetime-local" id="sp-startTime" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Venue / Location</label>
+                                    <input type="text" id="sp-venue" placeholder="Wankhede Stadium, Mumbai" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Team A Name</label>
-                            <input type="text" id="sp-teamA" placeholder="India" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <!-- Section: Teams -->
+                        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:18px;margin-bottom:18px;">
+                            <div style="font-size:.75rem;color:var(--primary-neon);font-weight:700;letter-spacing:1px;margin-bottom:14px;">TEAMS</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                                <div>
+                                    <label class="sp-label">Team A Name</label>
+                                    <input type="text" id="sp-teamA" placeholder="India" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Team B Name</label>
+                                    <input type="text" id="sp-teamB" placeholder="Pakistan" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Team A Flag / Emoji</label>
+                                    <input type="text" id="sp-flagA" placeholder="🇮🇳" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Team B Flag / Emoji</label>
+                                    <input type="text" id="sp-flagB" placeholder="🇵🇰" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Team A Logo URL (optional)</label>
+                                    <input type="url" id="sp-logoA" placeholder="https://…/logo-india.png" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Team B Logo URL (optional)</label>
+                                    <input type="url" id="sp-logoB" placeholder="https://…/logo-pak.png" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Team A Flag/Icon</label>
-                            <input type="text" id="sp-flagA" placeholder="🇮🇳" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <!-- Section: Betting Odds & Percentages -->
+                        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:18px;margin-bottom:18px;">
+                            <div style="font-size:.75rem;color:var(--primary-neon);font-weight:700;letter-spacing:1px;margin-bottom:14px;">BETTING ODDS & WIN PERCENTAGE</div>
+                            <p style="font-size:.8rem;color:rgba(255,255,255,.4);margin-bottom:14px;">Set decimal odds (e.g. 1.85) AND optionally the win % displayed on the betting UI. Percentages auto-calculate if left empty.</p>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+                                <div style="border:1px solid rgba(57,255,20,.15);border-radius:10px;padding:14px;">
+                                    <div style="font-weight:700;margin-bottom:10px;color:var(--primary-neon);" id="sp-label-teamA-odds">Team A Win</div>
+                                    <label class="sp-label">Odds</label>
+                                    <input type="number" id="sp-oddsA" placeholder="1.85" step="0.01" min="1.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;margin-bottom:10px;" oninput="autoCalcPct()">
+                                    <label class="sp-label">Win % (shown on UI)</label>
+                                    <div style="display:flex;gap:8px;align-items:center;margin-top:5px;">
+                                        <input type="range" id="sp-pctA" min="0" max="100" value="45" style="flex:1;" oninput="document.getElementById('sp-pctA-val').textContent=this.value+'%'">
+                                        <span id="sp-pctA-val" style="font-weight:700;color:var(--primary-neon);min-width:40px;">45%</span>
+                                    </div>
+                                </div>
+                                <div style="border:1px solid rgba(255,193,7,.1);border-radius:10px;padding:14px;">
+                                    <div style="font-weight:700;margin-bottom:10px;color:#ffc107;">Draw</div>
+                                    <label class="sp-label">Odds (leave empty = no draw)</label>
+                                    <input type="number" id="sp-oddsDraw" placeholder="5.00" step="0.01" min="1.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;margin-bottom:10px;">
+                                    <label class="sp-label">Draw % (shown on UI)</label>
+                                    <div style="display:flex;gap:8px;align-items:center;margin-top:5px;">
+                                        <input type="range" id="sp-pctD" min="0" max="100" value="10" style="flex:1;" oninput="document.getElementById('sp-pctD-val').textContent=this.value+'%'">
+                                        <span id="sp-pctD-val" style="font-weight:700;color:#ffc107;min-width:40px;">10%</span>
+                                    </div>
+                                </div>
+                                <div style="border:1px solid rgba(255,100,50,.15);border-radius:10px;padding:14px;">
+                                    <div style="font-weight:700;margin-bottom:10px;color:#ff9900;" id="sp-label-teamB-odds">Team B Win</div>
+                                    <label class="sp-label">Odds</label>
+                                    <input type="number" id="sp-oddsB" placeholder="2.10" step="0.01" min="1.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;margin-bottom:10px;" oninput="autoCalcPct()">
+                                    <label class="sp-label">Win % (shown on UI)</label>
+                                    <div style="display:flex;gap:8px;align-items:center;margin-top:5px;">
+                                        <input type="range" id="sp-pctB" min="0" max="100" value="45" style="flex:1;" oninput="document.getElementById('sp-pctB-val').textContent=this.value+'%'">
+                                        <span id="sp-pctB-val" style="font-weight:700;color:#ff9900;min-width:40px;">45%</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Team B Name</label>
-                            <input type="text" id="sp-teamB" placeholder="Pakistan" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <!-- Section: Media & Links -->
+                        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:18px;margin-bottom:18px;">
+                            <div style="font-size:.75rem;color:var(--primary-neon);font-weight:700;letter-spacing:1px;margin-bottom:14px;">MEDIA & LINKS</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                                <div>
+                                    <label class="sp-label">Match Banner Image URL</label>
+                                    <input type="url" id="sp-banner" placeholder="https://…/match-banner.jpg" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">🔴 Live Stream Link (YouTube/Twitch)</label>
+                                    <input type="url" id="sp-stream" placeholder="https://youtube.com/watch?v=…" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div style="grid-column:1/-1;">
+                                    <label class="sp-label">Match Notes / Description</label>
+                                    <textarea id="sp-notes" rows="2" placeholder="Any extra info about the match…" class="search-input" style="width:100%;max-width:none;margin-top:5px;resize:vertical;"></textarea>
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Team B Flag/Icon</label>
-                            <input type="text" id="sp-flagB" placeholder="🇵🇰" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <!-- Section: Current Score (for live) -->
+                        <div style="background:rgba(255,255,255,.03);border-radius:12px;padding:18px;margin-bottom:18px;">
+                            <div style="font-size:.75rem;color:#ff4d4d;font-weight:700;letter-spacing:1px;margin-bottom:14px;">CURRENT SCORE (for live matches)</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+                                <div>
+                                    <label class="sp-label">Score A</label>
+                                    <input type="text" id="sp-scoreA" placeholder="156/4" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Score B</label>
+                                    <input type="text" id="sp-scoreB" placeholder="143/8" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Match Detail / Stage</label>
+                                    <input type="text" id="sp-detail" placeholder="18.2 Overs / Q3 4:22" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                            </div>
+                            <div style="margin-top:12px;">
+                                <label class="sp-label">Commentary (one line per update — newest first)</label>
+                                <textarea id="sp-commentary" rows="4" placeholder="18.5 — Bumrah OUT! Pakistan 143/8&#10;18.4 — Fabulous Six by Babar!" class="search-input" style="width:100%;max-width:none;margin-top:5px;font-family:monospace;font-size:.82rem;resize:vertical;"></textarea>
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">League / Tournament</label>
-                            <input type="text" id="sp-league" placeholder="ICC T20 World Cup" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
-                        </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Format</label>
-                            <input type="text" id="sp-format" placeholder="T20 / 90 min / BO3" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
-                        </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Odds A</label>
-                            <input type="number" id="sp-oddsA" placeholder="1.85" step="0.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
-                        </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Odds Draw (optional)</label>
-                            <input type="number" id="sp-oddsDraw" placeholder="5.00" step="0.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
-                        </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Odds B</label>
-                            <input type="number" id="sp-oddsB" placeholder="2.10" step="0.01" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
-                        </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Start Time</label>
-                            <input type="datetime-local" id="sp-startTime" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                            <button class="btn btn-primary" onclick="saveMatchForm()" style="min-width:160px;">💾 Save Match</button>
+                            <button class="btn glass" onclick="clearMatchForm()">✕ Clear</button>
                         </div>
                     </div>
-                    <div style="margin-top:20px;display:flex;gap:12px;">
-                        <button class="btn btn-primary" onclick="saveMatchForm()">💾 Save Match</button>
-                        <button class="btn glass" onclick="clearMatchForm()">✕ Clear</button>
+
+                    <!-- All Matches List -->
+                    <div class="glass" style="padding:25px;border-radius:20px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+                            <h3>📋 All Matches</h3>
+                            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                                <select id="sp-filter-sport" onchange="renderSportMatches()" class="search-input" style="max-width:160px;">
+                                    <option value="all">All Sports</option>
+                                    <option value="cricket">🏏 Cricket</option>
+                                    <option value="football">⚽ Football</option>
+                                    <option value="tennis">🎾 Tennis</option>
+                                    <option value="basketball">🏀 Basketball</option>
+                                    <option value="esports">🎮 eSports</option>
+                                </select>
+                                <select id="sp-filter-status" onchange="renderSportMatches()" class="search-input" style="max-width:140px;">
+                                    <option value="all">All Status</option>
+                                    <option value="live">🔴 Live</option>
+                                    <option value="upcoming">📅 Upcoming</option>
+                                    <option value="finished">✅ Finished</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="admin-table">
+                                <thead><tr><th>Sport</th><th>Match</th><th>League</th><th>Score</th><th>Odds (A/D/B)</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="sp-matches-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Score Updater -->
-                <div class="glass" style="padding:25px;border-radius:20px;margin-bottom:25px;">
-                    <h3>⚡ Quick Score Update</h3>
-                    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-top:15px;align-items:end;">
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Select Match</label>
-                            <select id="sp-score-match" class="search-input" style="width:100%;max-width:none;margin-top:5px;"></select>
+                <!-- ═══ TAB: LIVE SCORE ═══ -->
+                <div id="sp-pane-score" style="display:none;">
+                    <div class="glass" style="padding:30px;border-radius:20px;margin-bottom:25px;">
+                        <h3>⚡ Quick Score &amp; Commentary Update</h3>
+                        <p style="color:rgba(255,255,255,.4);font-size:.85rem;margin-top:8px;margin-bottom:20px;">Select a match and instantly push score updates. Visible to all users within seconds.</p>
+
+                        <div style="margin-bottom:20px;">
+                            <label class="sp-label">Select Match (any status)</label>
+                            <select id="sp-score-match" class="search-input" style="width:100%;max-width:none;margin-top:5px;" onchange="prefillScoreForm()"></select>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Score A</label>
-                            <input type="text" id="sp-score-a" placeholder="156/4" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px;">
+                            <div>
+                                <label class="sp-label">Score A</label>
+                                <input type="text" id="sp-score-a" placeholder="156/4" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                            </div>
+                            <div>
+                                <label class="sp-label">Score B</label>
+                                <input type="text" id="sp-score-b" placeholder="143/8" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                            </div>
+                            <div>
+                                <label class="sp-label">Detail / Stage</label>
+                                <input type="text" id="sp-score-detail" placeholder="18.2 Overs" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                            </div>
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Score B</label>
-                            <input type="text" id="sp-score-b" placeholder="143/8" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <div style="margin-bottom:16px;">
+                            <label class="sp-label">New Commentary Line (prepended to log)</label>
+                            <input type="text" id="sp-commentary-line" placeholder="18.5 — Bumrah takes a wicket! OUT!" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
                         </div>
-                        <div>
-                            <label style="font-size:.8rem;color:var(--text-muted);">Detail</label>
-                            <input type="text" id="sp-score-detail" placeholder="18.2 Overs" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                        <!-- Odds quick update -->
+                        <div style="background:rgba(255,255,255,.03);border-radius:10px;padding:16px;margin-bottom:16px;">
+                            <div style="font-size:.75rem;color:var(--primary-neon);font-weight:700;letter-spacing:1px;margin-bottom:12px;">QUICK ODDS UPDATE</div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                                <div>
+                                    <label class="sp-label">Odds A</label>
+                                    <input type="number" id="sp-q-oddsA" step="0.01" placeholder="1.85" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Odds Draw</label>
+                                    <input type="number" id="sp-q-oddsDraw" step="0.01" placeholder="5.00" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                                <div>
+                                    <label class="sp-label">Odds B</label>
+                                    <input type="number" id="sp-q-oddsB" step="0.01" placeholder="2.10" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Status toggle -->
+                        <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;">
+                            <label class="sp-label" style="margin:0;">Change Status:</label>
+                            <div id="sp-status-btns" style="display:flex;gap:8px;">
+                                <button class="btn glass" style="font-size:.78rem;" onclick="quickSetStatus('upcoming')">📅 Upcoming</button>
+                                <button class="btn btn-primary" style="font-size:.78rem;background:rgba(255,77,77,.2);border-color:#ff4d4d;color:#ff4d4d;" onclick="quickSetStatus('live')">🔴 Go Live</button>
+                                <button class="btn glass" style="font-size:.78rem;" onclick="quickSetStatus('finished')">✅ End Match</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" style="width:100%;padding:14px;" onclick="updateScoreForm()">📡 Publish Update</button>
                     </div>
-                    <div style="margin-top:12px;">
-                        <label style="font-size:.8rem;color:var(--text-muted);">Commentary Line</label>
-                        <input type="text" id="sp-commentary-line" placeholder="18.5 — Bumrah takes a wicket! OUT!" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+
+                    <!-- Live match previews -->
+                    <div class="glass" style="padding:25px;border-radius:20px;">
+                        <h3 style="margin-bottom:20px;">🔴 Live Matches Quick View</h3>
+                        <div id="sp-live-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;"></div>
                     </div>
-                    <button class="btn btn-primary" style="margin-top:15px;" onclick="updateScoreForm()">📡 Publish Score</button>
                 </div>
 
-                <!-- All Matches List -->
-                <div class="glass" style="padding:25px;border-radius:20px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                        <h3>📋 All Matches</h3>
-                        <select id="sp-filter-sport" onchange="renderSportMatches()" class="search-input" style="max-width:160px;">
-                            <option value="all">All Sports</option>
-                            <option value="cricket">Cricket</option>
-                            <option value="football">Football</option>
-                            <option value="tennis">Tennis</option>
-                            <option value="basketball">Basketball</option>
-                            <option value="esports">eSports</option>
-                        </select>
+                <!-- ═══ TAB: LEAGUES ═══ -->
+                <div id="sp-pane-leagues" style="display:none;">
+                    <div class="glass" style="padding:30px;border-radius:20px;margin-bottom:25px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                            <h3 id="sp-league-form-title">🏆 Add New League</h3>
+                            <button class="btn glass" onclick="clearLeagueForm()" style="font-size:.75rem;">✕ Clear</button>
+                        </div>
+                        <input type="hidden" id="sp-league-id">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                            <div>
+                                <label class="sp-label">League Name</label>
+                                <input type="text" id="sp-lg-name" placeholder="IPL 2026" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                            </div>
+                            <div>
+                                <label class="sp-label">Sport</label>
+                                <select id="sp-lg-sport" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                    <option value="cricket">🏏 Cricket</option>
+                                    <option value="football">⚽ Football</option>
+                                    <option value="tennis">🎾 Tennis</option>
+                                    <option value="basketball">🏀 Basketball</option>
+                                    <option value="esports">🎮 eSports</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sp-label">Flag / Icon Emoji</label>
+                                <input type="text" id="sp-lg-flag" placeholder="🇮🇳" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                            </div>
+                            <div>
+                                <label class="sp-label">Status</label>
+                                <select id="sp-lg-status" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                                    <option value="upcoming">🟡 Upcoming</option>
+                                    <option value="active">🟢 Active / Ongoing</option>
+                                    <option value="finished">⚫ Finished</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="sp-label">League Banner URL (optional)</label>
+                                <input type="url" id="sp-lg-banner" placeholder="https://…/league-banner.jpg" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                            </div>
+                            <div>
+                                <label class="sp-label">Official Website Link</label>
+                                <input type="url" id="sp-lg-link" placeholder="https://ipl.bcci.tv" class="search-input" style="width:100%;max-width:none;margin-top:5px;">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top:20px;" onclick="saveLeagueForm()">💾 Save League</button>
                     </div>
-                    <div style="overflow-x:auto;">
-                        <table class="admin-table">
-                            <thead><tr><th>Sport</th><th>Match</th><th>League</th><th>Score</th><th>Status</th><th>Actions</th></tr></thead>
-                            <tbody id="sp-matches-body"></tbody>
-                        </table>
+
+                    <div class="glass" style="padding:25px;border-radius:20px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
+                            <h3>All Leagues</h3>
+                            <select id="sp-lg-filter" onchange="renderLeaguesAdmin()" class="search-input" style="max-width:160px;">
+                                <option value="all">All Sports</option>
+                                <option value="cricket">Cricket</option>
+                                <option value="football">Football</option>
+                                <option value="tennis">Tennis</option>
+                                <option value="basketball">Basketball</option>
+                                <option value="esports">eSports</option>
+                            </select>
+                        </div>
+                        <div style="overflow-x:auto;">
+                            <table class="admin-table">
+                                <thead><tr><th>Flag</th><th>Name</th><th>Sport</th><th>Status</th><th>Link</th><th>Actions</th></tr></thead>
+                                <tbody id="sp-leagues-body"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
+
         </main>
     </div>
 
