@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     Traffic.init();
 
     const isAuthPage = window.location.pathname.includes('login.html') || window.location.pathname.includes('register.html');
-    const isLandingPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('about.html') || window.location.pathname.endsWith('support.html') || window.location.pathname.endsWith('terms.html');
+    const isLandingPage = window.location.pathname.endsWith('/') || window.location.pathname.endsWith('index.html') || window.location.pathname.endsWith('about.html') || window.location.pathname.endsWith('support.html') || window.location.pathname.endsWith('terms.html') || window.location.pathname.endsWith('cricket.html') || window.location.pathname.endsWith('football.html') || window.location.pathname.endsWith('tennis.html') || window.location.pathname.endsWith('basketball.html') || window.location.pathname.endsWith('esports.html') || window.location.pathname.endsWith('betting.html') || window.location.pathname.endsWith('match-details.html');
 
     if (!isLandingPage) {
         Auth.guard();
