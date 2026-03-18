@@ -26,7 +26,7 @@ $headerNew = '<header class="top-header">
         </button>
     </header>'
 
-$files = "tasks.html", "spin.html", "luckydraw.html", "pool.html", "referral.html", "deposit.html", "withdraw.html", "support.html", "profile.html"
+$files = "tasks.html", "spin.html", "luckydraw.html", "pool.html", "referral.html", "deposit.html", "withdraw.html", "support.html", "profile.html", "cricket.html", "football.html", "tennis.html", "basketball.html", "esports.html", "betting.html"
 
 foreach ($f in $files) {
     if (Test-Path $f) {
