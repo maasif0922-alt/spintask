@@ -262,14 +262,27 @@ const SportsDB = {
     saveMatch(matchData) {
         const matches = this._getLocal(this.DB_MATCHES);
         const idx = matches.findIndex(m => m.id === matchData.id);
+        
+        // Ensure new fields exist
+        const enrichedData = {
+            ...matchData,
+            logoA: matchData.logoA || '',
+            logoB: matchData.logoB || '',
+            bettingMargin: matchData.bettingMargin || '0',
+            redirectUrl: matchData.redirectUrl || '',
+            stats: matchData.stats || {},
+            updatedAt: new Date().toISOString()
+        };
+
         if (idx !== -1) {
-            matches[idx] = { ...matches[idx], ...matchData, updatedAt: new Date().toISOString() };
+            matches[idx] = { ...matches[idx], ...enrichedData };
         } else {
-            matches.unshift({ ...matchData, id: 'match_' + Date.now(), createdAt: new Date().toISOString() });
+            enrichedData.id = enrichedData.id || 'match_' + Date.now();
+            enrichedData.createdAt = enrichedData.updatedAt;
+            matches.unshift(enrichedData);
         }
         this._saveLocal(this.DB_MATCHES, matches);
 
-        // Real-time Firebase push
         if (firebaseReady && db) {
             const m = idx !== -1 ? matches[idx] : matches[0];
             db.ref('sports/matches/' + m.id).set(m);
@@ -299,6 +312,15 @@ const SportsDB = {
         if (firebaseReady && db) db.ref('sports/matches/' + id).update({ scoreA, scoreB, detail, commentary: matches[idx].commentary });
     },
 
+    updateStats(id, stats) {
+        const matches = this._getLocal(this.DB_MATCHES);
+        const idx = matches.findIndex(m => m.id === id);
+        if (idx === -1) return;
+        matches[idx].stats = { ...(matches[idx].stats || {}), ...stats };
+        this._saveLocal(this.DB_MATCHES, matches);
+        if (firebaseReady && db) db.ref('sports/matches/' + id).update({ stats: matches[idx].stats });
+    },
+
     // ─── League CRUD ──────────────────────────────────────────────────────
 
     getLeagues(sport = null) {
@@ -309,16 +331,25 @@ const SportsDB = {
     saveLeague(leagueData) {
         const leagues = this._getLocal(this.DB_LEAGUES);
         const idx = leagues.findIndex(l => l.id === leagueData.id);
+        const enriched = { ...leagueData, updatedAt: new Date().toISOString() };
+        
         if (idx !== -1) {
-            leagues[idx] = { ...leagues[idx], ...leagueData };
+            leagues[idx] = { ...leagues[idx], ...enriched };
         } else {
-            leagues.unshift({ ...leagueData, id: 'l_' + Date.now() });
+            enriched.id = enriched.id || 'l_' + Date.now();
+            leagues.unshift(enriched);
         }
         this._saveLocal(this.DB_LEAGUES, leagues);
-        if (firebaseReady && db) {
-            const l = idx !== -1 ? leagues[idx] : leagues[0];
-            db.ref('sports/leagues/' + l.id).set(l);
-        }
+        const final = idx !== -1 ? leagues[idx] : leagues[0];
+        if (firebaseReady && db) db.ref('sports/leagues/' + final.id).set(final);
+        return final;
+    },
+
+    deleteLeague(id) {
+        let leagues = this._getLocal(this.DB_LEAGUES);
+        leagues = leagues.filter(l => l.id !== id);
+        this._saveLocal(this.DB_LEAGUES, leagues);
+        if (firebaseReady && db) db.ref('sports/leagues/' + id).remove();
     },
 
     // ─── Firebase Real-Time Listeners ────────────────────────────────────
