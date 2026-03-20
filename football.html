@@ -4,75 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Football | SpinTask Sports</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/sport-page.css">
 </head>
-<body>
-    <header class="glass">
-        <div class="container container-nav">
-            <nav>
-                <a href="index.html" class="logo">
-                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2"/><circle cx="20" cy="20" r="12" stroke="#39ff14" stroke-width="1" stroke-dasharray="4 4"/><path d="M20 8V12M20 28V32M8 20H12M28 20H32" stroke="#39ff14" stroke-width="2" stroke-linecap="round"/><circle cx="20" cy="20" r="4" fill="#39ff14"/></svg>
-                    SpinTask<span>.</span>
-                </a>
-                <ul class="nav-links">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="sportxbet.html" style="color:#ffaa00;font-weight:700;">🏅 SportXBet</a></li>
-                    <li><a href="cricket.html">Cricket</a></li>
-                    <li><a href="football.html" style="color:#39ff14;">Football</a></li>
-                    <li><a href="tennis.html">Tennis</a></li>
-                </ul>
-                <div class="auth-btns">
-                    <a href="login.html" class="btn btn-outline">Login</a>
-                    <a href="register.html" class="btn btn-primary">Start Earning</a>
-                </div>
+<body class="sport-page-body">
+    <header class="glass" style="position:sticky;top:0;z-index:100;background:rgba(8,11,16,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.07);">
+        <div class="container container-nav" style="height:56px;">
+            <a href="index.html" class="logo" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#39ff14;font-weight:700;">
+                <svg width="26" height="26" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2"/><circle cx="20" cy="20" r="4" fill="#39ff14"/></svg>
+                SpinTask<span style="color:#fff;">.</span>
+            </a>
+            <nav style="display:flex;gap:16px;align-items:center;font-size:0.85rem;">
+                <a href="sports.html" style="color:#ffaa00;font-weight:700;text-decoration:none;">🏅 Sports</a>
+                <a href="cricket.html" style="color:#6b7280;text-decoration:none;">Cricket</a>
+                <a href="tennis.html"  style="color:#6b7280;text-decoration:none;">Tennis</a>
+                <a href="dashboard.html" class="btn btn-primary" style="padding:7px 16px;font-size:0.82rem;">Dashboard</a>
             </nav>
         </div>
     </header>
 
-    <main>
-        <section class="sp-hero" style="background: radial-gradient(ellipse at 50% -20%, rgba(57,255,20,.08) 0%, transparent 70%);">
-            <div class="container">
-                <span class="sp-sport-icon">⚽</span>
-                <h1>Football Betting</h1>
-                <p class="sp-hero-sub">Live Premier League, Champions League, La Liga, Bundesliga &amp; more.</p>
-                <div class="sp-stats-strip">
-                    <div class="sp-stat-pill"><span id="live-count">0</span> Live Now</div>
-                    <div class="sp-stat-pill"><span id="upcoming-count">0</span> Upcoming</div>
-                    <div class="sp-stat-pill"><span>6</span> Leagues</div>
-                </div>
+    <section class="sp-hero">
+        <div class="container">
+            <span class="sp-sport-icon">⚽</span>
+            <h1>Football</h1>
+            <p class="sp-hero-sub">Premier League, La Liga, Champions League — live scores & betting odds.</p>
+            <div class="sp-stats-strip">
+                <div class="sp-stat-pill"><span id="live-count">0</span> Live Now</div>
+                <div class="sp-stat-pill"><span id="upcoming-count">0</span> Upcoming</div>
+                <div class="sp-stat-pill"><span>7</span> Leagues</div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section class="sp-section" style="padding-top:10px;">
-            <div class="container">
-                <div class="sp-section-header">
-                    <h2>🔴 Live Matches</h2>
-                    <a href="sportxbet.html" class="btn btn-outline" style="font-size:.8rem;">Full Betting Hub →</a>
-                </div>
-                <div id="live-matches" class="sp-match-grid"><div class="sp-empty">Loading live matches…</div></div>
-            </div>
-        </section>
-
-        <section class="sp-section">
-            <div class="container">
-                <div class="sp-section-header"><h2>📅 Upcoming Matches</h2></div>
-                <div id="upcoming-matches" class="sp-match-grid"><div class="sp-empty">Loading…</div></div>
-            </div>
-        </section>
-
-        <section class="sp-section glass" style="margin:0;border-radius:0;">
-            <div class="container">
-                <div class="sp-section-header"><h2>🏆 Leagues &amp; Tournaments</h2></div>
-                <div id="leagues-list" class="sp-leagues-grid"></div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="glass" style="padding:20px 0;">
-        <div class="container"><div class="footer-bottom">© 2026 SpinTask. Professional Football Betting Interface.</div></div>
-    </footer>
+    <main></main>
 
     <script src="js/auth.js"></script>
     <script src="js/config.js"></script>
@@ -80,15 +45,6 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-service.js"></script>
     <script src="js/sport-page.js"></script>
-    <script>
-        SportPage.init({ sport: 'football' });
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const matches = SportsDB.getMatches('football');
-                document.getElementById('live-count').textContent = matches.filter(m=>m.status==='live').length;
-                document.getElementById('upcoming-count').textContent = matches.filter(m=>m.status==='upcoming').length;
-            }, 300);
-        });
-    </script>
+    <script>SportPage.init({ sport: 'football' });</script>
 </body>
 </html>

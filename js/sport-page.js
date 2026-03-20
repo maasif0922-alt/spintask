@@ -1,124 +1,192 @@
 /**
- * sport-page.js
- * Shared logic for all individual sport pages (cricket, football, tennis, basketball, esports).
- * Usage: include this after firebase-service.js, then call SportPage.init(config)
+ * sport-page.js — Universal Dynamic Sports Page Renderer v2
+ * Renders live/upcoming/league tabs from SportsDB data.
  */
 
 const SportPage = {
-    config: null,
+    sport: null,
+    pollInterval: null,
 
-    init(cfg) {
-        this.config = cfg;
+    // ── Entry Point ─────────────────────────────────────────────────────────
+    init({ sport }) {
+        this.sport = sport;
         document.addEventListener('DOMContentLoaded', () => {
-            SportsDB.seedDefaults();
-            this._render();
+            this._buildPage();
         });
     },
 
-    _formatTime(iso) {
-        if (!iso) return '';
-        const d = new Date(iso);
-        const now = new Date();
-        const diff = d - now;
-        if (diff <= 0) return 'Started';
-        if (diff < 3600000) return `In ${Math.round(diff / 60000)}m`;
-        if (diff < 86400000) return `In ${Math.round(diff / 3600000)}h`;
-        return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    _buildPage() {
+        const main = document.querySelector('main') || document.querySelector('.sp-main');
+        if (!main) return;
+
+        main.innerHTML = `
+          <!-- Tab Bar -->
+          <div class="sp-tab-bar">
+            <button class="sp-tab active" id="sp-tab-live" onclick="SportPage.showTab('live')">
+              🔴 Live <span class="sp-tab-count" id="sp-live-count">0</span>
+            </button>
+            <button class="sp-tab" id="sp-tab-upcoming" onclick="SportPage.showTab('upcoming')">
+              📅 Upcoming <span class="sp-tab-count" id="sp-upcoming-count">0</span>
+            </button>
+            <button class="sp-tab" id="sp-tab-leagues" onclick="SportPage.showTab('leagues')">
+              🏆 Leagues
+            </button>
+          </div>
+
+          <!-- Sections -->
+          <div class="sp-section" id="sp-section-live">
+            <div class="container">
+              <div class="sp-match-grid" id="sp-live-grid">
+                <div class="sp-empty"><span class="sp-loading-dots">Loading</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sp-section sp-section-hidden" id="sp-section-upcoming">
+            <div class="container">
+              <div class="sp-match-grid" id="sp-upcoming-grid">
+                <div class="sp-empty"><span class="sp-loading-dots">Loading</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sp-section sp-section-hidden" id="sp-section-leagues">
+            <div class="container">
+              <div class="sp-leagues-grid" id="sp-leagues-grid">
+                <div class="sp-empty"><span class="sp-loading-dots">Loading</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Start real-time listener
+        this.pollInterval = SportsDB.listenMatches(this.sport, (matches) => {
+            this._renderMatches(matches);
+        });
+
+        // Leagues (static-ish, no real-time needed)
+        this._renderLeagues();
     },
 
-    _renderMatchCard(m) {
+    // ── Tab Switching ────────────────────────────────────────────────────────
+    showTab(tab) {
+        ['live','upcoming','leagues'].forEach(t => {
+            const sec = document.getElementById('sp-section-' + t);
+            const btn = document.getElementById('sp-tab-' + t);
+            if (sec) sec.classList.toggle('sp-section-hidden', t !== tab);
+            if (btn) btn.classList.toggle('active', t === tab);
+        });
+    },
+
+    // ── Render Matches ───────────────────────────────────────────────────────
+    _renderMatches(matches) {
+        const live     = matches.filter(m => m.status === 'live');
+        const upcoming = matches.filter(m => m.status === 'upcoming');
+        const completed= matches.filter(m => m.status === 'completed');
+
+        // Update counts
+        const lc = document.getElementById('sp-live-count');
+        const uc = document.getElementById('sp-upcoming-count');
+        if (lc) lc.textContent = live.length;
+        if (uc) uc.textContent = upcoming.length;
+
+        // Update hero stats if present
+        const liveEl     = document.getElementById('live-count');
+        const upcomingEl = document.getElementById('upcoming-count');
+        if (liveEl)     liveEl.textContent = live.length;
+        if (upcomingEl) upcomingEl.textContent = upcoming.length;
+
+        this._fillGrid('sp-live-grid',     live.length     ? live     : null, 'No live matches right now');
+        this._fillGrid('sp-upcoming-grid', upcoming.length ? upcoming : null, 'No upcoming matches scheduled');
+    },
+
+    _fillGrid(gridId, matches, emptyMsg) {
+        const grid = document.getElementById(gridId);
+        if (!grid) return;
+        if (!matches) {
+            grid.innerHTML = `<div class="sp-empty">${emptyMsg}</div>`;
+            return;
+        }
+        grid.innerHTML = matches.map(m => this._matchCardHTML(m)).join('');
+    },
+
+    _matchCardHTML(m) {
         const isLive = m.status === 'live';
-        const scoreA = isLive ? m.scoreA : '—';
-        const scoreB = isLive ? m.scoreB : '—';
-        const statusHtml = isLive
-            ? `<span class="sp-live-dot">● LIVE</span>`
-            : `<span class="sp-up-dot">⏰ ${this._formatTime(m.startTime)}</span>`;
-        const hasDraw = m.sport === 'cricket' || m.sport === 'football';
+        const statusLabel = isLive
+            ? `<span class="sp-status-badge live"><span class="sp-live-dot"></span> LIVE</span>`
+            : m.status === 'upcoming'
+                ? `<span class="sp-status-badge upcoming">📅 UPCOMING</span>`
+                : `<span class="sp-status-badge completed">✓ COMPLETED</span>`;
+
+        const scoreHTML = isLive
+            ? `<div class="sp-score live-score">${m.scoreA || '0'} <span style="font-size:0.6em;color:#555">–</span> ${m.scoreB || '0'}</div>`
+            : `<div class="sp-score"><span class="sp-vs">VS</span></div>`;
+
+        const drawOdd = m.oddsDraw && m.oddsDraw !== '-'
+            ? `<div class="sp-odd-btn"><span class="sp-odd-label">Draw</span><span class="sp-odd-val">${m.oddsDraw}</span></div>` : '';
+
+        const oddsRow = (m.oddsA || m.oddsB)
+            ? `<div class="sp-odds-row">
+                <div class="sp-odd-btn"><span class="sp-odd-label">${m.teamA}</span><span class="sp-odd-val">${m.oddsA || '?'}</span></div>
+                ${drawOdd}
+                <div class="sp-odd-btn"><span class="sp-odd-label">${m.teamB}</span><span class="sp-odd-val">${m.oddsB || '?'}</span></div>
+               </div>` : '';
+
+        const startFmt = m.startTime && m.status === 'upcoming'
+            ? `<span style="color:#6b7280;font-size:0.75rem;margin-left:6px;">${SportPage._formatTime(m.startTime)}</span>` : '';
 
         return `
-        <div class="sp-match-card" onclick="window.location.href='match-details.html?id=${m.id}'">
-            <div class="sp-card-top">
-                <span class="sp-league-tag">${m.league || ''}</span>
-                ${statusHtml}
+          <a href="match-details.html?id=${m.id}" class="sp-match-card ${m.status}" style="text-decoration:none;">
+            <div class="sp-card-header">
+              <span class="sp-league-name">🏆 ${m.league || ''} ${m.format ? '· '+m.format : ''}</span>
+              ${statusLabel}
             </div>
-            <div class="sp-teams-row">
-                <div class="sp-team">
-                    <span class="sp-flag">${m.flagA || ''}</span>
-                    <span class="sp-tname">${m.teamA || ''}</span>
-                    ${isLive ? `<span class="sp-score sp-score-a">${scoreA}</span>` : ''}
-                </div>
-                <div class="sp-vs-col">
-                    <div class="sp-vs">VS</div>
-                    ${isLive ? `<div class="sp-detail">${m.detail || ''}</div>` : ''}
-                </div>
-                <div class="sp-team sp-team-b">
-                    <span class="sp-flag">${m.flagB || ''}</span>
-                    <span class="sp-tname">${m.teamB || ''}</span>
-                    ${isLive ? `<span class="sp-score sp-score-b">${scoreB}</span>` : ''}
-                </div>
+            <div class="sp-teams">
+              <div class="sp-team">
+                <div class="sp-team-flag">${m.flagA || '🏳'}</div>
+                <div class="sp-team-name">${m.teamA}</div>
+              </div>
+              ${scoreHTML}
+              <div class="sp-team">
+                <div class="sp-team-flag">${m.flagB || '🏳'}</div>
+                <div class="sp-team-name">${m.teamB}</div>
+              </div>
             </div>
-            <div class="sp-odds-row">
-                <button class="sp-odds-btn" onclick="event.stopPropagation();window.location.href='match-details.html?id=${m.id}'">
-                    <span class="sp-odds-label">${m.teamA} Win</span>
-                    <span class="sp-odds-val">${m.oddsA || '—'}</span>
-                </button>
-                ${hasDraw && m.oddsDraw && m.oddsDraw !== '-' ? `<button class="sp-odds-btn" onclick="event.stopPropagation();window.location.href='match-details.html?id=${m.id}'">
-                    <span class="sp-odds-label">Draw</span>
-                    <span class="sp-odds-val">${m.oddsDraw}</span>
-                </button>` : ''}
-                <button class="sp-odds-btn" onclick="event.stopPropagation();window.location.href='match-details.html?id=${m.id}'">
-                    <span class="sp-odds-label">${m.teamB} Win</span>
-                    <span class="sp-odds-val">${m.oddsB || '—'}</span>
-                </button>
-            </div>
-        </div>`;
+            <div class="sp-card-detail">${m.detail || ''} ${startFmt}</div>
+            ${oddsRow}
+            <div class="sp-view-btn">View Details →</div>
+          </a>`;
     },
 
-    _renderEmpty(msg) {
-        return `<div class="sp-empty">${msg}</div>`;
+    // ── Render Leagues ───────────────────────────────────────────────────────
+    _renderLeagues() {
+        const grid = document.getElementById('sp-leagues-grid');
+        if (!grid) return;
+        const leagues = SportsDB.getLeagues(this.sport);
+        if (!leagues.length) {
+            grid.innerHTML = `<div class="sp-empty">No leagues configured.</div>`;
+            return;
+        }
+        grid.innerHTML = leagues.map(l => `
+          <div class="sp-league-card">
+            <div class="sp-league-icon">${l.flag || '🏆'}</div>
+            <div class="sp-league-info">
+              <div class="sp-league-title">${l.name}</div>
+              <div class="sp-league-status ${l.status||'upcoming'}">${(l.status||'upcoming').toUpperCase()}</div>
+            </div>
+          </div>`).join('');
     },
 
-    _renderLeagueList(leagues) {
-        if (!leagues.length) return '<div class="sp-empty">No leagues found.</div>';
-        return leagues.map(l => `
-            <div class="sp-league-item">
-                <span class="sp-league-flag">${l.flag || '🏆'}</span>
-                <div>
-                    <div class="sp-league-name">${l.name}</div>
-                    <div class="sp-league-status">${l.status === 'active' ? '🟢 Ongoing' : '🟡 Upcoming'}</div>
-                </div>
-            </div>`).join('');
-    },
-
-    _render() {
-        const cfg = this.config;
-        const sport = cfg.sport;
-        const matches = SportsDB.getMatches(sport);
-        const leagues = SportsDB.getLeagues(sport);
-
-        const live = matches.filter(m => m.status === 'live');
-        const upcoming = matches.filter(m => m.status === 'upcoming');
-
-        const liveContainer = document.getElementById('live-matches');
-        const upcomingContainer = document.getElementById('upcoming-matches');
-        const leagueContainer = document.getElementById('leagues-list');
-
-        liveContainer.innerHTML = live.length
-            ? live.map(m => this._renderMatchCard(m)).join('')
-            : this._renderEmpty('No live matches right now. Check upcoming events below.');
-
-        upcomingContainer.innerHTML = upcoming.length
-            ? upcoming.map(m => this._renderMatchCard(m)).join('')
-            : this._renderEmpty('No upcoming matches scheduled yet.');
-
-        leagueContainer.innerHTML = this._renderLeagueList(leagues);
-
-        // Real-time listener
-        SportsDB.listenMatches(sport, (updatedMatches) => {
-            const updLive = updatedMatches.filter(m => m.status === 'live');
-            const updUp = updatedMatches.filter(m => m.status === 'upcoming');
-            liveContainer.innerHTML = updLive.length ? updLive.map(m => this._renderMatchCard(m)).join('') : this._renderEmpty('No live matches right now.');
-            upcomingContainer.innerHTML = updUp.length ? updUp.map(m => this._renderMatchCard(m)).join('') : this._renderEmpty('No upcoming matches scheduled yet.');
-        });
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    _formatTime(iso) {
+        try {
+            const d = new Date(iso);
+            const now = new Date();
+            const diff = d - now;
+            if (diff < 0) return 'Started';
+            if (diff < 3600000) return `in ${Math.round(diff/60000)}m`;
+            if (diff < 86400000) return `in ${Math.round(diff/3600000)}h`;
+            return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+        } catch(e) { return ''; }
     }
 };

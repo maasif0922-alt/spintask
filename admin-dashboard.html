@@ -9,6 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-service.js"></script>
+    <script src="js/sports-admin.js"></script>
     <style>
         :root {
             --bg-dark: #0a0a0a;
@@ -473,6 +476,36 @@
             margin-bottom: 12px;
         }
 
+        /* Sports Admin Sub-tab buttons */
+        .sa-stbtn {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 0;
+        }
+        .sa-stbtn:first-child { border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+        .sa-stbtn:last-child { border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+        .sa-stbtn:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+        }
+        .sa-stbtn-active {
+            background: var(--primary-neon);
+            color: #000;
+            border-color: var(--primary-neon);
+        }
+        .sa-stbtn-active:hover {
+            background: var(--primary-neon);
+            color: #000;
+        }
+
+
         @media(max-width:768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -531,7 +564,7 @@
                                 id="alert-badge-nav" class="alert-badge" style="display:none">0</span></a></li>
                     <li><a href="#" onclick="switchTab('tasks',event)">&#x1F4CB; Tasks</a></li>
                     <li><a href="#" onclick="switchTab('spinsettings',event)">&#x1F3A1; Spin Settings</a></li>
-                    <li><a href="#" onclick="switchTab('sportxbet',event)">🏅 SportXBet</a></li>
+                    <li><a href="#" onclick="switchTab('sportscms',event)">🏅 Sports CMS</a></li>
                     <li><a href="#" onclick="switchTab('trading',event)">&#x1F4C8; Trading Investment</a></li>
                     <li><a href="#" onclick="switchTab('luckydraw',event)">&#x1F389; Lucky Draw</a></li>
                     <li><a href="#" onclick="switchTab('notifications',event)">&#x1F4E3; Broadcast</a></li>
@@ -1027,70 +1060,156 @@
                 </div>
             </div>
 
-            <!-- SPORTXBET -->
-            <div id="tab-sportxbet" class="admin-section">
-                <div class="page-title">🏅 SportXBet Management</div>
-                
-                <!-- Add Match Form -->
-                <div class="card" style="margin-bottom:20px;">
-                    <h3>Add New Match</h3>
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;">
-                        <div class="form-group">
-                            <label>Sport Category</label>
-                            <select id="sxb-sport" class="form-input">
-                                <option value="Cricket">Cricket</option>
-                                <option value="Football">Football</option>
-                                <option value="Tennis">Tennis</option>
-                                <option value="Basketball">Basketball</option>
-                                <option value="eSports">eSports</option>
-                            </select>
+            <!-- SPORTS CMS -->
+            <div id="tab-sportscms" class="admin-section">
+                <div class="page-title">🏅 Sports CMS</div>
+
+                <!-- Sub-tab bar -->
+                <div style="display:flex;gap:0;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;margin-bottom:24px;">
+                    <button id="sa-stbtn-matches"    class="btn btn-outline sa-stbtn sa-stbtn-active" onclick="SportsAdmin.showSubTab('matches')">⚽ Matches</button>
+                    <button id="sa-stbtn-liveupdate" class="btn btn-outline sa-stbtn" onclick="SportsAdmin.showSubTab('liveupdate')">🔴 Live Update</button>
+                    <button id="sa-stbtn-leagues"    class="btn btn-outline sa-stbtn" onclick="SportsAdmin.showSubTab('leagues')">🏆 Leagues</button>
+                    <button id="sa-stbtn-categories" class="btn btn-outline sa-stbtn" onclick="SportsAdmin.showSubTab('categories')">📂 Categories</button>
+                </div>
+
+                <!-- ── MATCHES TAB ── -->
+                <div id="sa-subtab-matches">
+                    <!-- Match Form -->
+                    <div class="card" id="sa-match-form" style="margin-bottom:20px;">
+                        <h3 id="sa-match-form-title" style="margin-bottom:16px;">Add New Match</h3>
+                        <input type="hidden" id="sa-match-id">
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;">
+                            <div class="form-group"><label>Sport</label>
+                                <select id="sa-match-sport" class="form-input">
+                                    <option value="cricket">🏏 Cricket</option>
+                                    <option value="football">⚽ Football</option>
+                                    <option value="tennis">🎾 Tennis</option>
+                                    <option value="basketball">🏀 Basketball</option>
+                                    <option value="esports">🎮 eSports</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Status</label>
+                                <select id="sa-match-status" class="form-input">
+                                    <option value="upcoming">📅 Upcoming</option>
+                                    <option value="live">🔴 Live</option>
+                                    <option value="completed">✓ Completed</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Team A Name</label><input id="sa-match-teamA" class="form-input" placeholder="e.g. India"></div>
+                            <div class="form-group"><label>Team A Flag/Emoji</label><input id="sa-match-flagA" class="form-input" placeholder="🇮🇳"></div>
+                            <div class="form-group"><label>Team B Name</label><input id="sa-match-teamB" class="form-input" placeholder="e.g. Pakistan"></div>
+                            <div class="form-group"><label>Team B Flag/Emoji</label><input id="sa-match-flagB" class="form-input" placeholder="🇵🇰"></div>
+                            <div class="form-group"><label>League/Tournament</label><input id="sa-match-league" class="form-input" placeholder="ICC T20 World Cup"></div>
+                            <div class="form-group"><label>Format</label><input id="sa-match-format" class="form-input" placeholder="T20 / 90 min / BO3"></div>
+                            <div class="form-group"><label>Start Date &amp; Time</label><input id="sa-match-startTime" type="datetime-local" class="form-input"></div>
+                            <div class="form-group"><label>Score A</label><input id="sa-match-scoreA" class="form-input" placeholder="156/4 or 2"></div>
+                            <div class="form-group"><label>Score B</label><input id="sa-match-scoreB" class="form-input" placeholder="143/8 or 1"></div>
+                            <div class="form-group"><label>Detail / Over / Minute</label><input id="sa-match-detail" class="form-input" placeholder="18.2 Overs / 67'"></div>
+                            <div class="form-group"><label>Odds A</label><input id="sa-match-oddsA" class="form-input" placeholder="1.85"></div>
+                            <div class="form-group"><label>Odds Draw (– if none)</label><input id="sa-match-oddsDraw" class="form-input" placeholder="6.00 or -"></div>
+                            <div class="form-group"><label>Odds B</label><input id="sa-match-oddsB" class="form-input" placeholder="2.10"></div>
+                            <div class="form-group"><label>Display Order</label><input id="sa-match-order" type="number" class="form-input" value="99"></div>
                         </div>
-                        <div class="form-group"><label>Team A</label><input id="sxb-teamA" class="form-input" placeholder="Team A Name"></div>
-                        <div class="form-group"><label>Team B</label><input id="sxb-teamB" class="form-input" placeholder="Team B Name"></div>
-                        <div class="form-group"><label>Match Time</label><input id="sxb-time" type="datetime-local" class="form-input"></div>
-                        <div class="form-group"><label>Odds Team A</label><input id="sxb-oddsA" type="number" step="0.01" class="form-input" placeholder="1.85"></div>
-                        <div class="form-group"><label>Odds Team B</label><input id="sxb-oddsB" type="number" step="0.01" class="form-input" placeholder="2.10"></div>
+                        <div style="display:flex;gap:20px;margin-top:12px;align-items:center;flex-wrap:wrap;">
+                            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="sa-match-featured"> ⭐ Featured (show on homepage)</label>
+                            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="sa-match-visible" checked> 👁️ Visible to users</label>
+                        </div>
+                        <div style="display:flex;gap:10px;margin-top:16px;">
+                            <button class="btn btn-primary" onclick="SportsAdmin.saveMatch()">💾 Save Match</button>
+                            <button class="btn btn-outline" onclick="SportsAdmin.clearMatchForm()">✕ Clear</button>
+                        </div>
                     </div>
-                    <button class="btn btn-primary" onclick="addSXBMatch()">➕ Add Match</button>
-                </div>
 
-                <!-- Matches List -->
-                <div class="card" style="margin-bottom:20px;">
-                    <h3>Active Matches</h3>
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Sport</th>
-                                    <th>Teams</th>
-                                    <th>Time</th>
-                                    <th>Odds (A/B)</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sxb-matches-body"></tbody>
-                        </table>
+                    <!-- Matches list -->
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                            <h3 style="margin:0;">All Matches</h3>
+                            <button class="btn btn-outline" style="font-size:0.8rem;" onclick="SportsAdmin.renderMatches()">🔄 Refresh</button>
+                        </div>
+                        <div id="sa-matches-list"><div style="color:#6b7280;text-align:center;padding:30px;">Loading...</div></div>
                     </div>
                 </div>
 
-                <!-- Betting History -->
-                <div class="card">
-                    <h3>Betting History & Payouts</h3>
-                    <div style="overflow-x:auto;">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Bet Detail</th>
-                                    <th>Amount</th>
-                                    <th>Potential Payout</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sxb-bets-body"></tbody>
-                        </table>
+                <!-- ── LIVE UPDATE TAB ── -->
+                <div id="sa-subtab-liveupdate" style="display:none;">
+                    <div class="card" style="max-width:700px;">
+                        <h3 style="margin-bottom:16px;">🔴 Live Score &amp; Commentary Update</h3>
+                        <div class="form-group"><label>Select Match</label>
+                            <select id="sa-score-match-sel" class="form-input"><option value="">— Select Match —</option></select>
+                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                            <div class="form-group"><label>Score A</label><input id="sa-score-a" class="form-input" placeholder="156/4 or 2"></div>
+                            <div class="form-group"><label>Score B</label><input id="sa-score-b" class="form-input" placeholder="143/8 or 1"></div>
+                            <div class="form-group"><label>Detail (over/minute)</label><input id="sa-score-detail" class="form-input" placeholder="18.2 Overs / 67'"></div>
+                        </div>
+                        <div class="form-group"><label>Commentary Line (optional)</label>
+                            <input id="sa-commentary-line" class="form-input" placeholder="18.2 — Bumrah bowls a yorker — DOT!">
+                        </div>
+                        <button class="btn btn-primary" onclick="SportsAdmin.updateScore()">📡 Push Live Score</button>
+                    </div>
+
+                    <div class="card" style="max-width:700px;margin-top:20px;">
+                        <h3 style="margin-bottom:12px;">📊 Update Match Stats</h3>
+                        <p style="color:#6b7280;font-size:0.82rem;margin-bottom:12px;">Enter stats as JSON. Example: <code style="color:#39ff14;">{"possession":"60% – 40%", "shots":"12 – 7"}</code></p>
+                        <div class="form-group"><label>Stats JSON</label>
+                            <textarea id="sa-stats-json" class="form-input" style="font-family:monospace;font-size:0.82rem;" rows="5" placeholder='{"possession":"60% - 40%", "shots":"12 - 7", "corners":"6 - 2"}'></textarea>
+                        </div>
+                        <button class="btn btn-outline" onclick="SportsAdmin.updateStats()" style="border-color:#39ff14;color:#39ff14;">📊 Push Stats</button>
+                    </div>
+                </div>
+
+                <!-- ── LEAGUES TAB ── -->
+                <div id="sa-subtab-leagues" style="display:none;">
+                    <div class="card" style="margin-bottom:20px;max-width:700px;">
+                        <h3 style="margin-bottom:16px;">Add / Edit League</h3>
+                        <input type="hidden" id="sa-league-id">
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <div class="form-group"><label>League Name</label><input id="sa-league-name" class="form-input" placeholder="Premier League"></div>
+                            <div class="form-group"><label>Flag/Emoji</label><input id="sa-league-flag" class="form-input" placeholder="🏴󠁧󠁢󠁥󠁮󠁧󠁿"></div>
+                            <div class="form-group"><label>Sport</label>
+                                <select id="sa-league-sport" class="form-input">
+                                    <option value="cricket">🏏 Cricket</option>
+                                    <option value="football">⚽ Football</option>
+                                    <option value="tennis">🎾 Tennis</option>
+                                    <option value="basketball">🏀 Basketball</option>
+                                    <option value="esports">🎮 eSports</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Status</label>
+                                <select id="sa-league-status" class="form-input">
+                                    <option value="active">Active</option>
+                                    <option value="upcoming">Upcoming</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:10px;">
+                            <button class="btn btn-primary" onclick="SportsAdmin.saveLeague()">💾 Save League</button>
+                            <button class="btn btn-outline" onclick="document.getElementById('sa-league-id').value='';document.getElementById('sa-league-name').value='';">✕ Clear</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:12px;">All Leagues</h3>
+                        <div id="sa-leagues-list"></div>
+                    </div>
+                </div>
+
+                <!-- ── CATEGORIES TAB ── -->
+                <div id="sa-subtab-categories" style="display:none;">
+                    <div class="card" style="margin-bottom:20px;max-width:600px;">
+                        <h3 style="margin-bottom:16px;">Edit Category</h3>
+                        <input type="hidden" id="sa-cat-id">
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                            <div class="form-group"><label>ID (e.g. cricket)</label><input id="sa-cat-id" class="form-input" placeholder="cricket"></div>
+                            <div class="form-group"><label>Display Name</label><input id="sa-cat-name" class="form-input" placeholder="Cricket"></div>
+                            <div class="form-group"><label>Icon/Emoji</label><input id="sa-cat-icon" class="form-input" placeholder="🏏"></div>
+                            <div class="form-group"><label>Display Order</label><input id="sa-cat-order" type="number" class="form-input" value="1"></div>
+                        </div>
+                        <button class="btn btn-primary" onclick="SportsAdmin.saveCategory()">💾 Save Category</button>
+                    </div>
+                    <div class="card">
+                        <h3 style="margin-bottom:12px;">All Categories (toggle visibility)</h3>
+                        <div id="sa-cats-list"></div>
                     </div>
                 </div>
             </div>
