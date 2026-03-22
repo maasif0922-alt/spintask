@@ -50,7 +50,7 @@
                     <label
                         style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Email
                         Address</label>
-                    <input type="email" id="email" required placeholder="name@example.com"
+                    <input type="email" id="email" required autocapitalize="none" autocorrect="off" placeholder="name@example.com"
                         style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
                 </div>
                 <div style="margin-bottom: 15px;">
@@ -145,7 +145,7 @@
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            const email = document.getElementById('email').value.trim().toLowerCase();
             const password = document.getElementById('password').value;
             const confirmPass = document.getElementById('confirm-password').value;
             const errorMsg = document.getElementById('error-msg');

@@ -42,17 +42,23 @@ const Auth = {
      * Register a new user
      */
     async register(name, email, password, referredByCode = null) {
+        email = email.trim().toLowerCase();
         // 1. Check if email exists locally (for speed) then in Firestore
         const users = this.getUsers();
         if (users.find(u => u.email === email)) {
             throw new Error('Email already registered locally.');
         }
 
-        // Firestore check
+        // Firestore check (wrap in try-catch for graceful fallback)
         if (typeof fs !== 'undefined' && fs !== null) {
-            const snap = await fs.collection('users').where('email', '==', email).get();
-            if (!snap.empty) {
-                throw new Error('Email already registered in system.');
+            try {
+                const snap = await fs.collection('users').where('email', '==', email).get();
+                if (!snap.empty) {
+                    throw new Error('Email already registered in system.');
+                }
+            } catch (e) {
+                if (e.message && e.message.includes('already registered in system')) throw e;
+                console.warn('[Firestore] Checking email failed. Falling back to local only:', e.message);
             }
         }
 
@@ -100,6 +106,7 @@ const Auth = {
      * Login a user
      */
     async login(email, password, rememberMe = false) {
+        email = email.trim().toLowerCase();
         this.checkRateLimit(email);
 
         // Try local lookup first for speed
@@ -109,12 +116,16 @@ const Auth = {
         // If not found locally, try Firestore (Cross-device sync)
         if (!user && typeof fs !== 'undefined' && fs !== null) {
             console.log('[Auth] User not found locally, checking Firestore...');
-            const snap = await fs.collection('users').where('email', '==', email).get();
-            if (!snap.empty) {
-                user = snap.docs[0].data();
-                // Cache user locally
-                users.push(user);
-                localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+            try {
+                const snap = await fs.collection('users').where('email', '==', email).get();
+                if (!snap.empty) {
+                    user = snap.docs[0].data();
+                    // Cache user locally
+                    users.push(user);
+                    localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+                }
+            } catch (e) {
+                console.warn('[Firestore] Login lookup failed. Falling back to local only:', e.message);
             }
         }
 
@@ -263,6 +274,7 @@ const Auth = {
      */
     transferPoints(senderId, receiverEmail, amountPoints, note = '') {
         try {
+            receiverEmail = receiverEmail.trim().toLowerCase();
             // Check if transfers are globally enabled
             if (typeof Admin !== 'undefined' && Admin.getSetting('allowTransfers') === 'false') {
                 return { success: false, message: 'User transfers are currently disabled by the administrator.' };
@@ -377,6 +389,7 @@ const Auth = {
      * Rate Limiting Logic
      */
     recordAttempt(email) {
+        email = email.trim().toLowerCase();
         let attempts = JSON.parse(localStorage.getItem(this.ATTEMPTS_KEY) || '{}');
         if (!attempts[email]) attempts[email] = { count: 0, lastTry: 0 };
         attempts[email].count++;
@@ -385,6 +398,7 @@ const Auth = {
     },
 
     checkRateLimit(email) {
+        email = email.trim().toLowerCase();
         let attempts = JSON.parse(localStorage.getItem(this.ATTEMPTS_KEY) || '{}');
         const attempt = attempts[email];
         if (attempt && attempt.count >= this.MAX_ATTEMPTS) {
@@ -399,6 +413,7 @@ const Auth = {
     },
 
     clearAttempts(email) {
+        email = email.trim().toLowerCase();
         let attempts = JSON.parse(localStorage.getItem(this.ATTEMPTS_KEY) || '{}');
         delete attempts[email];
         localStorage.setItem(this.ATTEMPTS_KEY, JSON.stringify(attempts));
@@ -409,22 +424,24 @@ const Auth = {
      * Request a password reset OTP
      */
     async requestPasswordReset(email) {
+        email = email.trim().toLowerCase();
         if (typeof fs === 'undefined' || fs === null) {
             throw new Error('Firebase Firestore is not initialized.');
         }
 
-        // 1. Check if user exists
-        const snap = await fs.collection('users').where('email', '==', email).get();
-        if (snap.empty) {
-            throw new Error('No account found with this email address.');
-        }
+        try {
+            // 1. Check if user exists
+            const snap = await fs.collection('users').where('email', '==', email).get();
+            if (snap.empty) {
+                throw new Error('No account found with this email address.');
+            }
 
-        // 2. Generate 6-digit OTP
-        const otp = Math.floor(100000 + Math.random() * 900000).toString();
-        const expires = Date.now() + 600000; // 10 minutes
+            // 2. Generate 6-digit OTP
+            const otp = Math.floor(100000 + Math.random() * 900000).toString();
+            const expires = Date.now() + 600000; // 10 minutes
 
-        // 3. Save to Firestore
-        await fs.collection('password_resets').doc(email).set({
+            // 3. Save to Firestore
+            await fs.collection('password_resets').doc(email).set({
             email,
             otp,
             expires,
@@ -437,19 +454,25 @@ const Auth = {
         if (typeof Admin !== 'undefined') {
             Admin.addAdminAlert('security', `Password reset requested for ${email}. OTP: ${otp}`);
         }
-
+        
         return { success: true, otp }; // Returning OTP for simulation
+        } catch (e) {
+            console.error('[Firestore] Password reset request failed', e);
+            throw e;
+        }
     },
 
     /**
      * Verify OTP
      */
     async verifyOTP(email, otp) {
+        email = email.trim().toLowerCase();
         if (typeof fs === 'undefined' || fs === null) {
             throw new Error('Firebase Firestore is not initialized.');
         }
 
-        const doc = await fs.collection('password_resets').doc(email).get();
+        try {
+            const doc = await fs.collection('password_resets').doc(email).get();
         if (!doc.exists) throw new Error('No reset request found for this email.');
 
         const data = doc.data();
@@ -458,17 +481,23 @@ const Auth = {
         if (data.otp !== otp) throw new Error('Invalid OTP code.');
 
         return { success: true };
+        } catch (e) {
+            console.error('[Firestore] Verify OTP failed', e);
+            throw e;
+        }
     },
 
     /**
      * Reset Password
      */
     async resetPassword(email, otp, newPassword) {
+        email = email.trim().toLowerCase();
         if (typeof fs === 'undefined' || fs === null) {
             throw new Error('Firebase Firestore is not initialized.');
         }
 
-        // 1. Double check OTP
+        try {
+            // 1. Double check OTP
         await this.verifyOTP(email, otp);
 
         // 2. Hash new password
@@ -501,6 +530,10 @@ const Auth = {
         }
 
         return { success: true };
+        } catch (e) {
+            console.error('[Firestore] Reset password failed', e);
+            throw e;
+        }
     }
 };
 
