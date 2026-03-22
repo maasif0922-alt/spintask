@@ -273,6 +273,6 @@ const GLOBAL_CONFIG = {
             "active": true
         }
     ],
-    "version": "1.0.1",
-    "lastUpdated": "2026-03-22T13:35:00.000Z"
+    "version": "1.0.2",
+    "lastUpdated": "2026-03-22T18:02:22.015Z"
 };
