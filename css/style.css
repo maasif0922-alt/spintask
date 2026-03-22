@@ -1183,36 +1183,19 @@ footer {
 
     /* ── Public Header ── */
     .nav-links {
-        display: flex;
-        gap: 15px;
-        overflow-x: auto;
-        white-space: nowrap;
-        padding-bottom: 5px;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        max-width: 45%;
-    }
-    .nav-links::-webkit-scrollbar {
         display: none;
-    }
-    .nav-links li {
-        flex-shrink: 0;
     }
 
     .auth-btns {
-        display: flex;
-        gap: 8px;
-        padding: 4px 10px;
-        scale: 0.85;
-        transform-origin: right center;
+        display: none;
     }
 
     .hamburger-btn {
-        display: none !important;
+        display: flex;
     }
 
     .mobile-drawer {
-        display: none !important;
+        display: flex;
     }
 
     header {
@@ -1999,6 +1982,7 @@ footer {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
+    justify-content: center;
 }
 
 .sxb-cat-card {
@@ -2093,5 +2077,5 @@ footer {
 
 @media (max-width: 768px) {
     .vip-corner-wrapper { justify-content: center; }
-    .sxb-home-cats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-}
+    .sxb-home-cats { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+}

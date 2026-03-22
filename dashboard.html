@@ -107,6 +107,26 @@
             font-weight: 600;
             color: #fff;
         }
+
+        /* Mobile Fixes for Dashboard Banner */
+        @media (max-width: 768px) {
+            .verify-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .verify-banner .btn-verify {
+                margin-left: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .verify-banner .vb-icon {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 
