@@ -1538,22 +1538,40 @@
             document.getElementById('sp-history').innerHTML = hist.length ? hist.map(t => `<div class="sp-history-item"><span>${t.toName || t.toId}</span><span style="color:var(--primary-neon)">${fmt(t.amount)}</span><span style="color:var(--text-muted);font-size:0.78rem">${new Date(t.date).toLocaleString()}</span></div>`).join('') : '<p style="color:var(--text-muted)">No transfers yet.</p>';
         }
         function sendPoints() {
-            var emailVal = document.getElementById('sp-user').value;
+            var emailVal = (document.getElementById('sp-user').value || '').trim();
             var amt = parseFloat(document.getElementById('sp-amount').value);
             var note = document.getElementById('sp-note').value;
-            if (!emailVal || !amt || amt <= 0) { alert('Select a valid user and enter amount.'); return; }
-            var users = getUsers();
+            if (!emailVal || !amt || amt <= 0) { alert('Select a valid user email and enter amount.'); return; }
+            
+            // Get current users from list (which is synced via Firestore)
+            var users = (JSON.parse(localStorage.getItem('spintask_users')) || []);
             var idx = users.findIndex(u => u.email === emailVal);
-            if (idx === -1) { alert('User email not found in system.'); return; }
+            
+            if (idx === -1) {
+                alert('ERROR: This email (' + emailVal + ') is NOT registered in your records. You can only share points with registered users.');
+                return;
+            }
 
-            var uid = users[idx].id;
-            users[idx].balance = (users[idx].balance || 0) + amt;
-            saveUsers(users);
-            Admin.addTransferRecord({ toId: uid, toName: users[idx].name, amount: amt, note: note, by: 'admin' });
-            Admin.logAction(`Admin sent ${fmt(amt)} to ${users[idx].email}. Note: ${note}`);
-            alert(`Sent ${fmt(amt)} to ${users[idx].name}!`);
-            document.getElementById('sp-amount').value = ''; document.getElementById('sp-note').value = '';
-            renderSendPoints();
+            if (confirm('Are you sure you want to send ' + fmt(amt) + ' to ' + users[idx].name + ' (' + emailVal + ')?')) {
+                var uid = users[idx].id;
+                // Update local list (UI)
+                users[idx].balance = (parseFloat(users[idx].balance) || 0) + amt;
+                localStorage.setItem('spintask_users', JSON.stringify(users));
+                
+                // Sync to Firestore
+                if (typeof fs !== 'undefined' && fs !== null) {
+                    fs.collection('users').doc(uid).update({ balance: users[idx].balance });
+                }
+
+                Admin.addTransferRecord({ toId: uid, toName: users[idx].name, amount: amt, note: note, by: 'admin' });
+                Admin.logAction(`Admin sent ${fmt(amt)} to ${users[idx].email}. Note: ${note}`);
+                
+                alert(`SUCCESS: Sent ${fmt(amt)} to ${users[idx].name}!`);
+                document.getElementById('sp-amount').value = ''; 
+                document.getElementById('sp-note').value = '';
+                renderSendPoints();
+                renderUsers();
+            }
         }
 
         // ── Deposits ────────────────────────────────────────────────────────────────

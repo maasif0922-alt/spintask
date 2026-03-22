@@ -403,6 +403,105 @@ const Auth = {
         delete attempts[email];
         localStorage.setItem(this.ATTEMPTS_KEY, JSON.stringify(attempts));
     }
+    // ─── Password Reset Logic ──────────────────────────────────────
+
+    /**
+     * Request a password reset OTP
+     */
+    async requestPasswordReset(email) {
+        if (typeof fs === 'undefined' || fs === null) {
+            throw new Error('Firebase Firestore is not initialized.');
+        }
+
+        // 1. Check if user exists
+        const snap = await fs.collection('users').where('email', '==', email).get();
+        if (snap.empty) {
+            throw new Error('No account found with this email address.');
+        }
+
+        // 2. Generate 6-digit OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const expires = Date.now() + 600000; // 10 minutes
+
+        // 3. Save to Firestore
+        await fs.collection('password_resets').doc(email).set({
+            email,
+            otp,
+            expires,
+            used: false,
+            createdAt: new Date().toISOString()
+        });
+
+        // 4. Log for admin (and simulation)
+        console.log(`[Auth] OTP for ${email}: ${otp}`);
+        if (typeof Admin !== 'undefined') {
+            Admin.addAdminAlert('security', `Password reset requested for ${email}. OTP: ${otp}`);
+        }
+
+        return { success: true, otp }; // Returning OTP for simulation
+    },
+
+    /**
+     * Verify OTP
+     */
+    async verifyOTP(email, otp) {
+        if (typeof fs === 'undefined' || fs === null) {
+            throw new Error('Firebase Firestore is not initialized.');
+        }
+
+        const doc = await fs.collection('password_resets').doc(email).get();
+        if (!doc.exists) throw new Error('No reset request found for this email.');
+
+        const data = doc.data();
+        if (data.used) throw new Error('This OTP has already been used.');
+        if (Date.now() > data.expires) throw new Error('This OTP has expired.');
+        if (data.otp !== otp) throw new Error('Invalid OTP code.');
+
+        return { success: true };
+    },
+
+    /**
+     * Reset Password
+     */
+    async resetPassword(email, otp, newPassword) {
+        if (typeof fs === 'undefined' || fs === null) {
+            throw new Error('Firebase Firestore is not initialized.');
+        }
+
+        // 1. Double check OTP
+        await this.verifyOTP(email, otp);
+
+        // 2. Hash new password
+        const hashedPassword = await this.hashPassword(newPassword);
+
+        // 3. Update User in Firestore
+        const snap = await fs.collection('users').where('email', '==', email).get();
+        if (snap.empty) throw new Error('User not found.');
+        
+        const userId = snap.docs[0].id;
+        await fs.collection('users').doc(userId).update({
+            password: hashedPassword
+        });
+
+        // 4. Mark OTP as used
+        await fs.collection('password_resets').doc(email).update({
+            used: true
+        });
+
+        // 5. Update Local Cache
+        let users = this.getUsers();
+        let idx = users.findIndex(u => u.email === email);
+        if (idx !== -1) {
+            users[idx].password = hashedPassword;
+            localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+        }
+
+        if (typeof Admin !== 'undefined') {
+            Admin.logAction(`Password reset successfully for ${email}`);
+        }
+
+        return { success: true };
+    }
 };
 
 // --- NEW: Traffic & Visitor Tracking ---
