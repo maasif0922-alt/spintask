@@ -402,7 +402,7 @@ const Auth = {
         let attempts = JSON.parse(localStorage.getItem(this.ATTEMPTS_KEY) || '{}');
         delete attempts[email];
         localStorage.setItem(this.ATTEMPTS_KEY, JSON.stringify(attempts));
-    }
+    },
     // ─── Password Reset Logic ──────────────────────────────────────
 
     /**
