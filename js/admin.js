@@ -20,6 +20,7 @@ const Admin = {
     DB_SPIN_SETTINGS: 'spintask_spin_settings',
     DB_TRANSFERS: 'spintask_transfers',
     DB_TRADING_SETTINGS: 'spintask_trading_settings',
+    DB_METHODS: 'spintask_methods',
 
     // Default Settings Initialization
     init() {
@@ -187,6 +188,11 @@ const Admin = {
             localStorage.setItem(this.DB_SPIN_SETTINGS, JSON.stringify(defaultSpinSettings));
         }
 
+        if (!localStorage.getItem(this.DB_METHODS)) {
+            const defaultMethods = typeof GLOBAL_CONFIG !== 'undefined' ? GLOBAL_CONFIG.methods : [];
+            localStorage.setItem(this.DB_METHODS, JSON.stringify(defaultMethods));
+        }
+
         // --- NEW: Global Configuration Sync ---
         this.syncFromConfig();
     },
@@ -236,6 +242,10 @@ const Admin = {
         if (GLOBAL_CONFIG.content) {
             const current = this.getObjDb(this.DB_CONTENT);
             this.saveDb(this.DB_CONTENT, { ...current, ...GLOBAL_CONFIG.content });
+        }
+
+        if (GLOBAL_CONFIG.methods) {
+            this.saveDb(this.DB_METHODS, GLOBAL_CONFIG.methods);
         }
 
         localStorage.setItem('spintask_config_version', GLOBAL_CONFIG.version || Date.now());

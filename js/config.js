@@ -181,6 +181,98 @@ const GLOBAL_CONFIG = {
             }
         ]
     },
-    "version": "1.0.0",
-    "lastUpdated": "2026-03-22T08:17:23.009Z"
+    "methods": [
+        {
+            "id": "tasks",
+            "name": "Tasks",
+            "icon": "📋",
+            "shortDesc": "Complete simple micro-tasks for instant USDT.",
+            "fullDetails": "Our micro-task platform allows you to earn USDT by completing simple actions like visiting websites, liking social media posts, and following accounts. Each task is verified instantly and rewards are credited to your balance.",
+            "url": "tasks.html",
+            "active": true
+        },
+        {
+            "id": "spin",
+            "name": "Spin Wheel",
+            "icon": "🎡",
+            "shortDesc": "Spin the daily wheel to win USDT bonuses.",
+            "fullDetails": "Every 24 hours, you get a free spin on our lucky wheel. Wins range from $0.01 to high-value USDT bonuses. Increase your VIP level to unlock more frequent spins and better rewards.",
+            "url": "spin.html",
+            "active": true
+        },
+        {
+            "id": "luckydraw",
+            "name": "Lucky Draw",
+            "icon": "🎉",
+            "shortDesc": "Join high-prize draws for premium rewards.",
+            "fullDetails": "Purchase tickets for our premium lucky draws. Prizes include high-end electronics, gift cards, and large USDT jackpots. Each draw has a limited number of tickets to ensure fair winning chances.",
+            "url": "luckydraw.html",
+            "active": true
+        },
+        {
+            "id": "pool",
+            "name": "Community Pool",
+            "icon": "🌊",
+            "shortDesc": "Join investment pools for weekly payouts.",
+            "fullDetails": "Stake your USDT in our community-managed pools and earn a share of the platform's weekly profits. Payouts are distributed every Sunday directly to your internal wallet.",
+            "url": "community-pool.html",
+            "active": true
+        },
+        {
+            "id": "trading",
+            "name": "Trading Plans",
+            "icon": "📈",
+            "shortDesc": "Invest in curated trading plans for steady growth.",
+            "fullDetails": "Choose from Basic, Standard, or Gold trading plans. Each plan offers a fixed daily percentage return on your investment, managed by our expert trading team.",
+            "url": "trading.html",
+            "active": true
+        },
+        {
+            "id": "sports",
+            "name": "Sports Hub",
+            "icon": "🏅",
+            "shortDesc": "Predict results and earn on your favorite sports.",
+            "fullDetails": "Bet on live Cricket, Football, and Tennis matches. Our platform provides real-time odds and instant payouts for successful predictions based on official match results.",
+            "url": "sports.html",
+            "active": true
+        },
+        {
+            "id": "referrals",
+            "name": "Referrals",
+            "icon": "👥",
+            "shortDesc": "Invite friends and earn lifetime commissions.",
+            "fullDetails": "Build your own team! Earn up to 10% commission on all earnings made by your direct referrals and a further 5% on their referrals. Your earning potential is unlimited.",
+            "url": "referrals.html",
+            "active": true
+        },
+        {
+            "id": "deposit",
+            "name": "Instant Deposit",
+            "icon": "💰",
+            "shortDesc": "Fund your account quickly via USDT TRC20.",
+            "fullDetails": "Add funds to your account instantly using the USDT (TRC20) network. Deposits are typically processed within 5-10 minutes after network confirmation.",
+            "url": "deposit.html",
+            "active": true
+        },
+        {
+            "id": "withdraw",
+            "name": "Fast Withdraw",
+            "icon": "💸",
+            "shortDesc": "Cash out your earnings directly to your wallet.",
+            "fullDetails": "Withdraw your profits easily to any USDT wallet or exchange like Binance. We process withdrawal requests within 24 hours to ensure you get your money fast.",
+            "url": "withdraw.html",
+            "active": true
+        },
+        {
+            "id": "profile",
+            "name": "User Profile",
+            "icon": "👤",
+            "shortDesc": "Manage your account, security, and verification.",
+            "fullDetails": "Complete your KYC verification to unlock higher withdrawal limits and premium features. Keep your account secure with 2FA and manage your personal details easily.",
+            "url": "profile.html",
+            "active": true
+        }
+    ],
+    "version": "1.0.1",
+    "lastUpdated": "2026-03-22T13:35:00.000Z"
 };

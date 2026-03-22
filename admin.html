@@ -193,6 +193,7 @@
                     </li>
                     <li><a onclick="showSection('settings')" data-section="settings"><span>⚙️</span> Settings</a></li>
                     <li><a onclick="showSection('sports')" data-section="sports"><span>🏅</span> Sports Mgmt</a></li>
+                    <li><a onclick="showSection('methods')" data-section="methods"><span>💎</span> Methods</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -542,6 +543,61 @@
                     </div>
                 </div>
             </div>
+            <!-- SECTION: METHODS -->
+            <div id="section-methods" class="admin-section">
+                <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <h3>Manage Earning Methods</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 25px;">These methods appear on the Home Page "Ways to Earn" section.</p>
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Icon</th>
+                                    <th>Name</th>
+                                    <th>Short Desc</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="methods-list-body">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Edit Method Backdrop -->
+                <div id="edit-method-modal" class="glass" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:600px; z-index:1000; padding:30px; border-radius:20px; box-shadow:0 0 50px rgba(0,0,0,0.5); background: #0a0b1e; border: 1px solid var(--primary-neon);">
+                    <h3 id="modal-title">Edit Earning Method</h3>
+                    <input type="hidden" id="edit-m-id">
+                    <div style="display:grid; grid-template-columns: 1fr 2fr; gap:15px; margin-top:20px;">
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Icon (Emoji)</label>
+                            <input type="text" id="edit-m-icon" class="search-input" style="width:100%; max-width:none;">
+                        </div>
+                        <div>
+                            <label style="font-size:0.8rem; color:var(--text-muted);">Method Name</label>
+                            <input type="text" id="edit-m-name" class="search-input" style="width:100%; max-width:none;">
+                        </div>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Short Description (Home Page)</label>
+                        <input type="text" id="edit-m-short" class="search-input" style="width:100%; max-width:none;">
+                    </div>
+                    <div style="margin-top:15px;">
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Full Details (Details Page)</label>
+                        <textarea id="edit-m-full" rows="5" class="search-input" style="width:100%; max-width:none;"></textarea>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <label style="font-size:0.8rem; color:var(--text-muted);">Target URL (Link)</label>
+                        <input type="text" id="edit-m-url" class="search-input" style="width:100%; max-width:none;">
+                    </div>
+                    <div style="margin-top:25px; display:flex; gap:15px;">
+                        <button class="btn btn-primary" onclick="saveMethod()">SAVE CHANGES</button>
+                        <button class="btn glass" onclick="closeMethodModal()">CANCEL</button>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -605,12 +661,14 @@
                 content: { h1: 'Website Content', p: 'Edit dynamic site text effortlessly.' },
                 notifications: { h1: 'Broadcasts', p: 'Communicate with global notifications.' },
                 settings: { h1: 'Platform Settings', p: 'Configure global system variables.' },
-                sports: { h1: 'Sports Management', p: 'Add matches, update live scores, manage leagues.' }
+                sports: { h1: 'Sports Management', p: 'Add matches, update live scores, manage leagues.' },
+                methods: { h1: 'Earning Methods', p: 'Customize how users see earning options on the home page.' }
             };
             if (!titles[sectionId]) return;
             document.getElementById('main-title').innerText = titles[sectionId].h1;
             document.getElementById('main-subtitle').innerText = titles[sectionId].p;
             if (sectionId === 'sports') initSportsSection();
+            if (sectionId === 'methods') initMethodsSection();
         }
 
         // INITIALIZATION
@@ -748,6 +806,79 @@
             const logs = Admin.getDb(Admin.DB_LOGS).reverse();
             const logBox = document.getElementById('admin-logs');
             logBox.innerHTML = logs.length ? logs.map(l => `<div>[${new Date(l.time).toLocaleTimeString()}] ${l.desc}</div>`).join('') : 'No recent logs.';
+        }
+
+        // --- METHODS MANAGEMENT LOGIC ---
+        function initMethodsSection() {
+            const methods = Admin.getDb(Admin.DB_METHODS);
+            const tbody = document.getElementById('methods-list-body');
+            tbody.innerHTML = '';
+
+            methods.forEach(m => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-size: 1.5rem;">${m.icon}</td>
+                    <td><strong>${m.name}</strong></td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);">${m.shortDesc}</td>
+                    <td><span class="status-badge status-${m.active !== false ? 'approved' : 'rejected'}">${m.active !== false ? 'Active' : 'Inactive'}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn glass" onclick="editMethod('${m.id}')">Edit</button>
+                            <button class="btn glass" onclick="toggleMethodStatus('${m.id}')">${m.active !== false ? 'Disable' : 'Enable'}</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function editMethod(id) {
+            const methods = Admin.getDb(Admin.DB_METHODS);
+            const m = methods.find(x => x.id === id);
+            if (!m) return;
+
+            document.getElementById('edit-m-id').value = m.id;
+            document.getElementById('edit-m-icon').value = m.icon;
+            document.getElementById('edit-m-name').value = m.name;
+            document.getElementById('edit-m-short').value = m.shortDesc;
+            document.getElementById('edit-m-full').value = m.fullDetails || '';
+            document.getElementById('edit-m-url').value = m.url || '';
+
+            document.getElementById('edit-method-modal').style.display = 'block';
+        }
+
+        function closeMethodModal() {
+            document.getElementById('edit-method-modal').style.display = 'none';
+        }
+
+        function saveMethod() {
+            const id = document.getElementById('edit-m-id').value;
+            const methods = Admin.getDb(Admin.DB_METHODS);
+            const idx = methods.findIndex(x => x.id === id);
+            if (idx === -1) return;
+
+            methods[idx].icon = document.getElementById('edit-m-icon').value;
+            methods[idx].name = document.getElementById('edit-m-name').value;
+            methods[idx].shortDesc = document.getElementById('edit-m-short').value;
+            methods[idx].fullDetails = document.getElementById('edit-m-full').value;
+            methods[idx].url = document.getElementById('edit-m-url').value;
+
+            Admin.saveDb(Admin.DB_METHODS, methods);
+            Admin.logAction(`Admin updated earning method: ${methods[idx].name}`);
+            closeMethodModal();
+            initMethodsSection();
+            alert('Method saved and deployed to home page!');
+        }
+
+        function toggleMethodStatus(id) {
+            const methods = Admin.getDb(Admin.DB_METHODS);
+            const idx = methods.findIndex(x => x.id === id);
+            if (idx !== -1) {
+                methods[idx].active = methods[idx].active === false ? true : false;
+                Admin.saveDb(Admin.DB_METHODS, methods);
+                Admin.logAction(`Admin toggled method status: ${methods[idx].name}`);
+                initMethodsSection();
+            }
         }
 
         // ACTION FUNCTIONS

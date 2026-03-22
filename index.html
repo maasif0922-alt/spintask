@@ -84,8 +84,19 @@
                 <p id="pub-hero-sub">The most trusted micro-task platform. Complete simple actions, spin the daily
                     wheel, and withdraw
                     your earnings directly to your Binance wallet.</p>
-                
+            </div>
+        </section>
 
+        <!-- Earning Methods Section -->
+        <section class="methods-section" style="padding: 10px 0 40px;">
+            <div class="container">
+                <div class="section-title" style="margin-bottom: 25px;">
+                    <h2 style="font-size: 1.5rem;">💰 Ways to Earn</h2>
+                </div>
+                <div id="methods-container" class="sxb-home-cats">
+                    <!-- Populated by JS -->
+                    <div style="color: var(--text-muted);">Loading methods...</div>
+                </div>
             </div>
         </section>
 
@@ -369,6 +380,27 @@
                 if (!socialGrid.children.length) {
                     socialGrid.innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">No social links configured yet.</p>';
                 }
+            }
+
+            // --- Earning Methods ---
+            const methods = Admin.getDb(Admin.DB_METHODS);
+            const methodsContainer = document.getElementById('methods-container');
+            if (methodsContainer && methods && methods.length > 0) {
+                methodsContainer.innerHTML = '';
+                methods.filter(m => m.active !== false).forEach(m => {
+                    const card = document.createElement('a');
+                    card.href = `method-details.html?id=${m.id}`;
+                    card.className = 'sxb-cat-card'; 
+                    card.innerHTML = `
+                        <span class="sxb-cat-icon">${m.icon}</span>
+                        <div class="sxb-cat-name">${m.name}</div>
+                        <div class="sxb-cat-desc">${m.shortDesc}</div>
+                        <span class="sxb-go-badge">INFO</span>
+                    `;
+                    methodsContainer.appendChild(card);
+                });
+            } else if (methodsContainer) {
+                methodsContainer.innerHTML = '<p style="color:var(--text-muted); text-align:center; width:100%;">No earning methods found.</p>';
             }
 
             // Fetch and render quick stats + ticker
