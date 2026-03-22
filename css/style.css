@@ -1928,19 +1928,43 @@ footer {
 }
 
 .vip-corner-btn {
+    position: fixed;
+    top: 95px;
+    right: 20px;
+    z-index: 2000;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 24px;
-    border-radius: 40px;
-    background: linear-gradient(135deg, rgba(57,255,20,0.15), rgba(57,255,20,0.05));
-    border: 1px solid rgba(57,255,20,0.5);
+    gap: 12px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(57,255,20,0.3);
     color: var(--primary-neon);
-    font-weight: 800;
-    font-size: 0.95rem;
+    font-weight: 700;
+    font-size: 0.9rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(57,255,20,0.15);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.vip-corner-content {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.vip-corner-text { 
+    font-size: 0.85rem; 
+    font-weight: 800;
+    color: var(--text-white);
+}
+
+.vip-corner-sub {
+    font-size: 0.65rem;
+    color: var(--primary-neon);
+    opacity: 0.8;
 }
 
 .vip-corner-btn:hover {
@@ -1969,11 +1993,10 @@ footer {
 .vip-corner-badge {
     background: var(--primary-neon);
     color: #000;
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 900;
-    padding: 3px 10px;
-    border-radius: 20px;
-    letter-spacing: 1px;
+    padding: 2px 8px;
+    border-radius: 4px;
     margin-left: 4px;
 }
 
@@ -2076,6 +2099,13 @@ footer {
 .withdrawal-fee-notice strong { color: #ffaa00; }
 
 @media (max-width: 768px) {
+    .vip-corner-btn {
+        top: auto;
+        bottom: 20px;
+        right: 15px;
+        left: 15px;
+        justify-content: center;
+    }
     .vip-corner-wrapper { justify-content: center; }
     .sxb-home-cats { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-}
+}
