@@ -179,13 +179,13 @@ nav {
 
 /* Hero Section */
 .hero {
-    padding: 100px 0;
+    padding: 40px 0 30px;
     text-align: center;
     background: radial-gradient(circle at top right, rgba(77, 124, 255, 0.1), transparent);
 }
 
 .hero h1 {
-    font-size: 3.5rem;
+    font-size: 2.2rem;
     margin-bottom: 20px;
     background: linear-gradient(to right, #fff, var(--primary-neon));
     -webkit-background-clip: text;
@@ -1980,7 +1980,7 @@ footer {
 /* Category Cards Grid */
 .sxb-home-cats {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 16px;
     justify-content: center;
 }
@@ -1989,7 +1989,7 @@ footer {
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 16px;
-    padding: 20px 16px;
+    padding: 12px 10px;
     text-align: center;
     text-decoration: none;
     color: var(--text-white);
@@ -2007,7 +2007,7 @@ footer {
     box-shadow: 0 8px 24px rgba(255,170,0,0.15);
 }
 
-.sxb-cat-icon { font-size: 2.2rem; margin-bottom: 4px; }
+.sxb-cat-icon { font-size: 1.6rem; margin-bottom: 4px; }
 .sxb-cat-name { font-weight: 700; font-size: 0.95rem; }
 .sxb-cat-desc { font-size: 0.72rem; color: var(--text-muted); }
 
