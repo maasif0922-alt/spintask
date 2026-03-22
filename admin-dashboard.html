@@ -642,6 +642,11 @@
                             <div id="h-new-accounts"
                                 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-top: 4px;">0</div>
                         </div>
+                        <div class="card" style="margin-bottom: 0; padding: 16px; border-left: 3px solid #f6d365;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Today's Deposits</div>
+                            <div id="h-today-dep"
+                                style="font-size: 1.5rem; font-weight: 700; color: var(--primary-neon); margin-top: 4px;">$0.00</div>
+                        </div>
                         <div class="card"
                             style="margin-bottom: 0; padding: 16px; border-left: 3px solid var(--primary-neon);">
                             <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Top
@@ -1329,6 +1334,10 @@
             // Total Payouts Today
             const payoutsToday = txs.filter(t => t.type === 'withdraw' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
             document.getElementById('h-payouts').textContent = fmt(payoutsToday);
+
+            // Today's Deposits
+            const depToday = txs.filter(t => t.type === 'deposit' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
+            document.getElementById('h-today-dep').textContent = fmt(depToday);
 
             // Website Clicks Today
             let clicksData = JSON.parse(localStorage.getItem('spintask_clicks') || '{"count":0}');

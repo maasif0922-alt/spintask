@@ -1079,6 +1079,84 @@ const Admin = {
 const DEPLOYMENT_DATA = ${jsonString};
 
 // END OF DATA BUNDLE`;
+    },
+
+    // ─── Balance & User Helpers ───────────────────────────────────────────
+
+    updateUserBalance(userId, newBalance) {
+        const users = this.getAllUsers();
+        const idx = users.findIndex(u => u.id === userId);
+        if (idx !== -1) {
+            users[idx].balance = parseFloat(newBalance);
+            localStorage.setItem('spintask_users', JSON.stringify(users));
+            this.logAction(`Admin updated balance for ${users[idx].email} to ${newBalance}`);
+            return true;
+        }
+        return false;
+    },
+
+    suspendUser(userId, suspended) {
+        const users = this.getAllUsers();
+        const idx = users.findIndex(u => u.id === userId);
+        if (idx !== -1) {
+            users[idx].suspended = suspended;
+            localStorage.setItem('spintask_users', JSON.stringify(users));
+            this.logAction(`Admin ${suspended ? 'suspended' : 'activated'} user ${users[idx].email}`);
+            return true;
+        }
+        return false;
+    },
+
+    // ─── Admin Alerts ─────────────────────────────────────────────────────
+
+    addAdminAlert(type, message) {
+        const alerts = this.getDb(this.DB_ADMIN_ALERTS);
+        alerts.unshift({
+            id: 'alert_' + Date.now(),
+            type,
+            message,
+            time: new Date().toISOString(),
+            read: false
+        });
+        this.saveDb(this.DB_ADMIN_ALERTS, alerts.slice(0, 100)); // Keep last 100
+    },
+
+    getAdminAlerts() {
+        return this.getDb(this.DB_ADMIN_ALERTS);
+    },
+
+    getUnreadAdminAlertCount() {
+        return this.getDb(this.DB_ADMIN_ALERTS).filter(a => !a.read).length;
+    },
+
+    markAllAdminAlertsRead() {
+        const alerts = this.getDb(this.DB_ADMIN_ALERTS);
+        alerts.forEach(a => a.read = true);
+        this.saveDb(this.DB_ADMIN_ALERTS, alerts);
+    },
+
+    clearAdminAlerts() {
+        this.saveDb(this.DB_ADMIN_ALERTS, []);
+    },
+
+    // ─── Manual Transfers / Point Sharing ─────────────────────────────────
+
+    addTransferRecord(data) {
+        const transfers = this.getDb(this.DB_TRANSFERS);
+        transfers.unshift({
+            id: 'tr_' + Date.now(),
+            toId: data.toId,
+            toName: data.toName,
+            amount: data.amount,
+            note: data.note || '',
+            date: new Date().toISOString(),
+            by: data.by || 'admin'
+        });
+        this.saveDb(this.DB_TRANSFERS, transfers.slice(0, 500));
+    },
+
+    getAllTransfers() {
+        return this.getDb(this.DB_TRANSFERS);
     }
 };
 
