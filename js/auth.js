@@ -42,9 +42,18 @@ const Auth = {
      * Register a new user
      */
     async register(name, email, password, referredByCode = null) {
+        // 1. Check if email exists locally (for speed) then in Firestore
         const users = this.getUsers();
         if (users.find(u => u.email === email)) {
-            throw new Error('Email already registered.');
+            throw new Error('Email already registered locally.');
+        }
+
+        // Firestore check
+        if (typeof fs !== 'undefined' && fs !== null) {
+            const snap = await fs.collection('users').where('email', '==', email).get();
+            if (!snap.empty) {
+                throw new Error('Email already registered in system.');
+            }
         }
 
         const hashedPassword = await this.hashPassword(password);
@@ -57,6 +66,7 @@ const Auth = {
             earnings: 0,
             verified: false,
             verificationDate: null,
+            role: 'user',
             registeredAt: new Date().toISOString(),
             referralCode: 'REF' + Math.random().toString(36).substring(2, 7).toUpperCase(),
             referredBy: referredByCode || null,
@@ -64,10 +74,21 @@ const Auth = {
             createdAt: new Date().toISOString()
         };
 
+        // 2. Save locally
         users.push(newUser);
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
 
-        // Fire admin alert for new registration
+        // 3. Save to Firestore
+        if (typeof fs !== 'undefined' && fs !== null) {
+            try {
+                await fs.collection('users').doc(newUser.id).set(newUser);
+                console.log('[Firestore] User saved successfully.');
+            } catch (e) {
+                console.error('[Firestore] User save failed:', e);
+            }
+        }
+
+        // 4. Fire admin alert for new registration
         if (typeof Admin !== 'undefined') {
             Admin.addAdminAlert('registration', `New user registered: ${name} (${email})`);
         }
@@ -81,8 +102,21 @@ const Auth = {
     async login(email, password, rememberMe = false) {
         this.checkRateLimit(email);
 
-        const users = this.getUsers();
-        const user = users.find(u => u.email === email);
+        // Try local lookup first for speed
+        let users = this.getUsers();
+        let user = users.find(u => u.email === email);
+
+        // If not found locally, try Firestore (Cross-device sync)
+        if (!user && typeof fs !== 'undefined' && fs !== null) {
+            console.log('[Auth] User not found locally, checking Firestore...');
+            const snap = await fs.collection('users').where('email', '==', email).get();
+            if (!snap.empty) {
+                user = snap.docs[0].data();
+                // Cache user locally
+                users.push(user);
+                localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+            }
+        }
 
         if (!user) {
             this.recordAttempt(email);

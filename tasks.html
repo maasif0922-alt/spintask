@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -34,15 +34,15 @@
         <aside class="sidebar glass" id="main-sidebar">
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
-                    <li><a href="tasks.html" class="active"><span>📋</span> Tasks</a></li>
-                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
-                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
-                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
-                    <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
-                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
-                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
-                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
+                    <li><a href="dashboard.html"><span>??</span> Dashboard</a></li>
+                    <li><a href="tasks.html" class="active"><span>??</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>??</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>??</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>??</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>??</span> Trading Plans</a></li>
+                    <li><a href="referral.html"><span>??</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>??</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>??</span> Withdraw</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -72,7 +72,7 @@
             <!-- Verification Lock Screen (Hidden by default) -->
             <div id="tasks-locked-screen" class="glass"
                 style="display:none; text-align:center; padding:60px 30px; border-radius:24px; margin:20px auto; max-width:600px; border:1px solid rgba(255,165,0,0.3);">
-                <span style="font-size:5rem; margin-bottom:20px; display:block;">🔒</span>
+                <span style="font-size:5rem; margin-bottom:20px; display:block;">??</span>
                 <h2 style="font-size:1.8rem; margin-bottom:15px;">Tasks are Locked</h2>
                 <p style="color:var(--text-muted); line-height:1.7; margin-bottom:25px;">
                     Earning from tasks is exclusive to <strong>Verified Accounts</strong>.<br>
@@ -81,10 +81,10 @@
                 </p>
                 <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                     <a href="dashboard.html" class="btn btn-primary" style="padding: 12px 30px;">
-                        ✅ Verify Account — $1
+                        ? Verify Account � $1
                     </a>
                     <a href="deposit.html" class="btn btn-outline" style="padding: 12px 30px;">
-                        💰 Deposit First
+                        ?? Deposit First
                     </a>
                 </div>
                 <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
@@ -106,6 +106,11 @@
         </main>
     </div>
 
+    <!-- Firebase SDK (V8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="js/firebase-config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/config.js"></script>
     <script src="js/admin.js"></script>
@@ -114,23 +119,23 @@
 
     <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
         <ul>
-            <li><a href="dashboard.html"><span class="bn-icon">🏠</span>Home</a></li>
-            <li><a href="tasks.html" class="active"><span class="bn-icon">📋</span>Tasks</a></li>
-            <li><a href="spin.html"><span class="bn-icon">🎡</span>Spin</a></li>
-            <li><a href="withdraw.html"><span class="bn-icon">💸</span>Withdraw</a></li>
-            <li><a href="#" id="more-btn"><span class="bn-icon">⋯</span>More</a></li>
+            <li><a href="dashboard.html"><span class="bn-icon">??</span>Home</a></li>
+            <li><a href="tasks.html" class="active"><span class="bn-icon">??</span>Tasks</a></li>
+            <li><a href="spin.html"><span class="bn-icon">??</span>Spin</a></li>
+            <li><a href="withdraw.html"><span class="bn-icon">??</span>Withdraw</a></li>
+            <li><a href="#" id="more-btn"><span class="bn-icon">?</span>More</a></li>
         </ul>
     </nav>
     <div class="mobile-more-sheet" id="more-sheet">
         <div class="more-sheet-handle"></div>
         <ul>
-            <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
-            <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
-            <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
-            <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
-            <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
-            <li><a href="profile.html"><span>👤</span> Profile</a></li>
-            <li><a href="#" onclick="Auth.logout(); return false;" style="color:#ff4d4d;"><span>🚪</span> Logout</a>
+            <li><a href="luckydraw.html"><span>??</span> Lucky Draw</a></li>
+            <li><a href="pool.html"><span>??</span> Community Pool</a></li>
+            <li><a href="plans.html"><span>??</span> Trading Plans</a></li>
+            <li><a href="referral.html"><span>??</span> Referrals</a></li>
+            <li><a href="deposit.html"><span>??</span> Deposit</a></li>
+            <li><a href="profile.html"><span>??</span> Profile</a></li>
+            <li><a href="#" onclick="Auth.logout(); return false;" style="color:#ff4d4d;"><span>??</span> Logout</a>
             </li>
         </ul>
     </div>
@@ -170,11 +175,11 @@
                 const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
                 // Assign a generic icon based on keyword or default
-                let icon = '📋';
+                let icon = '??';
                 const titleLower = task.title.toLowerCase();
-                if (titleLower.includes('video') || titleLower.includes('watch')) icon = '▶️';
-                if (titleLower.includes('website') || titleLower.includes('visit')) icon = '🌐';
-                if (titleLower.includes('twitter') || titleLower.includes('follow') || titleLower.includes('social')) icon = '📱';
+                if (titleLower.includes('video') || titleLower.includes('watch')) icon = '??';
+                if (titleLower.includes('website') || titleLower.includes('visit')) icon = '??';
+                if (titleLower.includes('twitter') || titleLower.includes('follow') || titleLower.includes('social')) icon = '??';
 
                 const taskHtml = `
                     <div class="task-item glass">
@@ -201,7 +206,7 @@
         function startTask(btn, seconds, reward) {
             const user = Auth.getCurrentUser();
             if (!user || !user.verified) {
-                alert('⚠️ Please verify your account to start tasks.');
+                alert('?? Please verify your account to start tasks.');
                 window.location.href = 'dashboard.html';
                 return;
             }
@@ -231,7 +236,7 @@
 
                     // Fire admin alert
                     if (typeof Admin !== 'undefined') {
-                        Admin.addAdminAlert('task', `📋 Task: ${user.name} completed a task and earned +$${reward.toFixed(2)} USDT`);
+                        Admin.addAdminAlert('task', `?? Task: ${user.name} completed a task and earned +$${reward.toFixed(2)} USDT`);
                         Admin.logAction(`${user.email} completed task for $${reward}`);
                     }
 
@@ -249,7 +254,7 @@
         <!-- Header -->
         <div class="mob-nav-header">
             <div class="mob-nav-title">
-                <div class="mob-nav-avatar" id="mob-nav-avatar">👤</div>
+                <div class="mob-nav-avatar" id="mob-nav-avatar">??</div>
                 <div>
                     <div class="mob-nav-username" id="mob-nav-username">Welcome!</div>
                     <div class="mob-nav-subtitle">SpinTask Member</div>
@@ -267,7 +272,7 @@
         <!-- Balance strip -->
         <div class="mob-nav-balance">
             <div class="mob-nav-bal-item">
-                <span class="mob-nav-bal-label">💰 Balance</span>
+                <span class="mob-nav-bal-label">?? Balance</span>
                 <span class="mob-nav-bal-value user-balance-value">$0.00</span>
             </div>
             <a href="deposit.html" class="mob-nav-dep-btn">+ Deposit</a>
@@ -277,51 +282,51 @@
         <div class="mob-nav-section-label">Navigation</div>
         <div class="mob-nav-grid">
             <a href="dashboard.html" class="mob-nav-item active">
-                <div class="mob-nav-icon">🏠</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Home</div>
             </a>
             <a href="tasks.html" class="mob-nav-item">
-                <div class="mob-nav-icon">📋</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Tasks</div>
             </a>
             <a href="spin.html" class="mob-nav-item">
-                <div class="mob-nav-icon">🎡</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Spin Wheel</div>
             </a>
             <a href="luckydraw.html" class="mob-nav-item">
-                <div class="mob-nav-icon">🎉</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Lucky Draw</div>
             </a>
             <a href="pool.html" class="mob-nav-item">
-                <div class="mob-nav-icon">👥</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Community Pool</div>
             </a>
             <a href="plans.html" class="mob-nav-item">
-                <div class="mob-nav-icon">📈</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Trading Plans</div>
             </a>
             <a href="referral.html" class="mob-nav-item">
-                <div class="mob-nav-icon">🔗</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Referrals</div>
             </a>
             <a href="deposit.html" class="mob-nav-item">
-                <div class="mob-nav-icon">💰</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Deposit</div>
             </a>
             <a href="withdraw.html" class="mob-nav-item">
-                <div class="mob-nav-icon">💸</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Withdraw</div>
             </a>
             <a href="profile.html" class="mob-nav-item">
-                <div class="mob-nav-icon">👤</div>
+                <div class="mob-nav-icon">??</div>
                 <div class="mob-nav-label">Profile</div>
             </a>
         </div>
 
         <!-- Footer Actions -->
         <div class="mob-nav-footer">
-            <a href="support.html" class="mob-nav-support-btn">💬 Support</a>
-            <button class="mob-nav-logout-btn" onclick="Auth.logout()">🚪 Logout</button>
+            <a href="support.html" class="mob-nav-support-btn">?? Support</a>
+            <button class="mob-nav-logout-btn" onclick="Auth.logout()">?? Logout</button>
         </div>
     </div>
     <script>
@@ -331,7 +336,7 @@
 
             // Welcome message
             const wm = document.getElementById('welcome-msg');
-            if (wm) wm.innerText = `Welcome back, ${user.name.split(' ')[0]}! 👋`;
+            if (wm) wm.innerText = `Welcome back, ${user.name.split(' ')[0]}! ??`;
 
             // Earnings
             const totalEarningsEl = document.getElementById('user-total-earnings');
@@ -341,10 +346,10 @@
             const badgeDash = document.getElementById('status-badge-dash');
             const statusSub = document.getElementById('status-sub-dash');
             if (user.verified) {
-                badgeDash.innerHTML = `<span class="verified-badge">✅ Verified</span>`;
+                badgeDash.innerHTML = `<span class="verified-badge">? Verified</span>`;
                 statusSub.innerText = '1 free spin daily';
             } else {
-                badgeDash.innerHTML = `<span class="unverified-badge">⚠️ Unverified</span>`;
+                badgeDash.innerHTML = `<span class="unverified-badge">?? Unverified</span>`;
                 statusSub.innerText = 'Verify for $1 to unlock spins';
             }
 
@@ -353,12 +358,12 @@
             if (!user.verified && bannerContainer) {
                 bannerContainer.innerHTML = `
                     <div class="verify-banner">
-                        <div class="vb-icon">🔐</div>
+                        <div class="vb-icon">??</div>
                         <div class="vb-text">
                             <h4>Your account is not verified</h4>
                             <p>Pay $1.00 USDT to unlock the Spin Wheel and earn 1 free daily spin for life.</p>
                         </div>
-                        <button class="btn-verify" onclick="doVerify()">Verify Now — $1</button>
+                        <button class="btn-verify" onclick="doVerify()">Verify Now � $1</button>
                     </div>
                 `;
             }
@@ -367,8 +372,8 @@
             const profileBadge = document.getElementById('profile-badge');
             if (profileBadge) {
                 profileBadge.innerHTML = user.verified
-                    ? `<span class="verified-badge">✅ Verified Account</span>`
-                    : `<span class="unverified-badge">⚠️ Unverified</span>`;
+                    ? `<span class="verified-badge">? Verified Account</span>`
+                    : `<span class="unverified-badge">?? Unverified</span>`;
             }
 
             const profileCard = document.getElementById('profile-card');
@@ -378,7 +383,7 @@
                     : 'N/A';
                 const verDate = user.verificationDate
                     ? new Date(user.verificationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : '—';
+                    : '�';
                 profileCard.innerHTML = `
                     <div class="profile-field">
                         <label>Username</label>
@@ -406,7 +411,7 @@
                     </div>
                     <div class="profile-field">
                         <label>Referral Code</label>
-                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '—'}</div>
+                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '�'}</div>
                     </div>
                     <div class="profile-field">
                         <label>Account ID</label>
@@ -440,7 +445,7 @@
             if (investments.length === 0) {
                 container.innerHTML = `
                     <div class="glass" style="padding: 30px; border-radius: 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.2);">
-                        <h3 style="margin-bottom: 10px;">📈 Trading & Investment</h3>
+                        <h3 style="margin-bottom: 10px;">?? Trading & Investment</h3>
                         <p style="color: var(--text-muted); margin-bottom: 20px;">You do not have any active trading plans. Start earning daily passive income today!</p>
                         <a href="plans.html" class="btn btn-primary">Explore Trading Plans</a>
                     </div>
@@ -448,7 +453,7 @@
                 return;
             }
 
-            let html = '<div class="glass" style="padding: 30px; border-radius: 20px;"><h3 style="margin-bottom: 20px;">📈 Active Trading Plans</h3><div style="display: flex; flex-direction: column; gap: 20px;">';
+            let html = '<div class="glass" style="padding: 30px; border-radius: 20px;"><h3 style="margin-bottom: 20px;">?? Active Trading Plans</h3><div style="display: flex; flex-direction: column; gap: 20px;">';
 
             investments.forEach(inv => {
                 const plan = Trading.PLANS_DEF.find(p => p.id === inv.planId);
@@ -470,7 +475,7 @@
                                 <h4 style="color: var(--primary-neon); font-size: 1.1rem; margin-bottom: 5px;">${plan.name} Plan</h4>
                                 <span style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 4px;">Since ${since.toLocaleDateString()}</span>
                             </div>
-                            <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="border-color: #39ff14; color: #39ff14; padding: 6px 15px; font-size: 0.85rem;" ${earnedAmount <= 0 ? 'disabled title="Earn some profit first to reinvest"' : ''}>♻️ Reinvest Profits</button>
+                            <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="border-color: #39ff14; color: #39ff14; padding: 6px 15px; font-size: 0.85rem;" ${earnedAmount <= 0 ? 'disabled title="Earn some profit first to reinvest"' : ''}>?? Reinvest Profits</button>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px;">
                             <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
@@ -506,7 +511,7 @@
             const user = Auth.getCurrentUser();
             if (!user) return;
 
-            if (!confirm('♻️ Are you sure you want to reinvest your accrued profits?\nThis will deduct the earned amount from your balance, add it to your investment, and give you a +0.5% daily rate bonus!')) {
+            if (!confirm('?? Are you sure you want to reinvest your accrued profits?\nThis will deduct the earned amount from your balance, add it to your investment, and give you a +0.5% daily rate bonus!')) {
                 return;
             }
 
@@ -515,7 +520,7 @@
                 alert(res.message);
                 location.reload();
             } else {
-                alert('❌ ' + res.message);
+                alert('? ' + res.message);
             }
         };
 
@@ -523,16 +528,16 @@
             const user = Auth.getCurrentUser();
             if (!user) return;
             if ((user.balance || 0) < 1) {
-                alert('❌ Insufficient balance. Please deposit at least $1.00 USDT to verify your account.');
+                alert('? Insufficient balance. Please deposit at least $1.00 USDT to verify your account.');
                 return;
             }
             if (confirm('Verify your account for $1.00 USDT? This will unlock the daily Spin Wheel.')) {
                 const result = Auth.verifyAccount();
                 if (result.success) {
-                    alert('✅ Account verified! You now get 1 free daily spin. Refreshing...');
+                    alert('? Account verified! You now get 1 free daily spin. Refreshing...');
                     location.reload();
                 } else {
-                    alert('❌ ' + result.message);
+                    alert('? ' + result.message);
                 }
             }
         }

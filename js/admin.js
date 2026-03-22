@@ -1087,8 +1087,15 @@ const DEPLOYMENT_DATA = ${jsonString};
         const users = this.getAllUsers();
         const idx = users.findIndex(u => u.id === userId);
         if (idx !== -1) {
-            users[idx].balance = parseFloat(newBalance);
+            const updatedUser = { ...users[idx], balance: parseFloat(newBalance) };
+            users[idx] = updatedUser;
             localStorage.setItem('spintask_users', JSON.stringify(users));
+            
+            // Sync to Firestore
+            if (typeof fs !== 'undefined' && fs !== null) {
+                fs.collection('users').doc(userId).update({ balance: parseFloat(newBalance) });
+            }
+
             this.logAction(`Admin updated balance for ${users[idx].email} to ${newBalance}`);
             return true;
         }
@@ -1101,6 +1108,12 @@ const DEPLOYMENT_DATA = ${jsonString};
         if (idx !== -1) {
             users[idx].suspended = suspended;
             localStorage.setItem('spintask_users', JSON.stringify(users));
+            
+            // Sync to Firestore
+            if (typeof fs !== 'undefined' && fs !== null) {
+                fs.collection('users').doc(userId).update({ suspended });
+            }
+
             this.logAction(`Admin ${suspended ? 'suspended' : 'activated'} user ${users[idx].email}`);
             return true;
         }
@@ -1111,14 +1124,20 @@ const DEPLOYMENT_DATA = ${jsonString};
 
     addAdminAlert(type, message) {
         const alerts = this.getDb(this.DB_ADMIN_ALERTS);
-        alerts.unshift({
+        const newAlert = {
             id: 'alert_' + Date.now(),
             type,
             message,
             time: new Date().toISOString(),
             read: false
-        });
-        this.saveDb(this.DB_ADMIN_ALERTS, alerts.slice(0, 100)); // Keep last 100
+        };
+        alerts.unshift(newAlert);
+        this.saveDb(this.DB_ADMIN_ALERTS, alerts.slice(0, 100));
+
+        // Sync to Firestore
+        if (typeof fs !== 'undefined' && fs !== null) {
+            fs.collection('admin_alerts').doc(newAlert.id).set(newAlert);
+        }
     },
 
     getAdminAlerts() {
@@ -1131,19 +1150,26 @@ const DEPLOYMENT_DATA = ${jsonString};
 
     markAllAdminAlertsRead() {
         const alerts = this.getDb(this.DB_ADMIN_ALERTS);
-        alerts.forEach(a => a.read = true);
+        alerts.forEach(a => {
+            a.read = true;
+            // Sync to Firestore (optional, but good for consistency)
+            if (typeof fs !== 'undefined' && fs !== null) {
+                fs.collection('admin_alerts').doc(a.id).update({ read: true });
+            }
+        });
         this.saveDb(this.DB_ADMIN_ALERTS, alerts);
     },
 
     clearAdminAlerts() {
         this.saveDb(this.DB_ADMIN_ALERTS, []);
+        // In a real app, you'd also clear Firestore, but usually alerts are persistent logs.
     },
 
     // ─── Manual Transfers / Point Sharing ─────────────────────────────────
 
     addTransferRecord(data) {
         const transfers = this.getDb(this.DB_TRANSFERS);
-        transfers.unshift({
+        const newRecord = {
             id: 'tr_' + Date.now(),
             toId: data.toId,
             toName: data.toName,
@@ -1151,12 +1177,52 @@ const DEPLOYMENT_DATA = ${jsonString};
             note: data.note || '',
             date: new Date().toISOString(),
             by: data.by || 'admin'
-        });
+        };
+        transfers.unshift(newRecord);
         this.saveDb(this.DB_TRANSFERS, transfers.slice(0, 500));
+
+        // Sync to Firestore
+        if (typeof fs !== 'undefined' && fs !== null) {
+            fs.collection('transfers').doc(newRecord.id).set(newRecord);
+        }
     },
 
     getAllTransfers() {
         return this.getDb(this.DB_TRANSFERS);
+    },
+
+    // ─── REAL-TIME FIREBASE SYNC ──────────────────────────────────────────
+
+    initFirebaseSync() {
+        if (typeof fs === 'undefined' || fs === null) return;
+
+        console.log('[Admin] Initializing Real-time Firestore Sync...');
+
+        // 1. Sync Users
+        fs.collection('users').onSnapshot(snapshot => {
+            const users = [];
+            snapshot.forEach(doc => users.push(doc.data()));
+            localStorage.setItem('spintask_users', JSON.stringify(users));
+            console.log('[Firestore] User list synced.');
+            // Trigger UI refresh if dashboard is open
+            window.dispatchEvent(new Event('admin:dataSynced'));
+        });
+
+        // 2. Sync Alerts
+        fs.collection('admin_alerts').orderBy('time', 'desc').limit(100).onSnapshot(snapshot => {
+            const alerts = [];
+            snapshot.forEach(doc => alerts.push(doc.data()));
+            localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify(alerts));
+            console.log('[Firestore] Admin alerts synced.');
+            window.dispatchEvent(new Event('admin:alertsSynced'));
+        });
+
+        // 3. Sync Transfers
+        fs.collection('transfers').orderBy('date', 'desc').limit(500).onSnapshot(snapshot => {
+            const transfers = [];
+            snapshot.forEach(doc => transfers.push(doc.data()));
+            localStorage.setItem(this.DB_TRANSFERS, JSON.stringify(transfers));
+        });
     }
 };
 
