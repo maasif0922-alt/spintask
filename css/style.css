@@ -1929,42 +1929,41 @@ footer {
 
 .vip-corner-btn {
     position: fixed;
-    top: 95px;
-    right: 20px;
+    top: 85px; /* Slightly higher */
+    right: 15px;
     z-index: 2000;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 20px;
-    border-radius: 12px;
-    background: rgba(10, 10, 10, 0.85);
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 10px;
+    background: rgba(10, 10, 10, 0.9);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(57,255,20,0.3);
     color: var(--primary-neon);
     font-weight: 700;
-    font-size: 0.9rem;
     text-decoration: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
 .vip-corner-content {
     display: flex;
     flex-direction: column;
     text-align: left;
-    line-height: 1.2;
+    line-height: 1.1;
 }
 
 .vip-corner-text { 
-    font-size: 0.85rem; 
+    font-size: 0.78rem; 
     font-weight: 800;
     color: var(--text-white);
 }
 
 .vip-corner-sub {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: var(--primary-neon);
-    opacity: 0.8;
+    opacity: 0.9;
 }
 
 .vip-corner-btn:hover {
@@ -1975,7 +1974,7 @@ footer {
 }
 
 .vip-corner-icon {
-    font-size: 1.2rem;
+    font-size: 1rem;
     animation: rocket-bob 1.8s ease-in-out infinite;
 }
 
@@ -1993,11 +1992,11 @@ footer {
 .vip-corner-badge {
     background: var(--primary-neon);
     color: #000;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     font-weight: 900;
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin-left: 4px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    margin-left: 2px;
 }
 
 /* Category Cards Grid */
