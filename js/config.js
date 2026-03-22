@@ -11,10 +11,12 @@ const GLOBAL_CONFIG = {
         "minWithdraw": 20,
         "refLvl1": 5,
         "refLvl2": 3,
+        "btcAddress": "BTC_WALLET_ADDRESS_HERE",
         "ti_basic_rate": 2,
+        "ti_regular_rate": 6,
+        "ti_premium_rate": 7,
         "ti_standard_rate": 3.5,
         "ti_gold_rate": 4.5,
-        "btcAddress": "BTC_WALLET_ADDRESS_HERE",
         "allowTransfers": true
     },
     "tasks": [
@@ -30,10 +32,10 @@ const GLOBAL_CONFIG = {
     "content": {
         "aboutText": "The most trusted micro-task platform.",
         "termsText": "These are the default terms and conditions.",
-        "privacyText": "Your privacy is important. We encrypt your data.",
-        "contactText": "Get in touch with us for support and inquiries.",
         "homeHero": "Earn USDT Online with Simple Tasks and Spins",
-        "homeSub": "Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet."
+        "homeSub": "Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet.",
+        "privacyText": "Your privacy is important. We encrypt your data.",
+        "contactText": "Get in touch with us for support and inquiries."
     },
     "luckydraws": [
         {
@@ -99,9 +101,9 @@ const GLOBAL_CONFIG = {
         "subText": "Join our official signal community and never miss profitable updates."
     },
     "community_links": {
-        "telegramLink": "https://t.me/your_group",
-        "whatsappGroupLink": "https://chat.whatsapp.com/your_group",
-        "whatsappCommunityLink": "https://chat.whatsapp.com/your_community",
+        "telegramLink": "https://t.me/+f2-FUTEOIAtjOTE0",
+        "whatsappGroupLink": "",
+        "whatsappCommunityLink": "",
         "activeLink": "telegram"
     },
     "social_media": {
@@ -179,6 +181,6 @@ const GLOBAL_CONFIG = {
             }
         ]
     },
-    "version": "1.0.3901",
-    "lastUpdated": "2026-03-18T10:41:21.000Z"
+    "version": "1.0.0",
+    "lastUpdated": "2026-03-22T08:17:23.009Z"
 };
