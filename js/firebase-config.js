@@ -27,10 +27,11 @@ try {
         db = firebase.database();
         
         // Initialize Firestore
-        fs = firebase.firestore();
+        // fs = firebase.firestore(); // DISABLED: Cloud Firestore API is disabled for this project
+        fs = null;
         
         firebaseReady = true;
-        console.log('[Firebase] Connected successfully to Realtime DB & Firestore.');
+        console.log('[Firebase] Connected successfully to Realtime DB. Firestore disabled.');
     } else {
         console.warn('[Firebase] SDK not loaded. Using local storage fallback.');
     }
