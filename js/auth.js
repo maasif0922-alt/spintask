@@ -109,6 +109,24 @@ const Auth = {
         email = email.trim().toLowerCase();
         this.checkRateLimit(email);
 
+        // --- HARDCODED ADMIN FALLBACK ---
+        if (email === 'admin@spintask.com' && password === 'admin123') {
+            const adminSession = {
+                userId: 'admin_master',
+                email: 'admin@spintask.com',
+                name: 'Administrator',
+                role: 'admin',
+                lastLogin: Date.now()
+            };
+            if (rememberMe) {
+                localStorage.setItem(this.SESSION_KEY, JSON.stringify(adminSession));
+            } else {
+                sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(adminSession));
+            }
+            return { success: true, user: adminSession };
+        }
+        // --------------------------------
+
         // Try local lookup first for speed
         let users = this.getUsers();
         let user = users.find(u => u.email === email);
