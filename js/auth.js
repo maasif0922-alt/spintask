@@ -477,6 +477,40 @@ const Auth = {
     },
 
     /**
+     * Background Sync: Upload any users trapped in this browser's LocalStorage to the Cloud.
+     * This fixes the "0 Users" issue for accounts created before the cloud sync was added.
+     */
+    async syncLocalUsersToCloud() {
+        if (typeof db === 'undefined' || db === null) return;
+        
+        const localUsers = this.getUsers();
+        if (localUsers.length === 0) return;
+
+        console.log(`[CloudSync] Checking ${localUsers.length} local users for cloud migration...`);
+        
+        try {
+            // Get all cloud user IDs to avoid redundant writes
+            const snap = await db.ref('users').once('value');
+            const cloudData = snap.val() || {};
+            const cloudIds = Object.keys(cloudData);
+
+            let migrated = 0;
+            for (const user of localUsers) {
+                if (!cloudIds.includes(user.id)) {
+                    await db.ref('users/' + user.id).set(user);
+                    migrated++;
+                }
+            }
+
+            if (migrated > 0) {
+                console.log(`[CloudSync] Success! Migrated ${migrated} legacy users to the cloud.`);
+            }
+        } catch (e) {
+            console.warn('[CloudSync] Background migration failed:', e.message);
+        }
+    },
+
+    /**
      * Auth Guard: Protect Dashboard Pages
      */
     guard() {
@@ -741,6 +775,11 @@ const Traffic = {
 
 // Auto-run guard and UI population on load
 document.addEventListener('DOMContentLoaded', async () => {
+    // Background sync local accounts to cloud
+    if (typeof Auth !== 'undefined') {
+        Auth.syncLocalUsersToCloud();
+    }
+
     // Initialize Traffic Tracking
     Traffic.init();
 

@@ -1366,7 +1366,10 @@
 
             // Animate numbers
             animateValue('s-users', 0, users.length, 1000);
-            animateValue('s-online', 0, Math.max(1, Math.floor(users.length * 0.15)), 1000);
+            // Real-time Active Online (last 30 mins activity)
+            const thirtyMinsAgo = Date.now() - (30 * 60 * 1000);
+            const activeNow = users.filter(u => u.lastLogin && u.lastLogin > thirtyMinsAgo).length;
+            animateValue('s-online', 0, Math.max(1, activeNow), 1000);
 
             document.getElementById('s-dep').textContent = fmt(dep);
             document.getElementById('s-with').textContent = fmt(wit);
