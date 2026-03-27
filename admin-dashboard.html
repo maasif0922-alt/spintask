@@ -1250,6 +1250,72 @@
             if (!u || u.role !== 'admin') { location.href = 'admin-login.html'; }
         })();
 
+        // ── Cloud Sync: Pull ALL users from Firebase Realtime DB ─────────────────────
+        (async function initAdminCloudSync() {
+            // Show a loading indicator
+            const dashEl = document.getElementById('tab-dashboard');
+
+            try {
+                // 1. Sync all users from Realtime DB
+                const totalUsers = await Auth.syncUsersFromCloud();
+
+                // 2. Sync all alerts from Realtime DB
+                await Auth.syncAlertsFromCloud();
+
+                // 3. Now render the dashboard with fresh data
+                renderDashboard();
+                updateAlertBadge();
+
+                if (totalUsers > 0) {
+                    console.log('[Admin] Cloud sync loaded ' + totalUsers + ' users.');
+                }
+            } catch (e) {
+                console.warn('[Admin] Cloud sync init failed:', e.message);
+            }
+
+            // 4. Start real-time listener for NEW registrations from any device
+            Auth.listenForCloudAlerts(function(alert) {
+                console.log('[Admin] Real-time alert received:', alert.message);
+
+                // Add to localStorage admin alerts
+                const localAlerts = JSON.parse(localStorage.getItem('spintask_admin_alerts') || '[]');
+                if (!localAlerts.find(a => a.id === alert.id)) {
+                    localAlerts.unshift(alert);
+                    localStorage.setItem('spintask_admin_alerts', JSON.stringify(localAlerts.slice(0, 200)));
+                }
+
+                // Show a toast notification
+                showAdminToast('🔔 ' + alert.message);
+
+                // If a registration, re-sync users and refresh user list
+                if (alert.type === 'registration') {
+                    Auth.syncUsersFromCloud().then(() => {
+                        renderDashboard();
+                        if (document.getElementById('tab-users').style.display === 'block') {
+                            renderUsers();
+                        }
+                    });
+                }
+
+                updateAlertBadge();
+            });
+        })();
+
+        // ── Toast Notification for Admin ────────────────────────────────────────────
+        function showAdminToast(message) {
+            let toast = document.getElementById('admin-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'admin-toast';
+                toast.style.cssText = 'position:fixed;bottom:30px;right:30px;background:linear-gradient(135deg,#0a0b1e,#1a1b3a);border:1px solid rgba(57,255,20,0.5);color:#fff;padding:14px 20px;border-radius:12px;font-size:0.9rem;z-index:99999;box-shadow:0 0 30px rgba(57,255,20,0.2);max-width:350px;display:none;animation:slideIn 0.3s ease;';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.style.display = 'block';
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => { toast.style.display = 'none'; }, 5000);
+        }
+
         // ── Tab switching ───────────────────────────────────────────────────────────
         function switchTab(id, e) {
             if (e) e.preventDefault();
@@ -1543,30 +1609,36 @@
             var note = document.getElementById('sp-note').value;
             if (!emailVal || !amt || amt <= 0) { alert('Select a valid user email and enter amount.'); return; }
             
-            // Get current users from list (which is synced via Firestore)
             var users = (JSON.parse(localStorage.getItem('spintask_users')) || []);
             var idx = users.findIndex(u => u.email === emailVal);
             
             if (idx === -1) {
-                alert('ERROR: This email (' + emailVal + ') is NOT registered in your records. You can only share points with registered users.');
+                alert('ERROR: This email (' + emailVal + ') is NOT registered. You can only share points with registered users.');
                 return;
             }
 
             if (confirm('Are you sure you want to send ' + fmt(amt) + ' to ' + users[idx].name + ' (' + emailVal + ')?')) {
                 var uid = users[idx].id;
-                // Update local list (UI)
-                users[idx].balance = (parseFloat(users[idx].balance) || 0) + amt;
+                users[idx].balance = parseFloat(((parseFloat(users[idx].balance) || 0) + amt).toFixed(2));
+                users[idx].earnings = parseFloat(((parseFloat(users[idx].earnings) || 0) + amt).toFixed(2));
                 localStorage.setItem('spintask_users', JSON.stringify(users));
                 
-                // Sync to Firestore
-                if (typeof fs !== 'undefined' && fs !== null) {
-                    fs.collection('users').doc(uid).update({ balance: users[idx].balance });
+                // Sync balance to Firebase Realtime DB (so user sees it on their device)
+                if (typeof db !== 'undefined' && db !== null) {
+                    db.ref('users/' + uid).update({ 
+                        balance: users[idx].balance,
+                        earnings: users[idx].earnings
+                    }).then(() => {
+                        console.log('[RealtimeDB] Balance synced to cloud for user:', emailVal);
+                    }).catch(e => {
+                        console.warn('[RealtimeDB] Balance sync failed:', e.message);
+                    });
                 }
 
                 Admin.addTransferRecord({ toId: uid, toName: users[idx].name, amount: amt, note: note, by: 'admin' });
-                Admin.logAction(`Admin sent ${fmt(amt)} to ${users[idx].email}. Note: ${note}`);
+                Admin.logAction('Admin sent ' + fmt(amt) + ' to ' + users[idx].email + '. Note: ' + note);
                 
-                alert(`SUCCESS: Sent ${fmt(amt)} to ${users[idx].name}!`);
+                alert('SUCCESS: Sent ' + fmt(amt) + ' to ' + users[idx].name + '!');
                 document.getElementById('sp-amount').value = ''; 
                 document.getElementById('sp-note').value = '';
                 renderSendPoints();

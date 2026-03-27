@@ -84,19 +84,29 @@ const Auth = {
         users.push(newUser);
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
 
-        // 3. Save to Firestore
-        if (typeof fs !== 'undefined' && fs !== null) {
+        // 3. Save to Firebase Realtime Database (cross-device sync)
+        if (typeof db !== 'undefined' && db !== null) {
             try {
-                await fs.collection('users').doc(newUser.id).set(newUser);
-                console.log('[Firestore] User saved successfully.');
+                await db.ref('users/' + newUser.id).set(newUser);
+                console.log('[RealtimeDB] User saved to cloud successfully.');
+
+                // Write a registration alert to Firebase so admin sees it in real-time
+                const alertId = 'alert_' + Date.now();
+                await db.ref('admin_alerts/' + alertId).set({
+                    id: alertId,
+                    type: 'registration',
+                    message: `🆕 New account registered: ${name} (${email})`,
+                    time: new Date().toISOString(),
+                    read: false
+                });
             } catch (e) {
-                console.error('[Firestore] User save failed:', e);
+                console.warn('[RealtimeDB] User save failed, using local only:', e.message);
             }
         }
 
-        // 4. Fire admin alert for new registration
+        // 4. Fire admin alert in localStorage (for same-device admin access)
         if (typeof Admin !== 'undefined') {
-            Admin.addAdminAlert('registration', `New user registered: ${name} (${email})`);
+            Admin.addAdminAlert('registration', `🆕 New account: ${name} (${email})`);
         }
 
         return { success: true, user: newUser };
@@ -131,19 +141,21 @@ const Auth = {
         let users = this.getUsers();
         let user = users.find(u => u.email === email);
 
-        // If not found locally, try Firestore (Cross-device sync)
-        if (!user && typeof fs !== 'undefined' && fs !== null) {
-            console.log('[Auth] User not found locally, checking Firestore...');
+        // If not found locally, try Firebase Realtime DB (cross-device sync)
+        if (!user && typeof db !== 'undefined' && db !== null) {
+            console.log('[Auth] User not found locally, checking Realtime DB...');
             try {
-                const snap = await fs.collection('users').where('email', '==', email).get();
-                if (!snap.empty) {
-                    user = snap.docs[0].data();
-                    // Cache user locally
+                const snap = await db.ref('users').orderByChild('email').equalTo(email).once('value');
+                if (snap.exists()) {
+                    const data = snap.val();
+                    user = Object.values(data)[0];
+                    // Cache user locally for future fast lookups
                     users.push(user);
                     localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+                    console.log('[RealtimeDB] User found in cloud and cached locally.');
                 }
             } catch (e) {
-                console.warn('[Firestore] Login lookup failed. Falling back to local only:', e.message);
+                console.warn('[RealtimeDB] Login lookup failed. Falling back to local only:', e.message);
             }
         }
 
@@ -387,6 +399,75 @@ const Auth = {
         if (typeof Admin === 'undefined') return [];
         const allTransfers = Admin.getAllTransfers();
         return allTransfers.filter(t => t.senderId === userId || t.receiverId === userId);
+    },
+
+    /**
+     * Sync all users from Firebase Realtime DB into localStorage.
+     * Call this on admin dashboard load to see users from ALL devices.
+     */
+    async syncUsersFromCloud() {
+        if (typeof db === 'undefined' || db === null) {
+            console.warn('[RealtimeDB] Not available. Skipping cloud sync.');
+            return 0;
+        }
+        try {
+            console.log('[RealtimeDB] Syncing all users from cloud...');
+            const snap = await db.ref('users').once('value');
+            if (!snap.exists()) return 0;
+            const cloudUsers = Object.values(snap.val());
+            const localUsers = this.getUsers();
+            cloudUsers.forEach(cu => {
+                const idx = localUsers.findIndex(lu => lu.id === cu.id);
+                if (idx === -1) {
+                    localUsers.push(cu);
+                } else {
+                    localUsers[idx] = Object.assign({}, localUsers[idx], cu);
+                }
+            });
+            localStorage.setItem(this.DB_KEY, JSON.stringify(localUsers));
+            console.log('[RealtimeDB] Sync complete. ' + cloudUsers.length + ' total users.');
+            return cloudUsers.length;
+        } catch (e) {
+            console.warn('[RealtimeDB] Sync failed:', e.message);
+            return 0;
+        }
+    },
+
+    /**
+     * Sync admin alerts from Firebase Realtime DB into localStorage.
+     */
+    async syncAlertsFromCloud() {
+        if (typeof db === 'undefined' || db === null) return;
+        try {
+            const snap = await db.ref('admin_alerts').once('value');
+            if (!snap.exists()) return;
+            const cloudAlerts = Object.values(snap.val()).sort((a, b) => new Date(b.time) - new Date(a.time));
+            const localAlerts = JSON.parse(localStorage.getItem('spintask_admin_alerts') || '[]');
+            cloudAlerts.forEach(ca => {
+                if (!localAlerts.find(la => la.id === ca.id)) localAlerts.unshift(ca);
+            });
+            localStorage.setItem('spintask_admin_alerts', JSON.stringify(localAlerts.slice(0, 200)));
+        } catch (e) {
+            console.warn('[RealtimeDB] Alert sync failed:', e.message);
+        }
+    },
+
+    /**
+     * Listen for new registrations in real-time on the admin dashboard.
+     * onNewAlert(alertData) is called whenever a new account is created on any device.
+     */
+    listenForCloudAlerts(onNewAlert) {
+        if (typeof db === 'undefined' || db === null) return;
+        try {
+            const startTime = new Date().toISOString();
+            db.ref('admin_alerts').orderByChild('time').startAt(startTime).on('child_added', snap => {
+                const alert = snap.val();
+                if (alert && typeof onNewAlert === 'function') onNewAlert(alert);
+            });
+            console.log('[RealtimeDB] Listening for new cloud alerts...');
+        } catch (e) {
+            console.warn('[RealtimeDB] Alert listener failed:', e.message);
+        }
     },
 
     /**
