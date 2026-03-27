@@ -186,6 +186,12 @@ const Auth = {
             sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionData));
         }
 
+        // --- NEW: Sync last login to Cloud ---
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('users/' + user.id).update({ lastLogin: sessionData.lastLogin })
+              .catch(e => console.warn('[RealtimeDB] Activity sync failed:', e.message));
+        }
+
         return { success: true, user: sessionData };
     },
 

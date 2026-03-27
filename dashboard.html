@@ -445,6 +445,38 @@
                 statusSub.innerText = 'Verify for $1 to unlock spins';
             }
 
+            // ── Real-time Cloud Sync ──────────────────────────────────────────────────
+            if (typeof db !== 'undefined' && db !== null && user.id) {
+                db.ref('users/' + user.id).on('value', snap => {
+                    const cloudData = snap.val();
+                    if (cloudData) {
+                        const localUsers = JSON.parse(localStorage.getItem('spintask_users') || '[]');
+                        const idx = localUsers.findIndex(u => u.id === user.id);
+                        if (idx !== -1) {
+                            // Check if balance or suspension changed
+                            const changed = cloudData.balance !== localUsers[idx].balance || cloudData.suspended !== localUsers[idx].suspended;
+                            if (changed) {
+                                console.log('[RealtimeDB] Cloud update detected, refreshing UI...');
+                                localUsers[idx] = Object.assign({}, localUsers[idx], cloudData);
+                                localStorage.setItem('spintask_users', JSON.stringify(localUsers));
+                                // Update session too if they are logged in as this user
+                                const session = JSON.parse(localStorage.getItem('spintask_current_user') || sessionStorage.getItem('spintask_current_user') || '{}');
+                                if (session.userId === user.id) {
+                                    // Soft refresh balance on UI
+                                    const balEl = document.getElementById('user-balance-dash');
+                                    if (balEl) balEl.innerText = `$${parseFloat(cloudData.balance || 0).toFixed(2)}`;
+                                    const earnEl = document.getElementById('user-total-earnings');
+                                    if (earnEl) earnEl.innerText = `${parseFloat(cloudData.earnings || 0).toFixed(2)} USDT`;
+                                    
+                                    // If suspended, logout
+                                    if (cloudData.suspended) window.location.href = 'login.html';
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
             // Verification Banner
             const bannerContainer = document.getElementById('verify-banner-container');
             if (!user.verified && bannerContainer) {

@@ -286,16 +286,23 @@ const Admin = {
      */
     addAdminAlert(type, message) {
         const alerts = this.getDb(this.DB_ADMIN_ALERTS);
-        alerts.unshift({
+        const alertData = {
             id: 'al_' + Date.now(),
             type,
             message,
             time: new Date().toISOString(),
             read: false
-        });
+        };
+        alerts.unshift(alertData);
         // Keep last 100 alerts
         if (alerts.length > 100) alerts.pop();
         this.saveDb(this.DB_ADMIN_ALERTS, alerts);
+
+        // Sync to Cloud
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('admin_alerts/' + alertData.id).set(alertData)
+              .catch(e => console.warn('[RealtimeDB] Alert sync failed:', e.message));
+        }
     },
 
     getAdminAlerts() {
@@ -379,6 +386,14 @@ const Admin = {
         if (index !== -1) {
             users[index].suspended = suspend;
             localStorage.setItem('spintask_users', JSON.stringify(users));
+            
+            // Sync to Firebase Realtime DB
+            if (typeof db !== 'undefined' && db !== null) {
+                db.ref('users/' + userId).update({ suspended: suspend })
+                  .then(() => console.log('[RealtimeDB] User suspension status synced.'))
+                  .catch(e => console.warn('[RealtimeDB] Suspension sync failed:', e.message));
+            }
+            
             this.logAction(`Admin ${suspend ? 'suspended' : 'activated'} user ID: ${userId}`);
         }
     },
@@ -389,6 +404,14 @@ const Admin = {
         if (index !== -1) {
             users[index].balance = parseFloat(newBalance) || 0;
             localStorage.setItem('spintask_users', JSON.stringify(users));
+            
+            // Sync to Firebase Realtime DB
+            if (typeof db !== 'undefined' && db !== null) {
+                db.ref('users/' + userId).update({ balance: users[index].balance })
+                  .then(() => console.log('[RealtimeDB] User balance synced.'))
+                  .catch(e => console.warn('[RealtimeDB] Balance sync failed:', e.message));
+            }
+
             this.logAction(`Admin modified balance for user ID: ${userId}`);
         }
     },
