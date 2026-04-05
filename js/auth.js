@@ -111,7 +111,40 @@ const Auth = {
             await Promise.race([firebaseSync(), timeout]);
         }
 
-        // 4. Fire admin alert in localStorage (for same-device admin access)
+        // 4. Handle Referral Tracking & Notification
+        if (newUser.referredBy) {
+            const allUsers = this.getUsers();
+            const cleanRef = newUser.referredBy.replace('REF-', '').toUpperCase();
+            const inviter = allUsers.find(u => 
+                u.id === newUser.referredBy || 
+                (u.referralCode && u.referralCode.replace('REF-', '').toUpperCase() === cleanRef)
+            );
+
+            if (inviter) {
+                // Update inviter's referral count
+                inviter.referralCount = (inviter.referralCount || 0) + 1;
+                
+                // Track referred user IDs for the tree (optional but good for speed)
+                if (!inviter.referredUsers) inviter.referredUsers = [];
+                inviter.referredUsers.push(newUser.id);
+
+                // Save inviter changes
+                localStorage.setItem(this.DB_KEY, JSON.stringify(allUsers));
+                if (typeof db !== 'undefined' && db !== null) {
+                    db.ref('users/' + inviter.id).update({ 
+                        referralCount: inviter.referralCount,
+                        referredUsers: inviter.referredUsers
+                    });
+                }
+
+                // Send notification to inviter
+                if (typeof Admin !== 'undefined') {
+                    Admin.addUserNotification(inviter.id, '🆕 New Referral!', `Someone just joined SpinTask using your referral link: <b>${name}</b>. You will earn 5% commission when they activate a Trading Plan!`);
+                }
+            }
+        }
+
+        // 5. Fire admin alert in localStorage (for same-device admin access)
         if (typeof Admin !== 'undefined') {
             Admin.addAdminAlert('registration', `🆕 New account: ${name} (${email})`);
         }
@@ -653,9 +686,11 @@ const Auth = {
         const path = window.location.pathname;
 
         const isAdminAuthPage = path.includes('admin-login');
-        // Make sure 'admin-login' doesn't falsely trigger as a user auth page
-        const isUserAuthPage = (path.includes('login') && !isAdminAuthPage) || path.includes('register');
-        const isAdminDashboard = path.includes('admin-dashboard') || path.includes('admin');
+        const isUserAuthPage = (path.includes('login') && !isAdminAuthPage) || path.includes('register') || path.includes('forgot-password');
+        const isAdminDashboard = path.includes('admin-dashboard') || path.includes('admin.html');
+        const isLandingPage = path.endsWith('/') || path.endsWith('index.html') || path.endsWith('about.html') || path.endsWith('support.html') || path.endsWith('terms.html') || path.endsWith('cricket.html') || path.endsWith('football.html') || path.endsWith('tennis.html') || path.endsWith('basketball.html') || path.endsWith('esports.html') || path.endsWith('betting.html') || path.endsWith('match-details.html') || path.endsWith('method-details.html');
+
+        if (isLandingPage) return; // Guard doesn't apply to landing pages
 
         if (!currentUser) {
             if (isAdminDashboard) {

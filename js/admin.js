@@ -703,6 +703,29 @@ const Admin = {
         }
     },
 
+    addUserNotification(userId, subject, message) {
+        const notifications = this.getDb(this.DB_NOTIFICATIONS);
+        const newNotif = {
+            id: 'note_' + Date.now() + Math.random().toString(36).substring(2, 5),
+            subject,
+            message,
+            date: new Date().toISOString(),
+            targetUserIds: [userId],
+            readBy: []
+        };
+        
+        notifications.push(newNotif);
+        this.saveDb(this.DB_NOTIFICATIONS, notifications);
+
+        // Sync to Realtime Database
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('notifications/' + newNotif.id).set(newNotif);
+        }
+        
+        console.log(`[Admin] Notification sent to user ${userId}: ${subject}`);
+        return newNotif;
+    },
+
     // ─── Community Links ─────────────────────────────────────────────────
 
     getCommunityLinks() {
@@ -1246,6 +1269,15 @@ const DEPLOYMENT_DATA = ${jsonString};
             const transfers = Object.values(data).sort((a, b) => new Date(b.date) - new Date(a.date));
             localStorage.setItem(this.DB_TRANSFERS, JSON.stringify(transfers));
             console.log('[RealtimeDB] Transfers synced.');
+        });
+
+        // 4. Sync User Notifications
+        db.ref('notifications').limitToLast(500).on('value', snap => {
+            const data = snap.val() || {};
+            const notifications = Object.values(data).sort((a, b) => new Date(b.date) - new Date(a.date));
+            localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify(notifications));
+            console.log('[RealtimeDB] User notifications synced.');
+            window.dispatchEvent(new Event('admin:notificationsSynced'));
         });
     }
 };
