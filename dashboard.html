@@ -564,14 +564,20 @@
                     </div>
 
                     <!-- Referral Promo -->
-                    <div class="referral-promo">
-                        <div class="rp-icon">🔗</div>
-                        <div class="rp-text">
-                            <h4>Invite Friends, Earn Together!</h4>
-                            <p>Get 5% commission on every referral's deposit.</p>
+                    <div class="referral-promo" style="display: flex; flex-direction: column; align-items: stretch; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="rp-icon">🔗</div>
+                            <div class="rp-text">
+                                <h4>Invite Friends, Earn Together!</h4>
+                                <p>Get 5% commission when referrals buy trading plans.</p>
+                            </div>
+                        </div>
+                        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--text-muted); font-size: 0.85rem;">Your Referral Earnings:</span>
+                            <span style="color: var(--neon); font-weight: 700; font-size: 1rem;" id="user-ref-earnings">$0.00</span>
                         </div>
                         <div class="rp-btns">
-                            <div class="rp-code" id="referral-code-display">REF-XXXXX</div>
+                            <div class="rp-code" id="referral-code-display" title="Copy this link to invite friends">REF-XXXXX</div>
                             <button class="rp-copy-btn" id="copy-ref-btn">📋 Copy</button>
                         </div>
                     </div>
@@ -682,8 +688,17 @@
             // Referral code
             const refEl = document.getElementById('referral-code-display');
             if (refEl) {
-                const code = 'REF-' + (user.referralCode || user.id.substring(0, 6).toUpperCase());
-                refEl.textContent = code;
+                const code = user.referralCode || user.id.substring(0, 6).toUpperCase();
+                refEl.textContent = 'https://spintask.vercel.app/register.html?ref=' + code;
+                refEl.style.fontSize = '0.75rem';
+                refEl.style.whiteSpace = 'nowrap';
+                refEl.style.overflow = 'hidden';
+                refEl.style.textOverflow = 'ellipsis';
+            }
+
+            const refEarnEl = document.getElementById('user-ref-earnings');
+            if (refEarnEl) {
+                refEarnEl.textContent = '$' + (user.referralEarnings || 0).toFixed(2);
             }
 
             // Copy referral code

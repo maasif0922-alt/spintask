@@ -501,6 +501,48 @@ const Auth = {
     },
 
     /**
+     * Give 5% commission to the user who referred this buyer
+     */
+    async giveReferralCommission(buyerId, amountSpent) {
+        const users = this.getUsers();
+        const buyer = users.find(u => u.id === buyerId);
+        if (!buyer || !buyer.referredBy) return;
+
+        // Strip "REF-" if present in the stored reference to ensure a match
+        const cleanRefCode = buyer.referredBy.replace('REF-', '');
+        
+        // Find the inviter using exact ID or stripped referral code
+        const inviterIndex = users.findIndex(u => 
+            u.id === buyer.referredBy || 
+            (u.referralCode && u.referralCode.replace('REF-', '') === cleanRefCode)
+        );
+        
+        if (inviterIndex !== -1) {
+            const inviter = users[inviterIndex];
+            // 5% standard commission on trading plans
+            const commission = parseFloat((amountSpent * 0.05).toFixed(2));
+            
+            inviter.balance = parseFloat(((inviter.balance || 0) + commission).toFixed(2));
+            inviter.earnings = parseFloat(((inviter.earnings || 0) + commission).toFixed(2));
+            inviter.referralEarnings = parseFloat(((inviter.referralEarnings || 0) + commission).toFixed(2));
+            
+            users[inviterIndex] = inviter;
+            localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+
+            // Sync inviter to Realtime DB
+            if (typeof db !== 'undefined' && db !== null) {
+                db.ref('users/' + inviter.id).update({
+                    balance: inviter.balance,
+                    earnings: inviter.earnings,
+                    referralEarnings: inviter.referralEarnings
+                }).catch(e => console.warn('[RealtimeDB] Inviter commission sync failed:', e.message));
+            }
+
+            console.log(`[Referral] Gave $${commission} to ${inviter.name} for referral of ${buyer.name}`);
+        }
+    },
+
+    /**
      * Sync all users from Firebase Realtime DB into localStorage.
      * Call this on admin dashboard load to see users from ALL devices.
      */

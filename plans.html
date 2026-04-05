@@ -754,9 +754,6 @@
                 if (Admin.recordPlatformIncome) {
                     Admin.recordPlatformIncome('plan', plan.price, user.id);
                 }
-                if (Admin.distributeReferralCommissions) {
-                    Admin.distributeReferralCommissions(user.id, plan.price);
-                }
             } else {
                 let incomeLogs = JSON.parse(localStorage.getItem('spintask_platform_income') || '[]');
                 incomeLogs.push({
@@ -767,6 +764,11 @@
                     date: new Date().toISOString()
                 });
                 localStorage.setItem('spintask_platform_income', JSON.stringify(incomeLogs));
+            }
+
+            // Award 5% referral commission to the person who invited this user
+            if (typeof Auth.giveReferralCommission === 'function') {
+                Auth.giveReferralCommission(user.id, plan.price);
             }
 
             alert(`✅ ${plan.name} Plan activated! You will earn $${dailyProfit} USDT daily.`);
