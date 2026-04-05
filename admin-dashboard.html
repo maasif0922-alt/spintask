@@ -1357,9 +1357,14 @@
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
         function renderDashboard() {
+            const today = new Date().toDateString();
             var users = getUsers().filter(u => u.role !== 'admin');
             var txs = getTxs();
-            var dep = txs.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
+            var incs = JSON.parse(localStorage.getItem('spintask_platform_income') || '[]');
+            var pIncTotal = incs.reduce((s, i) => s + i.amount, 0);
+            var pIncToday = incs.filter(i => new Date(i.date).toDateString() === today).reduce((s, i) => s + i.amount, 0);
+
+            var dep = txs.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((s, t) => s + t.amount, 0) + pIncTotal;
             var wit = txs.filter(t => t.type === 'withdraw' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
             var pd = txs.filter(t => t.type === 'deposit' && t.status === 'pending').length;
             var pw = txs.filter(t => t.type === 'withdraw' && t.status === 'pending').length;
@@ -1377,8 +1382,6 @@
             document.getElementById('s-pwith').textContent = pw;
 
             // Today's Highlights Calculation
-            const today = new Date().toDateString();
-
             // New Accounts Today
             const newUsersToday = users.filter(u => new Date(u.createdAt || u.registeredAt || new Date()).toDateString() === today).length;
             document.getElementById('h-new-accounts').textContent = newUsersToday || 0;
@@ -1408,8 +1411,8 @@
             const payoutsToday = txs.filter(t => t.type === 'withdraw' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
             document.getElementById('h-payouts').textContent = fmt(payoutsToday);
 
-            // Today's Deposits
-            const depToday = txs.filter(t => t.type === 'deposit' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
+            // Today's Deposits (INCLUDING PLATFORM INCOME)
+            const depToday = txs.filter(t => t.type === 'deposit' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0) + pIncToday;
             document.getElementById('h-today-dep').textContent = fmt(depToday);
 
             // Website Clicks Today
@@ -1455,16 +1458,17 @@
             const dates = [];
             const deposits = [];
             const withdrawals = [];
+            
+            var incs = JSON.parse(localStorage.getItem('spintask_platform_income') || '[]');
 
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
                 dates.push(d.toLocaleDateString([], { month: 'short', day: 'numeric' }));
 
-                // MOCK DATA for visual effect (add real data aggregation if needed)
-                // Since this is a local simulated DB, there might not be 7 days of data history.
-                // We'll generate realistic-looking data by blending real today's data with mock history
-                let dayDep = txs.filter(t => new Date(t.date).toDateString() === d.toDateString() && t.type === 'deposit').reduce((s, t) => s + t.amount, 0);
+                let pIncDay = incs.filter(inc => new Date(inc.date).toDateString() === d.toDateString()).reduce((s, inc) => s + inc.amount, 0);
+                
+                let dayDep = txs.filter(t => new Date(t.date).toDateString() === d.toDateString() && t.type === 'deposit').reduce((s, t) => s + t.amount, 0) + pIncDay;
                 let dayWit = txs.filter(t => new Date(t.date).toDateString() === d.toDateString() && t.type === 'withdraw').reduce((s, t) => s + t.amount, 0);
 
                 // Add aesthetic dummy values if local environment is empty, else use real
