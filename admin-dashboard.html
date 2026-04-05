@@ -793,9 +793,9 @@
                 <div class="page-title">🎁 Send Points</div>
                 <div class="send-points-card">
                     <div class="form-group">
-                        <label>Search User (Email)</label>
+                        <label>Search User (User ID)</label>
                         <input id="sp-user" list="sp-users-list" class="form-input"
-                            placeholder="Type email to search...">
+                            placeholder="Type or select User ID...">
                         <datalist id="sp-users-list"></datalist>
                     </div>
                     <div class="form-group"><label>Amount (USDT)</label><input type="number" id="sp-amount"
@@ -1579,7 +1579,7 @@
                 var susp = u.suspended;
                 return `<tr>
             <td><strong>${u.name || ''}</strong></td>
-            <td style="color:var(--text-muted)">${u.email}</td>
+            <td style="color:var(--text-muted)">${u.email}<br><span style="font-size:0.75rem;font-family:monospace;color:var(--primary-neon);cursor:pointer;" onclick="navigator.clipboard.writeText('${u.id}'); alert('Copied ID: ${u.id}')" title="Click to copy ID">🆔 ${u.id}</span></td>
             <td style="color:var(--primary-neon);font-weight:700">${fmt(u.balance)}</td>
             <td>${deps}</td><td>${withs}</td>
             <td><span class="badge ${susp ? 'badge-rejected' : 'badge-approved'}">${susp ? 'Suspended' : 'Active'}</span></td>
@@ -1602,28 +1602,27 @@
         function renderSendPoints() {
             var users = getUsers().filter(u => u.role !== 'admin');
             var dl = document.getElementById('sp-users-list');
-            if (dl) dl.innerHTML = users.map(u => `<option value="${u.email}">${u.name}</option>`).join('');
+            if (dl) dl.innerHTML = users.map(u => `<option value="${u.id}">${u.name} (${u.email})</option>`).join('');
             var hist = Admin.getAllTransfers().slice(0, 15);
             document.getElementById('sp-history').innerHTML = hist.length ? hist.map(t => `<div class="sp-history-item"><span>${t.toName || t.toId}</span><span style="color:var(--primary-neon)">${fmt(t.amount)}</span><span style="color:var(--text-muted);font-size:0.78rem">${new Date(t.date).toLocaleString()}</span></div>`).join('') : '<p style="color:var(--text-muted)">No transfers yet.</p>';
         }
         async function sendPoints() {
-            var emailVal = (document.getElementById('sp-user').value || '').trim().toLowerCase();
+            var userIdVal = (document.getElementById('sp-user').value || '').trim();
             var amt = parseFloat(document.getElementById('sp-amount').value);
             var note = document.getElementById('sp-note').value;
-            if (!emailVal || !amt || amt <= 0) { alert('Select a valid user email and enter amount.'); return; }
+            if (!userIdVal || !amt || amt <= 0) { alert('Select a valid User ID and enter amount.'); return; }
             
             var users = (JSON.parse(localStorage.getItem('spintask_users')) || []);
-            var idx = users.findIndex(u => (u.email || '').toLowerCase() === emailVal);
+            var idx = users.findIndex(u => u.id === userIdVal);
             
             let targetUser = idx !== -1 ? users[idx] : null;
 
             // If not found locally, query Firebase directly
             if (!targetUser && typeof db !== 'undefined' && db !== null) {
                 try {
-                    const snap = await db.ref('users').orderByChild('email').equalTo(emailVal).once('value');
+                    const snap = await db.ref('users/' + userIdVal).once('value');
                     if (snap.exists()) {
-                        const vals = snap.val();
-                        targetUser = Object.values(vals)[0];
+                        targetUser = snap.val();
                         // Add to local cache
                         users.push(targetUser);
                         idx = users.length - 1;
@@ -1635,11 +1634,11 @@
             }
 
             if (!targetUser) {
-                alert('ERROR: This email (' + emailVal + ') is NOT registered. You can only share points with registered users.');
+                alert('ERROR: This User ID (' + userIdVal + ') is NOT registered. Please check the ID.');
                 return;
             }
 
-            if (confirm('Are you sure you want to send ' + fmt(amt) + ' to ' + targetUser.name + ' (' + emailVal + ')?')) {
+            if (confirm('Are you sure you want to send ' + fmt(amt) + ' to ' + targetUser.name + ' (ID: ' + userIdVal + ')?')) {
                 var uid = targetUser.id;
                 targetUser.balance = parseFloat(((parseFloat(targetUser.balance) || 0) + amt).toFixed(2));
                 targetUser.earnings = parseFloat(((parseFloat(targetUser.earnings) || 0) + amt).toFixed(2));
@@ -1654,14 +1653,14 @@
                         balance: targetUser.balance,
                         earnings: targetUser.earnings
                     }).then(() => {
-                        console.log('[RealtimeDB] Balance synced to cloud for user:', emailVal);
+                        console.log('[RealtimeDB] Balance synced to cloud for user:', userIdVal);
                     }).catch(e => {
                         console.warn('[RealtimeDB] Balance sync failed:', e.message);
                     });
                 }
 
                 Admin.addTransferRecord({ toId: uid, toName: targetUser.name, amount: amt, note: note, by: 'admin' });
-                Admin.logAction('Admin sent ' + fmt(amt) + ' to ' + emailVal + '. Note: ' + note);
+                Admin.logAction('Admin sent ' + fmt(amt) + ' to User ID: ' + userIdVal + '. Note: ' + note);
                 
                 alert('SUCCESS: Sent ' + fmt(amt) + ' to ' + targetUser.name + '!');
                 document.getElementById('sp-amount').value = ''; 
