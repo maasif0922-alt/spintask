@@ -1720,25 +1720,41 @@
         // ── Admin Alerts ─────────────────────────────────────────────────────────────
         function renderAlerts() {
             var alerts = Admin.getAdminAlerts();
+            var allTxs = Admin.getTransactions();
             document.getElementById('alerts-list').innerHTML = alerts.length ? alerts.map(a => {
                 let actions = '';
+                let tx = null;
+
+                // 1. Try finding by stored data
                 if (a.data && a.data.txId) {
-                    const tx = Admin.getTransactions().find(t => t.id === a.data.txId);
-                    if (tx && tx.status === 'pending') {
-                        actions = `
-                            <div style="margin-top:10px; display:flex; gap:8px;">
-                                ${tx.proof && tx.proof.screenshotData ? `<button class="btn btn-outline" style="font-size:0.75rem; padding:5px 10px;" onclick="viewProof('${tx.id}')">👁️ View Proof</button>` : ''}
-                                <button class="btn btn-primary" style="font-size:0.75rem; padding:5px 10px;" onclick="approveTx('${tx.id}')">✅ Approve</button>
-                                <button class="btn btn-outline" style="font-size:0.75rem; padding:5px 10px; color:#ff4d4d; border-color:#ff4d4d;" onclick="rejectTx('${tx.id}')">❌ Reject</button>
-                            </div>
-                        `;
+                    tx = allTxs.find(t => t.id === a.data.txId);
+                } 
+                // 2. Fallback for old alerts: Try matching by message content
+                else if (a.type === 'deposit' || a.message.includes('Deposit request')) {
+                    // Message format: "💰 Deposit request: Name — $Amount USDT"
+                    const match = a.message.match(/request: (.*) — \$(.*) USDT/);
+                    if (match) {
+                        const amountStr = match[2];
+                        const amount = parseFloat(amountStr);
+                        // Find a pending deposit with this amount
+                        tx = allTxs.find(t => t.type === 'deposit' && t.status === 'pending' && Math.abs(t.amount - amount) < 0.01);
                     }
                 }
 
-                return `<div class="sp-history-item" style="${a.read ? '' : 'border-color:var(--primary-neon)'}">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
-                        <span>${a.read ? '' : ' 🔵 '} ${a.message}</span>
-                        <span style="color:var(--text-muted);font-size:0.78rem">${new Date(a.time).toLocaleString()}</span>
+                if (tx && tx.status === 'pending') {
+                    actions = `
+                        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+                            ${tx.proof && tx.proof.screenshotData ? `<button class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px; border-color:var(--primary-neon); color:var(--primary-neon);" onclick="viewProof('${tx.id}')">👁️ View Receipt</button>` : ''}
+                            <button class="btn btn-primary" style="font-size:0.75rem; padding:6px 12px;" onclick="approveTx('${tx.id}')">✅ Approve</button>
+                            <button class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px; color:#ff4d4d; border-color:#ff4d4d;" onclick="rejectTx('${tx.id}')">❌ Reject</button>
+                        </div>
+                    `;
+                }
+
+                return `<div class="sp-history-item" style="${a.read ? '' : 'border-color:var(--primary-neon)'}; padding: 15px; margin-bottom: 15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%; gap: 10px;">
+                        <span style="line-height: 1.4;">${a.read ? '' : ' 🔵 '} ${a.message}</span>
+                        <span style="color:var(--text-muted);font-size:0.78rem; white-space:nowrap;">${new Date(a.time).toLocaleString()}</span>
                     </div>
                     ${actions}
                 </div>`;
