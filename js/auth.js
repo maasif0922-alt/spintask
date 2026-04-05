@@ -281,6 +281,15 @@ const Auth = {
             Admin.addAdminAlert('verification', `User verified account: ${currentUser.name} (${currentUser.email})`);
         }
 
+        // Sync to cloud
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('users/' + currentUser.id).update({
+                balance: users[idx].balance,
+                verified: true,
+                verificationDate: users[idx].verificationDate
+            }).catch(e => console.warn('[RealtimeDB] Verification sync failed:', e.message));
+        }
+
         window.dispatchEvent(new CustomEvent('auth:balanceUpdated', {
             detail: { balance: users[idx].balance }
         }));
@@ -302,6 +311,12 @@ const Auth = {
         users[userIndex].balance = parseFloat((users[userIndex].balance + amount).toFixed(2));
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
 
+        // Sync to cloud
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('users/' + currentUser.id).update({ balance: users[userIndex].balance })
+              .catch(e => console.warn('[RealtimeDB] Balance update failed:', e.message));
+        }
+
         window.dispatchEvent(new CustomEvent('auth:balanceUpdated', {
             detail: { balance: users[userIndex].balance }
         }));
@@ -322,6 +337,13 @@ const Auth = {
 
         users[userIndex].earnings = parseFloat(((users[userIndex].earnings || 0) + amount).toFixed(3));
         localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+
+        // Sync to cloud
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('users/' + currentUser.id).update({ earnings: users[userIndex].earnings })
+              .catch(e => console.warn('[RealtimeDB] Earnings update failed:', e.message));
+        }
+
         return users[userIndex].earnings;
     },
 
@@ -841,6 +863,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const avatarDisplay = document.getElementById('user-avatar');
         const welcomeMsg = document.getElementById('welcome-msg');
         const balanceDisplays = document.querySelectorAll('.user-balance-value');
+        const earningsDisplays = document.querySelectorAll('.user-earnings-value');
 
         if (nameDisplay) nameDisplay.innerText = user.name;
         if (avatarDisplay) avatarDisplay.innerText = user.name.charAt(0).toUpperCase();
@@ -849,11 +872,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (balanceDisplays.length > 0) {
             balanceDisplays.forEach(el => el.innerText = `$${(user.balance || 0).toFixed(2)} USDT`);
         }
+        if (earningsDisplays.length > 0) {
+            earningsDisplays.forEach(el => el.innerText = `$${(user.earnings || 0).toFixed(2)} USDT`);
+        }
     }
 });
 
 // Sync balance updates across elements
 window.addEventListener('auth:balanceUpdated', (e) => {
+    const user = Auth.getCurrentUser();
     const balanceDisplays = document.querySelectorAll('.user-balance-value');
+    const earningsDisplays = document.querySelectorAll('.user-earnings-value');
+    
     balanceDisplays.forEach(el => el.innerText = `$${e.detail.balance.toFixed(2)} USDT`);
+    if (user && earningsDisplays.length > 0) {
+        earningsDisplays.forEach(el => el.innerText = `$${(user.earnings || 0).toFixed(2)} USDT`);
+    }
 });

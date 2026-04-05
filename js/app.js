@@ -64,6 +64,12 @@ const Trading = {
 
     saveUserInvestments(inv) {
         localStorage.setItem(this.TI_KEY, JSON.stringify(inv));
+        
+        // Sync to cloud
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('trading_investments').set(inv)
+              .catch(e => console.warn('[RealtimeDB] Investments sync failed:', e.message));
+        }
     },
 
     getUserActivePlan(userId, planId) {
@@ -108,6 +114,14 @@ const Trading = {
                     inv.totalCredited = parseFloat(((inv.totalCredited || 0) + dailyProfit).toFixed(2));
                     inv.lastCreditDate = now.toISOString();
                     updated = true;
+
+                    // Sync to cloud
+                    if (typeof db !== 'undefined' && db !== null) {
+                        db.ref('users/' + inv.userId).update({
+                            balance: users[uIdx].balance,
+                            earnings: users[uIdx].earnings
+                        }).catch(e => console.warn('[RealtimeDB] Auto-profit sync failed:', e.message));
+                    }
                 }
             }
         });

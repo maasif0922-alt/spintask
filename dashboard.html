@@ -212,7 +212,7 @@
                     </div>
                     <div class="stat-info">
                         <span class="stat-label">Total Earnings</span>
-                        <h3 class="stat-value user-balance-value">$0.00</h3>
+                        <h3 class="stat-value user-earnings-value">$0.00</h3>
                     </div>
                 </div>
                 <div class="stat-card glass">
@@ -242,6 +242,12 @@
             <!-- Dashboard Row 1 -->
             <div
                 style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px; align-items: start;">
+                
+                <!-- Trading Status Section -->
+                <div id="dashboard-trading-section">
+                    <!-- Populated by JS if active plans exist -->
+                </div>
+
                 <!-- Recent Activities -->
                 <div class="glass" style="padding: 30px; border-radius: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
@@ -335,7 +341,75 @@
             document.getElementById('stats-spins').innerText = `${user.spinsToday || 0}/5`;
 
             renderRecentTasks(user.id);
+            renderDashboardTrading(user);
         });
+
+        function renderDashboardTrading(user) {
+            const container = document.getElementById('dashboard-trading-section');
+            if (!container || !user) return;
+            if (typeof Trading === 'undefined') return;
+
+            const investments = Trading.getUserInvestments().filter(i => i.userId === user.id && i.status === 'active');
+            if (investments.length === 0) return;
+
+            let html = `
+                <div class="glass" style="padding: 30px; border-radius: 20px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="font-size: 1.3rem;">🚀 Active Trading Plans</h3>
+                        <a href="plans.html" style="font-size: 0.85rem; color: var(--primary-neon); text-decoration: none;">Upgrade Plan →</a>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+            `;
+
+            investments.forEach(inv => {
+                const plan = Trading.PLANS_DEF.find(p => p.id === inv.planId);
+                if (!plan) return;
+
+                const baseRate = Trading.getRate(plan);
+                const rate = baseRate + (inv.reinvestBonus || 0);
+                const dailyProfit = ((inv.amount * rate) / 100).toFixed(2);
+                
+                html += `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 15px; padding: 18px; display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 15px; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.5rem;">${plan.icon}</span>
+                            <div>
+                                <div style="font-size: 0.95rem; font-weight: 700;">${plan.name} Plan</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">$${inv.amount} Invested</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Daily Profit</div>
+                            <div style="color: var(--primary-neon); font-weight: 700;">+$${dailyProfit}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">Total Earned</div>
+                            <div style="color: #ffaa00; font-weight: 700;">$${(inv.totalCredited || 0).toFixed(2)}</div>
+                        </div>
+                        <div style="text-align: right;">
+                             <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.75rem; border-color: var(--primary-neon); color: var(--primary-neon);">♻️ Reinvest</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+            container.innerHTML = html;
+        }
+
+        window.handleReinvest = function (investmentId) {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+            if (!confirm('❓ Reinvest your current profits into this plan for a daily rate bonus?')) return;
+
+            const res = Trading.reinvestProfits(user.id, investmentId);
+            if (res.success) {
+                alert(res.message);
+                location.reload();
+            } else {
+                alert('❌ ' + res.message);
+            }
+        };
 
         function doVerify() {
             const user = Auth.getCurrentUser();
