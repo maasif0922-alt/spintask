@@ -7,13 +7,9 @@
     <title>SpinTask Admin Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Firebase SDK (V8) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="js/firebase-config.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/admin.js"></script>
+    <script src="js/firebase-config.js"></script>
     <script src="js/firebase-service.js"></script>
     <script src="js/sports-admin.js"></script>
     <style>
@@ -775,7 +771,6 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
-                                    <th>Referred By</th>
                                     <th>Balance</th>
                                     <th>Deposits</th>
                                     <th>Withdrawals</th>
@@ -794,9 +789,9 @@
                 <div class="page-title">🎁 Send Points</div>
                 <div class="send-points-card">
                     <div class="form-group">
-                        <label>Search User (User ID)</label>
+                        <label>Search User (Email)</label>
                         <input id="sp-user" list="sp-users-list" class="form-input"
-                            placeholder="Type or select User ID...">
+                            placeholder="Type email to search...">
                         <datalist id="sp-users-list"></datalist>
                     </div>
                     <div class="form-group"><label>Amount (USDT)</label><input type="number" id="sp-amount"
@@ -1251,72 +1246,6 @@
             if (!u || u.role !== 'admin') { location.href = 'admin-login.html'; }
         })();
 
-        // ── Cloud Sync: Pull ALL users from Firebase Realtime DB ─────────────────────
-        (async function initAdminCloudSync() {
-            // Show a loading indicator
-            const dashEl = document.getElementById('tab-dashboard');
-
-            try {
-                // 1. Sync all users from Realtime DB
-                const totalUsers = await Auth.syncUsersFromCloud();
-
-                // 2. Sync all alerts from Realtime DB
-                await Auth.syncAlertsFromCloud();
-
-                // 3. Now render the dashboard with fresh data
-                renderDashboard();
-                updateAlertBadge();
-
-                if (totalUsers > 0) {
-                    console.log('[Admin] Cloud sync loaded ' + totalUsers + ' users.');
-                }
-            } catch (e) {
-                console.warn('[Admin] Cloud sync init failed:', e.message);
-            }
-
-            // 4. Start real-time listener for NEW registrations from any device
-            Auth.listenForCloudAlerts(function(alert) {
-                console.log('[Admin] Real-time alert received:', alert.message);
-
-                // Add to localStorage admin alerts
-                const localAlerts = JSON.parse(localStorage.getItem('spintask_admin_alerts') || '[]');
-                if (!localAlerts.find(a => a.id === alert.id)) {
-                    localAlerts.unshift(alert);
-                    localStorage.setItem('spintask_admin_alerts', JSON.stringify(localAlerts.slice(0, 200)));
-                }
-
-                // Show a toast notification
-                showAdminToast('🔔 ' + alert.message);
-
-                // If a registration, re-sync users and refresh user list
-                if (alert.type === 'registration') {
-                    Auth.syncUsersFromCloud().then(() => {
-                        renderDashboard();
-                        if (document.getElementById('tab-users').style.display === 'block') {
-                            renderUsers();
-                        }
-                    });
-                }
-
-                updateAlertBadge();
-            });
-        })();
-
-        // ── Toast Notification for Admin ────────────────────────────────────────────
-        function showAdminToast(message) {
-            let toast = document.getElementById('admin-toast');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'admin-toast';
-                toast.style.cssText = 'position:fixed;bottom:30px;right:30px;background:linear-gradient(135deg,#0a0b1e,#1a1b3a);border:1px solid rgba(57,255,20,0.5);color:#fff;padding:14px 20px;border-radius:12px;font-size:0.9rem;z-index:99999;box-shadow:0 0 30px rgba(57,255,20,0.2);max-width:350px;display:none;animation:slideIn 0.3s ease;';
-                document.body.appendChild(toast);
-            }
-            toast.textContent = message;
-            toast.style.display = 'block';
-            clearTimeout(toast._timer);
-            toast._timer = setTimeout(() => { toast.style.display = 'none'; }, 5000);
-        }
-
         // ── Tab switching ───────────────────────────────────────────────────────────
         function switchTab(id, e) {
             if (e) e.preventDefault();
@@ -1358,24 +1287,16 @@
 
         // ── Dashboard ───────────────────────────────────────────────────────────────
         function renderDashboard() {
-            const today = new Date().toDateString();
             var users = getUsers().filter(u => u.role !== 'admin');
             var txs = getTxs();
-            var incs = JSON.parse(localStorage.getItem('spintask_platform_income') || '[]');
-            var pIncTotal = incs.reduce((s, i) => s + i.amount, 0);
-            var pIncToday = incs.filter(i => new Date(i.date).toDateString() === today).reduce((s, i) => s + i.amount, 0);
-
-            var dep = txs.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((s, t) => s + t.amount, 0) + pIncTotal;
+            var dep = txs.filter(t => t.type === 'deposit' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
             var wit = txs.filter(t => t.type === 'withdraw' && t.status === 'approved').reduce((s, t) => s + t.amount, 0);
             var pd = txs.filter(t => t.type === 'deposit' && t.status === 'pending').length;
             var pw = txs.filter(t => t.type === 'withdraw' && t.status === 'pending').length;
 
             // Animate numbers
             animateValue('s-users', 0, users.length, 1000);
-            // Real-time Active Online (last 30 mins activity)
-            const thirtyMinsAgo = Date.now() - (30 * 60 * 1000);
-            const activeNow = users.filter(u => u.lastLogin && u.lastLogin > thirtyMinsAgo).length;
-            animateValue('s-online', 0, Math.max(1, activeNow), 1000);
+            animateValue('s-online', 0, Math.max(1, Math.floor(users.length * 0.15)), 1000);
 
             document.getElementById('s-dep').textContent = fmt(dep);
             document.getElementById('s-with').textContent = fmt(wit);
@@ -1383,6 +1304,8 @@
             document.getElementById('s-pwith').textContent = pw;
 
             // Today's Highlights Calculation
+            const today = new Date().toDateString();
+
             // New Accounts Today
             const newUsersToday = users.filter(u => new Date(u.createdAt || u.registeredAt || new Date()).toDateString() === today).length;
             document.getElementById('h-new-accounts').textContent = newUsersToday || 0;
@@ -1412,8 +1335,8 @@
             const payoutsToday = txs.filter(t => t.type === 'withdraw' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
             document.getElementById('h-payouts').textContent = fmt(payoutsToday);
 
-            // Today's Deposits (INCLUDING PLATFORM INCOME)
-            const depToday = txs.filter(t => t.type === 'deposit' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0) + pIncToday;
+            // Today's Deposits
+            const depToday = txs.filter(t => t.type === 'deposit' && t.status === 'approved' && new Date(t.date).toDateString() === today).reduce((s, t) => s + t.amount, 0);
             document.getElementById('h-today-dep').textContent = fmt(depToday);
 
             // Website Clicks Today
@@ -1459,17 +1382,16 @@
             const dates = [];
             const deposits = [];
             const withdrawals = [];
-            
-            var incs = JSON.parse(localStorage.getItem('spintask_platform_income') || '[]');
 
             for (let i = 6; i >= 0; i--) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
                 dates.push(d.toLocaleDateString([], { month: 'short', day: 'numeric' }));
 
-                let pIncDay = incs.filter(inc => new Date(inc.date).toDateString() === d.toDateString()).reduce((s, inc) => s + inc.amount, 0);
-                
-                let dayDep = txs.filter(t => new Date(t.date).toDateString() === d.toDateString() && t.type === 'deposit').reduce((s, t) => s + t.amount, 0) + pIncDay;
+                // MOCK DATA for visual effect (add real data aggregation if needed)
+                // Since this is a local simulated DB, there might not be 7 days of data history.
+                // We'll generate realistic-looking data by blending real today's data with mock history
+                let dayDep = txs.filter(t => new Date(t.date).toDateString() === d.toDateString() && t.type === 'deposit').reduce((s, t) => s + t.amount, 0);
                 let dayWit = txs.filter(t => new Date(t.date).toDateString() === d.toDateString() && t.type === 'withdraw').reduce((s, t) => s + t.amount, 0);
 
                 // Add aesthetic dummy values if local environment is empty, else use real
@@ -1582,21 +1504,9 @@
                 var deps = txs.filter(t => t.userId === u.id && t.type === 'deposit' && t.status === 'approved').length;
                 var withs = txs.filter(t => t.userId === u.id && t.type === 'withdraw' && t.status === 'approved').length;
                 var susp = u.suspended;
-                var referredBy = u.referredBy || '—';
-                // Try to find inviter name
-                if (referredBy !== '—') {
-                    const inviter = getUsers().find(inv => 
-                        inv.id === referredBy || 
-                        (inv.referralCode && inv.referralCode.toUpperCase() === referredBy.toUpperCase()) ||
-                        (inv.role === 'admin' && referredBy.toUpperCase() === 'ADMIN_')
-                    );
-                    if (inviter) referredBy = inviter.name || inviter.id;
-                }
-
                 return `<tr>
             <td><strong>${u.name || ''}</strong></td>
-            <td style="color:var(--text-muted)">${u.email}<br><span style="font-size:0.75rem;font-family:monospace;color:var(--primary-neon);cursor:pointer;" onclick="navigator.clipboard.writeText('${u.id}'); alert('Copied ID: ${u.id}')" title="Click to copy ID">🆔 ${u.id}</span></td>
-            <td style="color:var(--text-muted); font-size: 0.9rem;">${referredBy}</td>
+            <td style="color:var(--text-muted)">${u.email}</td>
             <td style="color:var(--primary-neon);font-weight:700">${fmt(u.balance)}</td>
             <td>${deps}</td><td>${withs}</td>
             <td><span class="badge ${susp ? 'badge-rejected' : 'badge-approved'}">${susp ? 'Suspended' : 'Active'}</span></td>
@@ -1619,77 +1529,27 @@
         function renderSendPoints() {
             var users = getUsers().filter(u => u.role !== 'admin');
             var dl = document.getElementById('sp-users-list');
-            if (dl) dl.innerHTML = users.map(u => `<option value="${u.id}">${u.name} (${u.email})</option>`).join('');
+            if (dl) dl.innerHTML = users.map(u => `<option value="${u.email}">${u.name}</option>`).join('');
             var hist = Admin.getAllTransfers().slice(0, 15);
             document.getElementById('sp-history').innerHTML = hist.length ? hist.map(t => `<div class="sp-history-item"><span>${t.toName || t.toId}</span><span style="color:var(--primary-neon)">${fmt(t.amount)}</span><span style="color:var(--text-muted);font-size:0.78rem">${new Date(t.date).toLocaleString()}</span></div>`).join('') : '<p style="color:var(--text-muted)">No transfers yet.</p>';
         }
-        async function sendPoints() {
-            try {
-                var userIdVal = (document.getElementById('sp-user').value || '').replace('#', '').trim();
-                var amt = parseFloat(document.getElementById('sp-amount').value);
-                var note = document.getElementById('sp-note').value;
-                if (!userIdVal || !amt || amt <= 0) { alert('Select a valid User ID and enter amount.'); return; }
-                
-                var users = (JSON.parse(localStorage.getItem('spintask_users')) || []);
-                var idx = users.findIndex(u => String(u.id).replace('#', '') === userIdVal);
-                
-                let targetUser = idx !== -1 ? users[idx] : null;
+        function sendPoints() {
+            var emailVal = document.getElementById('sp-user').value;
+            var amt = parseFloat(document.getElementById('sp-amount').value);
+            var note = document.getElementById('sp-note').value;
+            if (!emailVal || !amt || amt <= 0) { alert('Select a valid user and enter amount.'); return; }
+            var users = getUsers();
+            var idx = users.findIndex(u => u.email === emailVal);
+            if (idx === -1) { alert('User email not found in system.'); return; }
 
-                // If not found locally, query Firebase directly
-                if (!targetUser && typeof db !== 'undefined' && db !== null) {
-                    try {
-                        const snap = await db.ref('users/' + userIdVal).once('value');
-                        if (snap.exists()) {
-                            targetUser = snap.val();
-                            // Add to local cache
-                            users.push(targetUser);
-                            idx = users.length - 1;
-                            localStorage.setItem('spintask_users', JSON.stringify(users));
-                        }
-                    } catch (e) {
-                        console.warn('[RealtimeDB] Fallback user search failed:', e.message);
-                    }
-                }
-
-                if (!targetUser) {
-                    alert('ERROR: This User ID (' + userIdVal + ') is NOT registered. Please check the ID.');
-                    return;
-                }
-
-                if (confirm('Are you sure you want to send ' + fmt(amt) + ' to ' + (targetUser.name || 'User') + ' (ID: ' + userIdVal + ')?')) {
-                    var uid = targetUser.id;
-                    targetUser.balance = parseFloat(((parseFloat(targetUser.balance) || 0) + amt).toFixed(2));
-                    targetUser.earnings = parseFloat(((parseFloat(targetUser.earnings) || 0) + amt).toFixed(2));
-                    
-                    // Save locally
-                    users[idx] = targetUser;
-                    localStorage.setItem('spintask_users', JSON.stringify(users));
-                    
-                    // Sync balance to Firebase Realtime DB
-                    if (typeof db !== 'undefined' && db !== null) {
-                        db.ref('users/' + uid).update({ 
-                            balance: targetUser.balance,
-                            earnings: targetUser.earnings
-                        }).then(() => {
-                            console.log('[RealtimeDB] Balance synced to cloud for user:', userIdVal);
-                        }).catch(e => {
-                            console.warn('[RealtimeDB] Balance sync failed:', e.message);
-                        });
-                    }
-
-                    Admin.addTransferRecord({ toId: uid, toName: targetUser.name, amount: amt, note: note, by: 'admin' });
-                    Admin.logAction('Admin sent ' + fmt(amt) + ' to User ID: ' + userIdVal + '. Note: ' + note);
-                    
-                    alert('SUCCESS: Sent ' + fmt(amt) + ' to ' + (targetUser.name || 'User') + '!');
-                    document.getElementById('sp-amount').value = ''; 
-                    document.getElementById('sp-note').value = '';
-                    renderSendPoints();
-                    renderUsers();
-                }
-            } catch (err) {
-                alert('CRITICAL ERROR: ' + err.message);
-                console.error(err);
-            }
+            var uid = users[idx].id;
+            users[idx].balance = (users[idx].balance || 0) + amt;
+            saveUsers(users);
+            Admin.addTransferRecord({ toId: uid, toName: users[idx].name, amount: amt, note: note, by: 'admin' });
+            Admin.logAction(`Admin sent ${fmt(amt)} to ${users[idx].email}. Note: ${note}`);
+            alert(`Sent ${fmt(amt)} to ${users[idx].name}!`);
+            document.getElementById('sp-amount').value = ''; document.getElementById('sp-note').value = '';
+            renderSendPoints();
         }
 
         // ── Deposits ────────────────────────────────────────────────────────────────
@@ -1714,61 +1574,76 @@
         <td>${t.status === 'pending' ? `<div class="tr-actions"><button class="btn btn-primary" onclick="approveTx('${t.id}')">Approve</button><button class="btn btn-outline" style="color:#ff4d4d" onclick="rejectTx('${t.id}')">Reject</button></div>` : '-'}</td>
     </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No withdrawals</td></tr>';
         }
-        function approveTx(id) { if (confirm('Approve this transaction?')) { Admin.resolveTransaction(id, 'approved'); renderDeposits(); renderWithdrawals(); renderDashboard(); renderAlerts(); } }
-        function rejectTx(id) { if (confirm('Reject this transaction?')) { Admin.resolveTransaction(id, 'rejected'); renderDeposits(); renderWithdrawals(); renderAlerts(); } }
+        function approveTx(id) { if (confirm('Approve this transaction?')) { Admin.resolveTransaction(id, 'approved'); renderDeposits(); renderWithdrawals(); renderDashboard(); } }
+        function rejectTx(id) { if (confirm('Reject this transaction?')) { Admin.resolveTransaction(id, 'rejected'); renderDeposits(); renderWithdrawals(); } }
 
         // ── Admin Alerts ─────────────────────────────────────────────────────────────
         function renderAlerts() {
             var alerts = Admin.getAdminAlerts();
-            var allTxs = Admin.getTransactions();
-            document.getElementById('alerts-list').innerHTML = alerts.length ? alerts.map(a => {
-                let actions = '';
-                let tx = null;
+            var txs = getTxs();
 
-                // 1. Try finding by stored data
-                if (a.data && a.data.txId) {
-                    tx = allTxs.find(t => t.id === a.data.txId);
-                } 
-                // 2. Fallback for old alerts: Try matching by message content
-                else if (a.type === 'deposit' || a.message.includes('Deposit request')) {
-                    // Message format: "💰 Deposit request: Name — $Amount USDT"
-                    const match = a.message.match(/request: (.*) — \$(.*) USDT/);
-                    if (match) {
-                        const amountStr = match[2];
-                        const amount = parseFloat(amountStr);
-                        // Find a pending deposit with this amount
-                        tx = allTxs.find(t => t.type === 'deposit' && t.status === 'pending' && Math.abs(t.amount - amount) < 0.01);
+            // Helper: try to find matching tx for old alerts that have no txId stored
+            function findTxForAlert(a) {
+                if (a.txId) return txs.find(function(t){ return t.id === a.txId; }) || null;
+                // Parse name and amount from message: "💰 Deposit request: NAME — $50.00 USDT"
+                var type = (a.type === 'deposit') ? 'deposit' : 'withdraw';
+                var msgMatch = a.message.match(/request:\s*(.+?)\s*[—-]\s*\$?([\d.]+)/);
+                if (!msgMatch) return null;
+                var msgName = msgMatch[1].trim().toLowerCase();
+                var msgAmt = parseFloat(msgMatch[2]);
+                var alertTime = new Date(a.time).getTime();
+                // Find deposit txs that match name+amount within ±60s of alert
+                var candidates = txs.filter(function(t) {
+                    if (t.type !== type) return false;
+                    if (Math.abs(parseFloat(t.amount) - msgAmt) > 0.01) return false;
+                    var tTime = new Date(t.date).getTime();
+                    if (Math.abs(tTime - alertTime) > 60000) return false; // within 60s
+                    var uName = userName(t.userId).toLowerCase();
+                    return uName.includes(msgName) || msgName.includes(uName);
+                });
+                // Also try by amount only if no name match (wider window: 5min)
+                if (!candidates.length) {
+                    candidates = txs.filter(function(t) {
+                        if (t.type !== type) return false;
+                        if (Math.abs(parseFloat(t.amount) - msgAmt) > 0.01) return false;
+                        var tTime = new Date(t.date).getTime();
+                        return Math.abs(tTime - alertTime) < 300000;
+                    });
+                }
+                return candidates.length ? candidates[0] : null;
+            }
+
+            document.getElementById('alerts-list').innerHTML = alerts.length ? alerts.map(function(a) {
+                var isDepTx = (a.type === 'deposit' || a.type === 'withdrawal' || a.type === 'withdraw');
+                var tx = findTxForAlert(a);
+                var isPending = tx && tx.status === 'pending';
+                var proof = tx ? (tx.proof || {}) : {};
+
+                var actionBtns = '';
+                if (isDepTx) {
+                    if (tx) {
+                        var txId = tx.id;
+                        actionBtns = '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center;">' +
+                            (isPending
+                                ? '<button onclick="rejectFromAlert(\'' + txId + '\')" style="background:#ff4d4d;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:0.78rem;font-weight:600;cursor:pointer;">&#x2717; Reject</button>' +
+                                  '<button onclick="approveFromAlert(\'' + txId + '\')" style="background:#39ff14;color:#000;border:none;border-radius:6px;padding:6px 16px;font-size:0.78rem;font-weight:600;cursor:pointer;">&#x2713; Approve</button>'
+                                : '<span class="badge badge-' + (tx.status === 'approved' ? 'approved' : 'rejected') + '">' + tx.status + '</span>'
+                            ) +
+                            '<button onclick="viewReceiptFromAlert(\'' + txId + '\')" style="background:transparent;color:#aaa;border:1px solid #555;border-radius:6px;padding:6px 14px;font-size:0.78rem;cursor:pointer;">&#x1F5BC;&#xFE0F; View Receipt</button>' +
+                        '</div>';
+                    } else {
+                        actionBtns = '<div style="margin-top:6px;"><span style="color:#666;font-size:0.75rem;">&#x26A0;&#xFE0F; Transaction not found — check Deposits tab</span></div>';
                     }
                 }
 
-                if (tx && tx.status === 'pending') {
-                    actions = `
-                        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-                            ${tx.proof && tx.proof.screenshotData ? `<button class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px; border-color:var(--primary-neon); color:var(--primary-neon);" onclick="viewProof('${tx.id}')">👁️ View Receipt</button>` : ''}
-                            <button class="btn btn-primary" style="font-size:0.75rem; padding:6px 12px;" onclick="approveTx('${tx.id}')">✅ Approve</button>
-                            <button class="btn btn-outline" style="font-size:0.75rem; padding:6px 12px; color:#ff4d4d; border-color:#ff4d4d;" onclick="rejectTx('${tx.id}')">❌ Reject</button>
-                        </div>
-                    `;
-                }
-
-                return `<div class="sp-history-item" style="${a.read ? '' : 'border-color:var(--primary-neon)'}; padding: 15px; margin-bottom: 15px;">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%; gap: 10px;">
-                        <span style="line-height: 1.4;">${a.read ? '' : ' 🔵 '} ${a.message}</span>
-                        <span style="color:var(--text-muted);font-size:0.78rem; white-space:nowrap;">${new Date(a.time).toLocaleString()}</span>
-                    </div>
-                    ${actions}
-                </div>`;
+                return '<div class="sp-history-item" style="flex-direction:column;align-items:flex-start;' + (a.read ? '' : 'border-color:var(--primary-neon)') + '">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;width:100%;flex-wrap:wrap;gap:8px;">' +
+                        '<span>' + (a.read ? '' : '&#x1F535; ') + a.message + '</span>' +
+                        '<span style="color:var(--text-muted);font-size:0.78rem;white-space:nowrap">' + new Date(a.time).toLocaleString() + '</span>' +
+                    '</div>' +
+                    actionBtns +
+                '</div>';
             }).join('') : '<p style="color:var(--text-muted)">No alerts.</p>';
-        }
-
-        function viewProof(txId) {
-            const tx = Admin.getTransactions().find(t => t.id === txId);
-            if (tx && tx.proof && tx.proof.screenshotData) {
-                document.getElementById('sc-img').src = tx.proof.screenshotData;
-                document.getElementById('sc-modal').style.display = 'flex';
-            } else {
-                alert('No proof screenshot found for this transaction.');
-            }
         }
         function updateAlertBadge() {
             var cnt = Admin.getUnreadAdminAlertCount();
@@ -1778,6 +1653,38 @@
         }
         function markAlertsRead() { Admin.markAllAdminAlertsRead(); renderAlerts(); updateAlertBadge(); }
         function clearAlerts() { Admin.clearAdminAlerts(); renderAlerts(); updateAlertBadge(); }
+
+        function approveFromAlert(txId) {
+            if (confirm('Approve this deposit and credit user balance?')) {
+                Admin.resolveTransaction(txId, 'approved');
+                renderDeposits(); renderWithdrawals(); renderDashboard(); renderAlerts(); updateAlertBadge();
+            }
+        }
+        function rejectFromAlert(txId) {
+            if (confirm('Reject this deposit?')) {
+                Admin.resolveTransaction(txId, 'rejected');
+                renderDeposits(); renderWithdrawals(); renderAlerts(); updateAlertBadge();
+            }
+        }
+        function viewReceiptFromAlert(txId) {
+            var tx = getTxs().find(function(t){ return t.id === txId; });
+            if (!tx) { alert('Transaction not found.'); return; }
+            var proof = tx.proof || {};
+            var imgData = proof.screenshotData || proof.screenshot || null;
+            var modal = document.getElementById('receipt-modal');
+            var img = document.getElementById('receipt-modal-img');
+            var info = document.getElementById('receipt-modal-info');
+            if (imgData) { img.src = imgData; img.style.display = 'block'; }
+            else { img.src = ''; img.style.display = 'none'; }
+            info.innerHTML =
+                '<strong>Amount:</strong> $' + (tx.amount || 0).toFixed(2) + ' USDT<br>' +
+                '<strong>TX / Hash:</strong> ' + (proof.txId || proof.hash || proof.txid || '<em style="color:#888">Not provided</em>') + '<br>' +
+                '<strong>User:</strong> ' + userName(tx.userId) + '<br>' +
+                '<strong>Date:</strong> ' + new Date(tx.date).toLocaleString() + '<br>' +
+                '<strong>Status:</strong> <span class="badge badge-' + (tx.status === 'approved' ? 'approved' : tx.status === 'rejected' ? 'rejected' : 'pending') + '">' + tx.status + '</span>' +
+                (!imgData ? '<br><br><em style="color:#888">&#x26A0; No screenshot was uploaded with this request.</em>' : '');
+            modal.style.display = 'flex';
+        }
 
         // ── Tasks ────────────────────────────────────────────────────────────────────
         function renderTasks() {
@@ -2124,24 +2031,6 @@
 
         // ── Init ──────────────────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize Firebase Sync
-            if (typeof Admin !== 'undefined' && Admin.initFirebaseSync) {
-                Admin.initFirebaseSync();
-            }
-
-            // Listen for Real-time Data Sync
-            window.addEventListener('admin:dataSynced', function() {
-                console.log('[Admin] Data synced, refreshing UI...');
-                renderUsers();
-                renderDashboard();
-                renderSendPoints();
-            });
-
-            window.addEventListener('admin:alertsSynced', function() {
-                console.log('[Admin] Alerts synced, refreshing UI...');
-                renderAlerts();
-                updateAlertBadge();
-            });
             // Show first tab
             document.querySelectorAll('.admin-section').forEach(s => s.style.display = 'none');
             var firstTab = document.getElementById('tab-dashboard');
@@ -2175,6 +2064,15 @@
             alert('Deployment code copied to clipboard! Please send it to Antigravity.');
         }
     </script>
+    <!-- Receipt / Proof Modal -->
+    <div id="receipt-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:9999;justify-content:center;align-items:center;flex-direction:column;gap:16px;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+        <div style="background:#111;border:1px solid rgba(57,255,20,0.3);border-radius:16px;padding:24px;max-width:520px;width:100%;position:relative;">
+            <button onclick="document.getElementById('receipt-modal').style.display='none'" style="position:absolute;top:12px;right:12px;background:transparent;border:none;color:#aaa;font-size:1.2rem;cursor:pointer;">✕</button>
+            <h3 style="color:var(--primary-neon);margin-bottom:14px;">🖼️ Payment Proof</h3>
+            <img id="receipt-modal-img" src="" alt="Payment Proof" style="width:100%;max-height:360px;object-fit:contain;border-radius:10px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.1);">
+            <div id="receipt-modal-info" style="font-size:0.85rem;line-height:1.8;color:var(--text-main);"></div>
+        </div>
+    </div>
 </body>
 
 </html>

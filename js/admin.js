@@ -286,23 +286,16 @@ const Admin = {
      */
     addAdminAlert(type, message) {
         const alerts = this.getDb(this.DB_ADMIN_ALERTS);
-        const alertData = {
+        alerts.unshift({
             id: 'al_' + Date.now(),
             type,
             message,
             time: new Date().toISOString(),
             read: false
-        };
-        alerts.unshift(alertData);
+        });
         // Keep last 100 alerts
         if (alerts.length > 100) alerts.pop();
         this.saveDb(this.DB_ADMIN_ALERTS, alerts);
-
-        // Sync to Cloud
-        if (typeof db !== 'undefined' && db !== null) {
-            db.ref('admin_alerts/' + alertData.id).set(alertData)
-              .catch(e => console.warn('[RealtimeDB] Alert sync failed:', e.message));
-        }
     },
 
     getAdminAlerts() {
@@ -386,14 +379,6 @@ const Admin = {
         if (index !== -1) {
             users[index].suspended = suspend;
             localStorage.setItem('spintask_users', JSON.stringify(users));
-            
-            // Sync to Firebase Realtime DB
-            if (typeof db !== 'undefined' && db !== null) {
-                db.ref('users/' + userId).update({ suspended: suspend })
-                  .then(() => console.log('[RealtimeDB] User suspension status synced.'))
-                  .catch(e => console.warn('[RealtimeDB] Suspension sync failed:', e.message));
-            }
-            
             this.logAction(`Admin ${suspend ? 'suspended' : 'activated'} user ID: ${userId}`);
         }
     },
@@ -404,14 +389,6 @@ const Admin = {
         if (index !== -1) {
             users[index].balance = parseFloat(newBalance) || 0;
             localStorage.setItem('spintask_users', JSON.stringify(users));
-            
-            // Sync to Firebase Realtime DB
-            if (typeof db !== 'undefined' && db !== null) {
-                db.ref('users/' + userId).update({ balance: users[index].balance })
-                  .then(() => console.log('[RealtimeDB] User balance synced.'))
-                  .catch(e => console.warn('[RealtimeDB] Balance sync failed:', e.message));
-            }
-
             this.logAction(`Admin modified balance for user ID: ${userId}`);
         }
     },
@@ -513,7 +490,7 @@ const Admin = {
         const users = this.getAllUsers();
         const user = users.find(u => u.id === userId);
         const userName = user ? user.name : userId;
-        this.addAdminAlert(type, `${type === 'deposit' ? '💰 Deposit' : '💸 Withdrawal'} request: ${userName} — $${parseFloat(amount).toFixed(2)} USDT`, { txId: tx.id });
+        this.addAdminAlert(type, `${type === 'deposit' ? '💰 Deposit' : '💸 Withdrawal'} request: ${userName} — $${parseFloat(amount).toFixed(2)} USDT`, tx.id);
 
         return tx;
     },
@@ -701,29 +678,6 @@ const Admin = {
                 this.saveDb(this.DB_NOTIFICATIONS, notes);
             }
         }
-    },
-
-    addUserNotification(userId, subject, message) {
-        const notifications = this.getDb(this.DB_NOTIFICATIONS);
-        const newNotif = {
-            id: 'note_' + Date.now() + Math.random().toString(36).substring(2, 5),
-            subject,
-            message,
-            date: new Date().toISOString(),
-            targetUserIds: [userId],
-            readBy: []
-        };
-        
-        notifications.push(newNotif);
-        this.saveDb(this.DB_NOTIFICATIONS, notifications);
-
-        // Sync to Realtime Database
-        if (typeof db !== 'undefined' && db !== null) {
-            db.ref('notifications/' + newNotif.id).set(newNotif);
-        }
-        
-        console.log(`[Admin] Notification sent to user ${userId}: ${subject}`);
-        return newNotif;
     },
 
     // ─── Community Links ─────────────────────────────────────────────────
@@ -1133,15 +1087,8 @@ const DEPLOYMENT_DATA = ${jsonString};
         const users = this.getAllUsers();
         const idx = users.findIndex(u => u.id === userId);
         if (idx !== -1) {
-            const updatedUser = { ...users[idx], balance: parseFloat(newBalance) };
-            users[idx] = updatedUser;
+            users[idx].balance = parseFloat(newBalance);
             localStorage.setItem('spintask_users', JSON.stringify(users));
-            
-            // Sync to Realtime Database
-            if (typeof db !== 'undefined' && db !== null) {
-                db.ref('users/' + userId).update({ balance: parseFloat(newBalance) });
-            }
-
             this.logAction(`Admin updated balance for ${users[idx].email} to ${newBalance}`);
             return true;
         }
@@ -1154,12 +1101,6 @@ const DEPLOYMENT_DATA = ${jsonString};
         if (idx !== -1) {
             users[idx].suspended = suspended;
             localStorage.setItem('spintask_users', JSON.stringify(users));
-            
-            // Sync to Realtime Database
-            if (typeof db !== 'undefined' && db !== null) {
-                db.ref('users/' + userId).update({ suspended });
-            }
-
             this.logAction(`Admin ${suspended ? 'suspended' : 'activated'} user ${users[idx].email}`);
             return true;
         }
@@ -1168,23 +1109,17 @@ const DEPLOYMENT_DATA = ${jsonString};
 
     // ─── Admin Alerts ─────────────────────────────────────────────────────
 
-    addAdminAlert(type, message, data = null) {
+    addAdminAlert(type, message, txId = null) {
         const alerts = this.getDb(this.DB_ADMIN_ALERTS);
-        const newAlert = {
+        alerts.unshift({
             id: 'alert_' + Date.now(),
             type,
             message,
-            data,
+            txId,   // linked transaction id (for deposit/withdrawal alerts)
             time: new Date().toISOString(),
             read: false
-        };
-        alerts.unshift(newAlert);
-        this.saveDb(this.DB_ADMIN_ALERTS, alerts.slice(0, 100));
-
-        // Sync to Realtime Database
-        if (typeof db !== 'undefined' && db !== null) {
-            db.ref('admin_alerts/' + newAlert.id).set(newAlert);
-        }
+        });
+        this.saveDb(this.DB_ADMIN_ALERTS, alerts.slice(0, 100)); // Keep last 100
     },
 
     getAdminAlerts() {
@@ -1197,26 +1132,19 @@ const DEPLOYMENT_DATA = ${jsonString};
 
     markAllAdminAlertsRead() {
         const alerts = this.getDb(this.DB_ADMIN_ALERTS);
-        alerts.forEach(a => {
-            a.read = true;
-            // Sync to Realtime Database (optional, but good for consistency)
-            if (typeof db !== 'undefined' && db !== null) {
-                db.ref('admin_alerts/' + a.id).update({ read: true });
-            }
-        });
+        alerts.forEach(a => a.read = true);
         this.saveDb(this.DB_ADMIN_ALERTS, alerts);
     },
 
     clearAdminAlerts() {
         this.saveDb(this.DB_ADMIN_ALERTS, []);
-        // In a real app, you'd also clear Firestore, but usually alerts are persistent logs.
     },
 
     // ─── Manual Transfers / Point Sharing ─────────────────────────────────
 
     addTransferRecord(data) {
         const transfers = this.getDb(this.DB_TRANSFERS);
-        const newRecord = {
+        transfers.unshift({
             id: 'tr_' + Date.now(),
             toId: data.toId,
             toName: data.toName,
@@ -1224,62 +1152,12 @@ const DEPLOYMENT_DATA = ${jsonString};
             note: data.note || '',
             date: new Date().toISOString(),
             by: data.by || 'admin'
-        };
-        transfers.unshift(newRecord);
+        });
         this.saveDb(this.DB_TRANSFERS, transfers.slice(0, 500));
-
-        // Sync to Realtime Database
-        if (typeof db !== 'undefined' && db !== null) {
-            db.ref('transfers/' + newRecord.id).set(newRecord);
-        }
     },
 
     getAllTransfers() {
         return this.getDb(this.DB_TRANSFERS);
-    },
-
-    // ─── REAL-TIME FIREBASE SYNC ──────────────────────────────────────────
-
-    initFirebaseSync() {
-        if (typeof db === 'undefined' || db === null) return;
-
-        console.log('[Admin] Initializing Real-time Database Sync...');
-
-        // 1. Sync Users
-        db.ref('users').on('value', snap => {
-            const data = snap.val() || {};
-            const users = Object.values(data);
-            localStorage.setItem('spintask_users', JSON.stringify(users));
-            console.log('[RealtimeDB] User list synced.');
-            // Trigger UI refresh if dashboard is open
-            window.dispatchEvent(new Event('admin:dataSynced'));
-        });
-
-        // 2. Sync Alerts
-        db.ref('admin_alerts').limitToLast(100).on('value', snap => {
-            const data = snap.val() || {};
-            const alerts = Object.values(data).sort((a, b) => new Date(b.time) - new Date(a.time));
-            localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify(alerts));
-            console.log('[RealtimeDB] Admin alerts synced.');
-            window.dispatchEvent(new Event('admin:alertsSynced'));
-        });
-
-        // 3. Sync Transfers
-        db.ref('transfers').limitToLast(500).on('value', snap => {
-            const data = snap.val() || {};
-            const transfers = Object.values(data).sort((a, b) => new Date(b.date) - new Date(a.date));
-            localStorage.setItem(this.DB_TRANSFERS, JSON.stringify(transfers));
-            console.log('[RealtimeDB] Transfers synced.');
-        });
-
-        // 4. Sync User Notifications
-        db.ref('notifications').limitToLast(500).on('value', snap => {
-            const data = snap.val() || {};
-            const notifications = Object.values(data).sort((a, b) => new Date(b.date) - new Date(a.date));
-            localStorage.setItem(this.DB_NOTIFICATIONS, JSON.stringify(notifications));
-            console.log('[RealtimeDB] User notifications synced.');
-            window.dispatchEvent(new Event('admin:notificationsSynced'));
-        });
     }
 };
 
