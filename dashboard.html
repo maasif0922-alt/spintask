@@ -682,7 +682,18 @@
 
             // Stats
             document.getElementById('stats-tasks').innerText = user.tasksCompleted || 0;
-            document.getElementById('stats-referrals').innerText = user.referralCount || 0;
+            
+            // Dynamic Referral Counting Fallback
+            let refCount = user.referralCount || 0;
+            if (refCount === 0) {
+                const allUsers = Auth.getUsers();
+                refCount = allUsers.filter(u => 
+                    u.referredBy === user.id || 
+                    (user.referralCode && u.referredBy === user.referralCode) || 
+                    (user.role === 'admin' && u.referredBy === 'ADMIN_')
+                ).length;
+            }
+            document.getElementById('stats-referrals').innerText = refCount;
             document.getElementById('stats-spins').innerText = `${user.spinsToday || 0}/5`;
 
             // Referral code

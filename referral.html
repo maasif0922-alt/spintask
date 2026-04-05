@@ -368,7 +368,10 @@
                 cards[1].innerText = level1.filter(u => u.verified).length + level2.filter(u => u.verified).length; // Active
             }
             const earningsEl = document.getElementById('referral-earnings');
-            if (earningsEl) earningsEl.innerText = (user.referralEarnings || 0).toFixed(2) + ' USDT';
+            if (earningsEl) {
+                // If user object has 0 earnings but level1 has verified users, we show a sync message or just the raw value
+                earningsEl.innerText = (user.referralEarnings || 0).toFixed(2) + ' USDT';
+            }
 
             // List
             const listContainer = document.getElementById('referrals-list-container');

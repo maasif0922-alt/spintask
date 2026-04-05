@@ -775,6 +775,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
+                                    <th>Referred By</th>
                                     <th>Balance</th>
                                     <th>Deposits</th>
                                     <th>Withdrawals</th>
@@ -1581,9 +1582,21 @@
                 var deps = txs.filter(t => t.userId === u.id && t.type === 'deposit' && t.status === 'approved').length;
                 var withs = txs.filter(t => t.userId === u.id && t.type === 'withdraw' && t.status === 'approved').length;
                 var susp = u.suspended;
+                var referredBy = u.referredBy || '—';
+                // Try to find inviter name
+                if (referredBy !== '—') {
+                    const inviter = getUsers().find(inv => 
+                        inv.id === referredBy || 
+                        (inv.referralCode && inv.referralCode.toUpperCase() === referredBy.toUpperCase()) ||
+                        (inv.role === 'admin' && referredBy.toUpperCase() === 'ADMIN_')
+                    );
+                    if (inviter) referredBy = inviter.name || inviter.id;
+                }
+
                 return `<tr>
             <td><strong>${u.name || ''}</strong></td>
             <td style="color:var(--text-muted)">${u.email}<br><span style="font-size:0.75rem;font-family:monospace;color:var(--primary-neon);cursor:pointer;" onclick="navigator.clipboard.writeText('${u.id}'); alert('Copied ID: ${u.id}')" title="Click to copy ID">🆔 ${u.id}</span></td>
+            <td style="color:var(--text-muted); font-size: 0.9rem;">${referredBy}</td>
             <td style="color:var(--primary-neon);font-weight:700">${fmt(u.balance)}</td>
             <td>${deps}</td><td>${withs}</td>
             <td><span class="badge ${susp ? 'badge-rejected' : 'badge-approved'}">${susp ? 'Suspended' : 'Active'}</span></td>

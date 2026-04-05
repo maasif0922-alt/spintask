@@ -93,16 +93,6 @@ const Auth = {
                 try {
                     await db.ref('users/' + newUser.id).set(newUser);
                     console.log('[RealtimeDB] User saved to cloud successfully.');
-
-                    // Write a registration alert to Firebase so admin sees it in real-time
-                    const alertId = 'alert_' + Date.now();
-                    await db.ref('admin_alerts/' + alertId).set({
-                        id: alertId,
-                        type: 'registration',
-                        message: `🆕 New account registered: ${name} (${email})`,
-                        time: new Date().toISOString(),
-                        read: false
-                    });
                 } catch (e) {
                     console.warn('[RealtimeDB] User save failed, using local only:', e.message);
                 }
