@@ -237,9 +237,64 @@ const Auth = {
             // --------------------------------------
 
             const users = this.getUsers();
-            return users.find(u => u.id === session.userId) || null;
+            const found = users.find(u => u.id === session.userId);
+            
+            // If not found in localStorage (pure cloud user), return partial from session
+            if (!found && session._cachedUser) {
+                return session._cachedUser;
+            }
+            
+            return found || null;
         } catch (e) {
             return null;
+        }
+    },
+
+    /**
+     * Refresh user data from Firebase cloud, update localStorage cache
+     * Called on page load to ensure stale balances are corrected.
+     */
+    async refreshUserFromCloud() {
+        const sessionStr = localStorage.getItem(this.SESSION_KEY) || sessionStorage.getItem(this.SESSION_KEY);
+        if (!sessionStr) return;
+
+        let session;
+        try { session = JSON.parse(sessionStr); } catch (e) { return; }
+
+        // Skip admin
+        if (!session.userId || session.userId === 'admin_master') return;
+
+        if (typeof db === 'undefined' || db === null) return;
+
+        try {
+            const snap = await db.ref('users/' + session.userId).once('value');
+            if (!snap.exists()) return;
+
+            const cloudUser = snap.val();
+
+            // Update localStorage user record with fresh cloud data
+            const users = this.getUsers();
+            const idx = users.findIndex(u => u.id === session.userId);
+            if (idx !== -1) {
+                // Merge cloud data (preserve local password hash)
+                users[idx] = { ...users[idx], ...cloudUser, password: users[idx].password };
+                localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+            } else {
+                // Cloud-only user — add to local cache
+                users.push(cloudUser);
+                localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+            }
+
+            // Update balance display immediately
+            const updatedBalance = cloudUser.balance || 0;
+            const balEls = document.querySelectorAll('.user-balance-value');
+            balEls.forEach(el => el.innerText = `$${updatedBalance.toFixed(2)} USDT`);
+            const earnEls = document.querySelectorAll('.user-earnings-value');
+            earnEls.forEach(el => el.innerText = `$${(cloudUser.earnings || 0).toFixed(2)} USDT`);
+
+            console.log('[Auth] User refreshed from cloud. Balance:', updatedBalance);
+        } catch (e) {
+            console.warn('[Auth] Cloud refresh failed:', e.message);
         }
     },
 

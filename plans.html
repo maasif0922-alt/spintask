@@ -697,6 +697,12 @@
             const user = Auth.getCurrentUser();
             if (!user) { alert('Please login first.'); return; }
 
+            // Block admin from activating plans
+            if (user.role === 'admin' || user.id === 'admin_master') {
+                alert('ℹ️ Admin accounts cannot activate trading plans.\n\nPlease log in with a regular user account to test this feature.');
+                return;
+            }
+
             const plan = Trading.PLANS_DEF.find(p => p.id === planId);
             if (!plan) return;
 
@@ -768,11 +774,19 @@
         }
 
         // Init
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const user = Auth.getCurrentUser();
             renderRateBanner();
             renderPlans(user);
             renderActiveInvestments(user);
+
+            // Refresh user data from cloud to get latest balance
+            if (typeof Auth.refreshUserFromCloud === 'function') {
+                await Auth.refreshUserFromCloud();
+                // Re-render with fresh data
+                const freshUser = Auth.getCurrentUser();
+                renderActiveInvestments(freshUser);
+            }
         });
 
         // Mobile Nav

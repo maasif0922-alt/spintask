@@ -710,6 +710,17 @@
             renderRecentActivity(user.id);
             renderActiveTradingPlans(user);
             renderTradingPlansMini();
+
+            // Refresh from Firebase cloud to get latest balance (in case admin updated it)
+            if (typeof Auth.refreshUserFromCloud === 'function') {
+                Auth.refreshUserFromCloud().then(() => {
+                    const freshUser = Auth.getCurrentUser();
+                    if (freshUser) {
+                        renderActiveTradingPlans(freshUser);
+                        renderTradingPlansMini();
+                    }
+                });
+            }
         });
 
         /* ── Verify Account ── */
