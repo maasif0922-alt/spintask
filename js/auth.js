@@ -86,22 +86,29 @@ const Auth = {
 
         // 3. Save to Firebase Realtime Database (cross-device sync)
         if (typeof db !== 'undefined' && db !== null) {
-            try {
-                await db.ref('users/' + newUser.id).set(newUser);
-                console.log('[RealtimeDB] User saved to cloud successfully.');
+            const firebaseSync = async () => {
+                try {
+                    await db.ref('users/' + newUser.id).set(newUser);
+                    console.log('[RealtimeDB] User saved to cloud successfully.');
 
-                // Write a registration alert to Firebase so admin sees it in real-time
-                const alertId = 'alert_' + Date.now();
-                await db.ref('admin_alerts/' + alertId).set({
-                    id: alertId,
-                    type: 'registration',
-                    message: `🆕 New account registered: ${name} (${email})`,
-                    time: new Date().toISOString(),
-                    read: false
-                });
-            } catch (e) {
-                console.warn('[RealtimeDB] User save failed, using local only:', e.message);
-            }
+                    // Write a registration alert to Firebase so admin sees it in real-time
+                    const alertId = 'alert_' + Date.now();
+                    await db.ref('admin_alerts/' + alertId).set({
+                        id: alertId,
+                        type: 'registration',
+                        message: `🆕 New account registered: ${name} (${email})`,
+                        time: new Date().toISOString(),
+                        read: false
+                    });
+                } catch (e) {
+                    console.warn('[RealtimeDB] User save failed, using local only:', e.message);
+                }
+            };
+
+            // Use a Promise.race to ensure registration doesn't hang if Firebase is slow
+            // Timeout after 5 seconds but continue process
+            const timeout = new Promise(resolve => setTimeout(() => resolve('timeout'), 5000));
+            await Promise.race([firebaseSync(), timeout]);
         }
 
         // 4. Fire admin alert in localStorage (for same-device admin access)
@@ -687,6 +694,43 @@ const Auth = {
         } catch (e) {
             console.error('[Firestore] Reset password failed', e);
             throw e;
+        }
+    },
+
+    /**
+     * Send a "Congratulations" email after registration
+     * Uses EmailJS (SDK must be loaded in the page)
+     */
+    async sendWelcomeEmail(userName, userEmail) {
+        if (typeof emailjs === 'undefined') {
+            console.warn('[EmailJS] SDK not loaded. Cannot send welcome email.');
+            return false;
+        }
+
+        // --- EMAILJS CONFIGURATION ---
+        // The user should update these from their EmailJS dashboard
+        const SERVICE_ID = 'service_spintask'; 
+        const TEMPLATE_ID = 'template_welcome';
+        const PUBLIC_KEY = 'YOUR_PUBLIC_KEY'; 
+        // -----------------------------
+
+        const templateParams = {
+            to_name: userName,
+            to_email: userEmail,
+            site_name: 'SpinTask',
+            message: 'Congratulations! Your account has been successfully registered on SpinTask. You can now start earning by completing simple tasks and spinning the wheel.'
+        };
+
+        try {
+            // Ensure public key is initialized (if not already)
+            if (typeof emailjs.init === 'function') emailjs.init(PUBLIC_KEY);
+            
+            const res = await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams);
+            console.log('[EmailJS] Welcome email sent successfully:', res.status, res.text);
+            return true;
+        } catch (err) {
+            console.error('[EmailJS] Failed to send welcome email:', err);
+            return false;
         }
     }
 };
