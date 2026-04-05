@@ -195,6 +195,9 @@ const Admin = {
 
         // --- NEW: Global Configuration Sync ---
         this.syncFromConfig();
+
+        // Initialize Firebase Sync for Real-time Admin Notifications & Transactions
+        this.initFirebaseSync();
     },
 
     /**
