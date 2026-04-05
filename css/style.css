@@ -507,17 +507,37 @@ footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px;
+    padding: 18px 20px;
     border-radius: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 14px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: var(--transition);
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
 .task-item:hover {
     background: rgba(255, 255, 255, 0.07);
     border-color: var(--primary-neon);
+}
+
+.btn-task {
+    flex-shrink: 0 !important;
+    padding: 10px 22px !important;
+    font-size: 0.88rem !important;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .task-item > div:last-child {
+        width: 100%;
+        justify-content: space-between;
+    }
 }
 
 /* Wheel Animation */
