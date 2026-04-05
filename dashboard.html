@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Dashboard | SpinTask</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -198,124 +198,106 @@
                         <span style="color: var(--primary-neon);">USDT</span>
                         <span class="user-balance-value" style="font-weight: 700;">$0.00</span>
                     </div>
-                    <a href="deposit.html" class="btn btn-primary"
-                        style="background: var(--accent-blue); border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(44, 165, 224, 0.3);">💰
-                        Deposit</a>
-                    <a href="spin.html" class="btn btn-primary">Daily Spin</a>
                 </div>
             </header>
 
-            <!-- Verification Banner (shown for unverified users) -->
-            <div id="verify-banner-container"></div>
+            <!-- Verification Banner -->
+            <div id="verify-banner-area"></div>
 
             <!-- Stats Grid -->
-            <div class="dash-grid">
-                <div class="dash-card glass">
-                    <h4>Account Balance</h4>
-                    <div class="value user-balance-value">0.00 USDT</div>
-                    <div class="trend">+0% from last week</div>
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-icon" style="background: rgba(57, 255, 20, 0.1); color: var(--primary-neon);">💰
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total Earnings</span>
+                        <h3 class="stat-value user-balance-value">$0.00</h3>
+                    </div>
                 </div>
-                <div class="dash-card glass">
-                    <h4>Total Earnings</h4>
-                    <div id="user-total-earnings" class="value">0.00 USDT</div>
-                    <div class="trend">Lifetime rewards</div>
+                <div class="stat-card glass">
+                    <div class="stat-icon" style="background: rgba(77, 124, 255, 0.1); color: var(--accent-blue);">📋
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Tasks Completed</span>
+                        <h3 class="stat-value" id="stats-tasks">0</h3>
+                    </div>
                 </div>
-                <div class="dash-card glass">
-                    <h4>Today's Earnings</h4>
-                    <div id="user-today-earnings" class="value">0.00 USDT</div>
-                    <div class="trend">0 tasks completed</div>
+                <div class="stat-card glass">
+                    <div class="stat-icon" style="background: rgba(255, 170, 0, 0.1); color: #ffaa00;">🎡</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Spins Today</span>
+                        <h3 class="stat-value" id="stats-spins">0/5</h3>
+                    </div>
                 </div>
-                <div class="dash-card glass">
-                    <h4>Account Status</h4>
-                    <div id="status-badge-dash" style="margin-top: 8px;"></div>
-                    <div class="trend" id="status-sub-dash">Free tier</div>
+                <div class="stat-card glass">
+                    <div class="stat-icon" style="background: rgba(255, 77, 77, 0.1); color: #ff4d4d;">👥</div>
+                    <div class="stat-info">
+                        <span class="stat-label">Referrals</span>
+                        <h3 class="stat-value" id="stats-referrals">0</h3>
+                    </div>
                 </div>
             </div>
 
-
-            <!-- Dashboard Analytics & Activity -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+            <!-- Dashboard Row 1 -->
+            <div
+                style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 30px; align-items: start;">
+                <!-- Profile Section -->
                 <div class="glass" style="padding: 30px; border-radius: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3 style="font-size: 1.3rem;">Personal Information</h3>
+                        <a href="profile.html"
+                            style="font-size: 0.85rem; color: var(--primary-neon); text-decoration: underline;">Edit
+                            Profile</a>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="profile-field">
+                            <label>Full Name</label>
+                            <div class="pf-value" id="prof-name">Loading...</div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Email Address</label>
+                            <div class="pf-value" id="prof-email">Loading...</div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Account Status</label>
+                            <div id="prof-status-badge">Loading...</div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Member Since</label>
+                            <div class="pf-value" id="prof-date">Loading...</div>
+                        </div>
+                    </div>
+
                     <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3>Earnings Overview</h3>
-                        <select
-                            style="background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 5px; border-radius: 5px;">
-                            <option>Last 7 Days</option>
-                            <option>Last 30 Days</option>
-                        </select>
-                    </div>
-                    <div class="chart-container">
-                        <div class="chart-bar" style="height: 30%;"></div>
-                        <div class="chart-bar" style="height: 50%;"></div>
-                        <div class="chart-bar" style="height: 40%;"></div>
-                        <div class="chart-bar" style="height: 80%;"></div>
-                        <div class="chart-bar" style="height: 60%;"></div>
-                        <div class="chart-bar" style="height: 90%;"></div>
-                        <div class="chart-bar" style="height: 45%;"></div>
+                        style="margin-top: 30px; padding: 20px; background: rgba(57, 255, 20, 0.05); border-radius: 16px; display: flex; align-items: center; gap: 15px;">
+                        <div
+                            style="width: 45px; height: 45px; border-radius: 12px; background: rgba(57, 255, 20, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                            🚀</div>
+                        <div>
+                            <h4 style="font-size: 0.95rem; margin-bottom: 2px;">Ready to grow?</h4>
+                            <p style="font-size: 0.82rem; color: var(--text-muted);">Upgrade to a Trading Plan to
+                                multiply your daily earnings.</p>
+                        </div>
+                        <a href="plans.html" class="btn btn-primary"
+                            style="margin-left: auto; padding: 8px 16px; font-size: 0.85rem;">View Plans</a>
                     </div>
                 </div>
 
+                <!-- Recent Activities -->
                 <div class="glass" style="padding: 30px; border-radius: 20px;">
-                    <h3>Recent Activity</h3>
-                    <div style="margin-top: 20px;">
-                        <div
-                            style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <div style="background: rgba(57, 255, 20, 0.1); padding: 10px; border-radius: 10px;">🎡
-                            </div>
-                            <div style="flex-grow: 1;">
-                                <div style="font-size: 0.9rem; font-weight: 600;">Daily Spin</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Today</div>
-                            </div>
-                            <div style="color: var(--primary-neon);">+Reward</div>
-                        </div>
-                        <div
-                            style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                            <div style="background: rgba(77, 124, 255, 0.1); padding: 10px; border-radius: 10px;">🌐
-                            </div>
-                            <div style="flex-grow: 1;">
-                                <div style="font-size: 0.9rem; font-weight: 600;">Visit Website</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">5 hours ago</div>
-                            </div>
-                            <div style="color: var(--primary-neon);">+$0.05</div>
+                    <h3 style="margin-bottom: 25px; font-size: 1.3rem;">Recent Tasks</h3>
+                    <div id="recent-tasks-list">
+                        <!-- Populated by JS -->
+                        <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
+                            <p style="font-size: 0.9rem;">No tasks completed yet.</p>
+                            <a href="tasks.html" class="btn btn-primary"
+                                style="margin-top: 15px; display: inline-block;">Start Earning</a>
                         </div>
                     </div>
-                    <a href="tasks.html"
-                        style="display: block; text-align: center; color: var(--primary-neon); font-size: 0.9rem; margin-top: 10px;">View
-                        All Tasks</a>
                 </div>
             </div>
 
-            <!-- Trading Investment Section -->
-            <div id="dashboard-trading-section" style="margin-top: 30px;">
-                <!-- Populated by JS -->
-            </div>
-
-
-            <!-- Plans & Referrals -->
-            <div style="margin-top: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                <div class="glass"
-                    style="padding: 30px; border-radius: 20px; border-left: 4px solid var(--primary-neon);">
-                    <h4>Your Trading Plan</h4>
-                    <p id="dash-plan-basic-name" style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">Free Tier
-                    </p>
-                    <p id="dash-plan-basic-desc" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">
-                        Upgrade to earn passive daily profit.</p>
-                    <a href="plans.html" class="btn btn-primary"
-                        style="margin-top: 20px; padding: 8px 20px; font-size: 0.9rem;">View Trading Plans</a>
-                </div>
-                <div class="glass"
-                    style="padding: 30px; border-radius: 20px; border-left: 4px solid var(--accent-blue);">
-                    <h4>Referral Program</h4>
-                    <p id="dash-ref-rates" style="font-size: 1.2rem; font-weight: 700; margin-top: 5px;">Level 1: 10% |
-                        Level 2: 5%</p>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 5px;">Earn commissions on your
-                        friend's earnings.</p>
-                    <a href="referral.html" class="btn btn-outline"
-                        style="margin-top: 20px; padding: 8px 20px; font-size: 0.9rem; border-color: var(--accent-blue); color: var(--accent-blue);">Invite
-                        Friends</a>
-                </div>
-            </div>
         </main>
     </div>
 
@@ -329,7 +311,75 @@
     <script src="js/admin.js"></script>
     <script src="js/app.js"></script>
     <script src="js/notifications.js"></script>
+    <script src="js/support.js"></script>
 
+    <!-- Navigation JS -->
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <ul>
+            <li><a href="dashboard.html" class="active"><span class="bn-icon">🏠</span>Home</a></li>
+            <li><a href="tasks.html"><span class="bn-icon">📋</span>Tasks</a></li>
+            <li><a href="spin.html"><span class="bn-icon">🎡</span>Spin</a></li>
+            <li><a href="withdraw.html"><span class="bn-icon">💸</span>Withdraw</a></li>
+            <li><a href="#" id="more-btn"><span class="bn-icon">➕</span>More</a></li>
+        </ul>
+    </nav>
+
+    <div class="mobile-more-sheet" id="more-sheet">
+        <div class="more-sheet-handle"></div>
+        <ul>
+            <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+            <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+            <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
+            <li><a href="sports.html"><span>🏅</span> Sports</a></li>
+            <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+            <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+            <li><a href="profile.html"><span>👤</span> Profile</a></li>
+            <li><a href="#" onclick="Auth.logout(); return false;" style="color:#ff4d4d;"><span>🚪</span> Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar-overlay" id="more-overlay" style="z-index:1065;"></div>
+
+    <script src="js/mobile.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+
+            // Welcome msg
+            document.getElementById('welcome-msg').innerText = `Welcome, ${user.name.split(' ')[0]}! 👋`;
+
+            // Profile info
+            document.getElementById('prof-name').innerText = user.name;
+            document.getElementById('prof-email').innerText = user.email;
+            document.getElementById('prof-date').innerText = new Date(user.joinedDate).toLocaleDateString();
+
+            // Status Badge
+            const statusArea = document.getElementById('prof-status-badge');
+            if (user.verified) {
+                statusArea.innerHTML = `<span class="verified-badge"><span>✅</span> Verified</span>`;
+            } else {
+                statusArea.innerHTML = `<span class="unverified-badge"><span>⚠️</span> Unverified</span>`;
+                // Show banner
+                document.getElementById('verify-banner-area').innerHTML = `
+                    <div class="verify-banner">
+                        <div class="vb-icon">🛡️</div>
+                        <div class="vb-text">
+                            <h4>Account Verification Required</h4>
+                            <p>Verify your account to enable withdrawals and access premium trading plans.</p>
+                        </div>
+                        <button class="btn-verify" onclick="location.href='profile.html'">Verify Now</button>
+                    </div>
+                `;
+            }
+
+            // Stats
+            document.getElementById('stats-tasks').innerText = user.tasksCompleted || 0;
+            document.getElementById('stats-referrals').innerText = user.referrals || 0;
+            // Spins - default is 5 per day unless plan
+            document.getElementById('stats-spins').innerText = `${user.spinsToday || 0}/5`;
+        });
+    </script>
     <!-- ========== MOBILE NAVIGATION DRAWER ========== -->
     <div class="mob-nav-overlay" id="mob-nav-overlay"></div>
     <div class="mob-nav-drawer" id="mob-nav-drawer">
@@ -389,7 +439,7 @@
             </a>
             <a href="sports.html" class="mob-nav-item">
                 <div class="mob-nav-icon">🏅</div>
-                <div class="mob-nav-label" style="color: #ffaa00; font-weight: 700;">Sports</div>
+                <div class="mob-nav-label">Sports</div>
             </a>
             <a href="referral.html" class="mob-nav-item">
                 <div class="mob-nav-icon">🔗</div>
@@ -415,266 +465,6 @@
             <button class="mob-nav-logout-btn" onclick="Auth.logout()">🚪 Logout</button>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
-
-            // Welcome message
-            const wm = document.getElementById('welcome-msg');
-            if (wm) wm.innerText = `Welcome back, ${user.name.split(' ')[0]}! 👋`;
-
-            // Setup profile image logic
-            const hdrImg = document.getElementById('header-profile-img');
-            if (hdrImg && user.email) {
-                hdrImg.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.email)}&backgroundColor=b6e3f4`;
-            }
-
-            // Earnings
-            const totalEarningsEl = document.getElementById('user-total-earnings');
-            if (totalEarningsEl) totalEarningsEl.innerText = `${(user.earnings || 0).toFixed(2)} USDT`;
-
-            // Status badge in stats grid
-            const badgeDash = document.getElementById('status-badge-dash');
-            const statusSub = document.getElementById('status-sub-dash');
-            if (user.verified) {
-                badgeDash.innerHTML = `<span class="verified-badge">✅ Verified</span>`;
-                statusSub.innerText = '1 free spin daily';
-            } else {
-                badgeDash.innerHTML = `<span class="unverified-badge">⚠️ Unverified</span>`;
-                statusSub.innerText = 'Verify for $1 to unlock spins';
-            }
-
-            // ── Real-time Cloud Sync ──────────────────────────────────────────────────
-            if (typeof db !== 'undefined' && db !== null && user.id) {
-                db.ref('users/' + user.id).on('value', snap => {
-                    const cloudData = snap.val();
-                    if (cloudData) {
-                        const localUsers = JSON.parse(localStorage.getItem('spintask_users') || '[]');
-                        const idx = localUsers.findIndex(u => u.id === user.id);
-                        if (idx !== -1) {
-                            // Check if balance or suspension changed
-                            const changed = cloudData.balance !== localUsers[idx].balance || cloudData.suspended !== localUsers[idx].suspended;
-                            if (changed) {
-                                console.log('[RealtimeDB] Cloud update detected, refreshing UI...');
-                                localUsers[idx] = Object.assign({}, localUsers[idx], cloudData);
-                                localStorage.setItem('spintask_users', JSON.stringify(localUsers));
-                                // Update session too if they are logged in as this user
-                                const session = JSON.parse(localStorage.getItem('spintask_current_user') || sessionStorage.getItem('spintask_current_user') || '{}');
-                                if (session.userId === user.id) {
-                                    // Soft refresh balance on UI
-                                    const balEl = document.getElementById('user-balance-dash');
-                                    if (balEl) balEl.innerText = `$${parseFloat(cloudData.balance || 0).toFixed(2)}`;
-                                    const earnEl = document.getElementById('user-total-earnings');
-                                    if (earnEl) earnEl.innerText = `${parseFloat(cloudData.earnings || 0).toFixed(2)} USDT`;
-                                    
-                                    // If suspended, logout
-                                    if (cloudData.suspended) window.location.href = 'login.html';
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Verification Banner
-            const bannerContainer = document.getElementById('verify-banner-container');
-            if (!user.verified && bannerContainer) {
-                bannerContainer.innerHTML = `
-                    <div class="verify-banner">
-                        <div class="vb-icon">🔐</div>
-                        <div class="vb-text">
-                            <h4>Your account is not verified</h4>
-                            <p>Pay $1.00 USDT to unlock the Spin Wheel and earn 1 free daily spin for life.</p>
-                        </div>
-                        <button class="btn-verify" onclick="doVerify()">Verify Now — $1</button>
-                    </div>
-                `;
-            }
-
-            // Profile Card
-            const profileBadge = document.getElementById('profile-badge');
-            if (profileBadge) {
-                profileBadge.innerHTML = user.verified
-                    ? `<span class="verified-badge">✅ Verified Account</span>`
-                    : `<span class="unverified-badge">⚠️ Unverified</span>`;
-            }
-
-            const profileCard = document.getElementById('profile-card');
-            if (profileCard) {
-                const regDate = user.registeredAt || user.createdAt
-                    ? new Date(user.registeredAt || user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : 'N/A';
-                const verDate = user.verificationDate
-                    ? new Date(user.verificationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : '—';
-                profileCard.innerHTML = `
-                    <div class="profile-field">
-                        <label>Username</label>
-                        <div class="pf-value">${user.name}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Email Address</label>
-                        <div class="pf-value">${user.email}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Account Balance</label>
-                        <div class="pf-value" style="color: var(--primary-neon);">$${(user.balance || 0).toFixed(2)} USDT</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Total Earned</label>
-                        <div class="pf-value">$${(user.earnings || 0).toFixed(2)} USDT</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Member Since</label>
-                        <div class="pf-value">${regDate}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Verification Date</label>
-                        <div class="pf-value">${verDate}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Referral Code</label>
-                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '—'}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Account ID</label>
-                        <div class="pf-value" style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">${user.id}</div>
-                    </div>
-                `;
-            }
-
-            // Referral Rates population
-            if (typeof Admin !== 'undefined') {
-                const r1 = Admin.getSetting('refLvl1') || 5;
-                const r2 = Admin.getSetting('refLvl2') || 3;
-                const refRatesEl = document.getElementById('dash-ref-rates');
-                if (refRatesEl) refRatesEl.innerText = `Level 1: ${r1}% | Level 2: ${r2}%`;
-            }
-
-            // Trading Investment Section population
-            renderDashboardTrading(user);
-        });
-
-        function renderDashboardTrading(user) {
-            const container = document.getElementById('dashboard-trading-section');
-            if (!container || !user) return;
-
-            if (typeof Trading === 'undefined') return;
-
-            const investments = Trading.getUserInvestments().filter(i => i.userId === user.id && i.status === 'active');
-
-            if (investments.length > 0) {
-                // Update the small side block
-                const pName = document.getElementById('dash-plan-basic-name');
-                const pDesc = document.getElementById('dash-plan-basic-desc');
-                if (pName && pDesc) {
-                    pName.innerText = investments.length + ' Active Plan(s)';
-                    pDesc.innerText = 'You are earning daily passive profit!';
-                }
-            }
-
-            if (investments.length === 0) {
-                container.innerHTML = `
-                    <div class="glass" style="padding: 30px; border-radius: 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.2);">
-                        <h3 style="margin-bottom: 10px;">📈 Trading & Investment</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 20px;">You do not have any active trading plans. Start earning daily passive income today!</p>
-                        <a href="plans.html" class="btn btn-primary">Explore Trading Plans</a>
-                    </div>
-                 `;
-                return;
-            }
-
-            let html = '<div class="glass" style="padding: 30px; border-radius: 20px;"><h3 style="margin-bottom: 20px;">📈 Active Trading Plans</h3><div style="display: flex; flex-direction: column; gap: 20px;">';
-
-            investments.forEach(inv => {
-                const plan = Trading.PLANS_DEF.find(p => p.id === inv.planId);
-                if (!plan) return;
-
-                const baseRate = Trading.getRate(plan);
-                const rate = parseFloat((baseRate + (inv.reinvestBonus || 0)).toFixed(2));
-                const dailyProfit = parseFloat(((inv.amount * rate) / 100).toFixed(2));
-                const earnedAmount = parseFloat((inv.totalCredited || 0).toFixed(2));
-
-                const since = new Date(inv.startDate);
-                const daysElapsed = Math.floor((new Date() - since) / (1000 * 60 * 60 * 24));
-                const remainingDays = Math.max(0, 60 - daysElapsed);
-
-                html += `
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; position: relative;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                            <div>
-                                <h4 style="color: var(--primary-neon); font-size: 1.1rem; margin-bottom: 5px;">${plan.name} Plan</h4>
-                                <span style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 4px;">Since ${since.toLocaleDateString()}</span>
-                            </div>
-                            <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="border-color: #39ff14; color: #39ff14; padding: 6px 15px; font-size: 0.85rem;" ${earnedAmount <= 0 ? 'disabled title="Earn some profit first to reinvest"' : ''}>♻️ Reinvest Profits</button>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px;">
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Total Invested</div>
-                                <div style="font-weight: 700;">$${inv.amount.toFixed(2)}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Daily Rate</div>
-                                <div style="font-weight: 700;">${rate}% ${inv.reinvestBonus ? '<span style="color:#ffaa00; font-size: 0.8em;">(Bonus)</span>' : ''}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Daily Earnings</div>
-                                <div style="font-weight: 700; color: #39ff14;">+$${dailyProfit}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Total Earned</div>
-                                <div style="font-weight: 700; color: #ffaa00;">$${earnedAmount}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Remaining Days</div>
-                                <div style="font-weight: 700;">${remainingDays} Days</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += '</div></div>';
-            container.innerHTML = html;
-        }
-
-        window.handleReinvest = function (investmentId) {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
-
-            if (!confirm('♻️ Are you sure you want to reinvest your accrued profits?\nThis will deduct the earned amount from your balance, add it to your investment, and give you a +0.5% daily rate bonus!')) {
-                return;
-            }
-
-            const res = Trading.reinvestProfits(user.id, investmentId);
-            if (res.success) {
-                alert(res.message);
-                location.reload();
-            } else {
-                alert('❌ ' + res.message);
-            }
-        };
-
-        function doVerify() {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
-            if ((user.balance || 0) < 1) {
-                alert('❌ Insufficient balance. Please deposit at least $1.00 USDT to verify your account.');
-                return;
-            }
-            if (confirm('Verify your account for $1.00 USDT? This will unlock the daily Spin Wheel.')) {
-                const result = Auth.verifyAccount();
-                if (result.success) {
-                    alert('✅ Account verified! You now get 1 free daily spin. Refreshing...');
-                    location.reload();
-                } else {
-                    alert('❌ ' + result.message);
-                }
-            }
-        }
-    </script>
-    <!-- Mobile Navigation JS -->
     <script>
         (function () {
             const dotsBtn = document.getElementById('mob-dots-btn');
@@ -714,5 +504,4 @@
         })();
     </script>
 </body>
-
 </html>

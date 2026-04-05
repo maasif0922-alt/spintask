@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Daily Spin | SpinTask</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -94,15 +94,15 @@
         <aside class="sidebar glass" id="main-sidebar">
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="dashboard.html"><span>??</span> Dashboard</a></li>
-                    <li><a href="tasks.html"><span>??</span> Tasks</a></li>
-                    <li><a href="spin.html" class="active"><span>??</span> Spin Wheel</a></li>
-                    <li><a href="luckydraw.html"><span>??</span> Lucky Draw</a></li>
-                    <li><a href="pool.html"><span>??</span> Community Pool</a></li>
-                    <li><a href="plans.html"><span>??</span> Trading Plans</a></li>
-                    <li><a href="referral.html"><span>??</span> Referrals</a></li>
-                    <li><a href="deposit.html"><span>??</span> Deposit</a></li>
-                    <li><a href="withdraw.html"><span>??</span> Withdraw</a></li>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html" class="active"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -152,7 +152,7 @@
                         Verify your account for just <strong>$1.00 USDT</strong> to unlock 1 free daily spin forever.</p>
                         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
                             <a href="dashboard.html" class="btn btn-primary" style="padding: 12px 30px;">
-                                ? Verify Account � $1
+                                ? Verify Account — $1
                             </a>
                             <a href="deposit.html" class="btn btn-outline" style="padding: 12px 30px;">
                                 ?? Deposit First
@@ -190,7 +190,7 @@
                 <header class="top-bar" style="justify-content: center; text-align: center; flex-direction: column; padding: 40px 20px;">
                     <h2 style="font-size: 2rem; margin-bottom: 10px;">Daily Reward Wheel</h2>
                     <p style="color: var(--text-muted); font-size: 1.1rem;">
-                        <span class="verified-badge" style="display:inline-flex; align-items:center; gap:5px; background:rgba(57,255,20,0.1); border:1px solid rgba(57,255,20,0.3); color:var(--primary-neon); padding:4px 12px; border-radius:15px; font-size:0.8rem; font-weight:600;">? Verified � 1 Free Daily Spin</span>
+                        <span class="verified-badge" style="display:inline-flex; align-items:center; gap:5px; background:rgba(57,255,20,0.1); border:1px solid rgba(57,255,20,0.3); color:var(--primary-neon); padding:4px 12px; border-radius:15px; font-size:0.8rem; font-weight:600;">? Verified — 1 Free Daily Spin</span>
                     </p>
                 </header>
 
@@ -469,7 +469,7 @@
                             <h4>Your account is not verified</h4>
                             <p>Pay $1.00 USDT to unlock the Spin Wheel and earn 1 free daily spin for life.</p>
                         </div>
-                        <button class="btn-verify" onclick="doVerify()">Verify Now � $1</button>
+                        <button class="btn-verify" onclick="doVerify()">Verify Now — $1</button>
                     </div>
                 `;
             }
@@ -489,7 +489,7 @@
                     : 'N/A';
                 const verDate = user.verificationDate
                     ? new Date(user.verificationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : '�';
+                    : '—';
                 profileCard.innerHTML = `
                     <div class="profile-field">
                         <label>Username</label>
@@ -517,7 +517,7 @@
                     </div>
                     <div class="profile-field">
                         <label>Referral Code</label>
-                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '�'}</div>
+                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '—'}</div>
                     </div>
                     <div class="profile-field">
                         <label>Account ID</label>
@@ -691,3 +691,4 @@
 </body>
 
 </html>
+

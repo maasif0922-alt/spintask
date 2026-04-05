@@ -27,6 +27,11 @@ body {
     overflow-x: hidden;
 }
 
+/* Mobile Input Zoom Fix */
+input, select, textarea {
+    font-size: 16px !important;
+}
+
 a {
     text-decoration: none;
     color: inherit;

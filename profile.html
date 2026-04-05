@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Profile | SpinTask</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -26,15 +26,15 @@
         <aside class="sidebar glass">
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="dashboard.html"><span>??</span> Dashboard</a></li>
-                    <li><a href="tasks.html"><span>??</span> Tasks</a></li>
-                    <li><a href="spin.html"><span>??</span> Spin Wheel</a></li>
-                    <li><a href="luckydraw.html"><span>??</span> Lucky Draw</a></li>
-                    <li><a href="pool.html"><span>??</span> Community Pool</a></li>
-                    <li><a href="plans.html"><span>??</span> Trading Plans</a></li>
-                    <li><a href="referral.html"><span>??</span> Referrals</a></li>
-                    <li><a href="deposit.html"><span>??</span> Deposit</a></li>
-                    <li><a href="withdraw.html"><span>??</span> Withdraw</a></li>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html"><span>💸</span> Withdraw</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -236,7 +236,7 @@
                             <h4>Your account is not verified</h4>
                             <p>Pay $1.00 USDT to unlock the Spin Wheel and earn 1 free daily spin for life.</p>
                         </div>
-                        <button class="btn-verify" onclick="doVerify()">Verify Now � $1</button>
+                        <button class="btn-verify" onclick="doVerify()">Verify Now — $1</button>
                     </div>
                 `;
             }
@@ -256,7 +256,7 @@
                     : 'N/A';
                 const verDate = user.verificationDate
                     ? new Date(user.verificationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : '�';
+                    : '—';
                 profileCard.innerHTML = `
                     <div class="profile-field">
                         <label>Username</label>
@@ -284,7 +284,7 @@
                     </div>
                     <div class="profile-field">
                         <label>Referral Code</label>
-                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '�'}</div>
+                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '—'}</div>
                     </div>
                     <div class="profile-field">
                         <label>Account ID</label>
@@ -458,3 +458,4 @@
 </body>
 
 </html>
+

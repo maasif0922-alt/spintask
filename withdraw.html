@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Withdraw | SpinTask</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -26,15 +26,15 @@
         <aside class="sidebar glass">
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="dashboard.html"><span>??</span> Dashboard</a></li>
-                    <li><a href="tasks.html"><span>??</span> Tasks</a></li>
-                    <li><a href="spin.html"><span>??</span> Spin Wheel</a></li>
-                    <li><a href="luckydraw.html"><span>??</span> Lucky Draw</a></li>
-                    <li><a href="pool.html"><span>??</span> Community Pool</a></li>
-                    <li><a href="plans.html"><span>??</span> Trading Plans</a></li>
-                    <li><a href="referral.html"><span>??</span> Referrals</a></li>
-                    <li><a href="deposit.html"><span>??</span> Deposit</a></li>
-                    <li><a href="withdraw.html" class="active"><span>??</span> Withdraw</a></li>
+                    <li><a href="dashboard.html"><span>🏠</span> Dashboard</a></li>
+                    <li><a href="tasks.html"><span>📋</span> Tasks</a></li>
+                    <li><a href="spin.html"><span>🎡</span> Spin Wheel</a></li>
+                    <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+                    <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+                    <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
+                    <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+                    <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+                    <li><a href="withdraw.html" class="active"><span>💸</span> Withdraw</a></li>
                 </ul>
             </nav>
             <div class="sidebar-footer">
@@ -74,7 +74,7 @@
                                 style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none;">
                         </div>
                         <div class="withdrawal-fee-notice">
-                            <span class="fee-icon">??</span>
+                            <span class="fee-icon">⚠️</span>
                             <p><strong>Withdrawal Fee: 15% commission</strong> will be deducted from every withdrawal. For example, if you withdraw $100 USDT, you will receive <strong>$85 USDT</strong> after the 15% fee is applied.</p>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 16px;">Submit Withdrawal
@@ -91,19 +91,21 @@
 
                 <div class="glass" style="margin-top: 40px; padding: 30px; border-radius: 20px;">
                     <h3>Withdrawal History</h3>
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Amount</th>
-                                <th>Address</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="user-withdraw-history">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Amount</th>
+                                    <th>Address</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-withdrawal-history">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
@@ -119,408 +121,99 @@
     <script src="js/admin.js"></script>
     <script src="js/app.js"></script>
     <script src="js/notifications.js"></script>
+    <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+        <ul>
+            <li><a href="dashboard.html"><span class="bn-icon">🏠</span>Home</a></li>
+            <li><a href="tasks.html"><span class="bn-icon">📋</span>Tasks</a></li>
+            <li><a href="spin.html"><span class="bn-icon">🎡</span>Spin</a></li>
+            <li><a href="withdraw.html" class="active"><span class="bn-icon">💸</span>Withdraw</a></li>
+            <li><a href="#" id="more-btn"><span class="bn-icon">➕</span>More</a></li>
+        </ul>
+    </nav>
+    <div class="mobile-more-sheet" id="more-sheet">
+        <div class="more-sheet-handle"></div>
+        <ul>
+            <li><a href="luckydraw.html"><span>🎉</span> Lucky Draw</a></li>
+            <li><a href="pool.html"><span>👥</span> Community Pool</a></li>
+            <li><a href="plans.html"><span>📈</span> Trading Plans</a></li>
+            <li><a href="referral.html"><span>🔗</span> Referrals</a></li>
+            <li><a href="deposit.html"><span>💰</span> Deposit</a></li>
+            <li><a href="profile.html"><span>👤</span> Profile</a></li>
+            <li><a href="#" onclick="Auth.logout(); return false;" style="color:#ff4d4d;"><span>🚪</span> Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="sidebar-overlay" id="more-overlay" style="z-index:1065;"></div>
+    <script src="js/mobile.js"></script>
     <script>
-        let minWithdraw = 20;
-
         document.addEventListener('DOMContentLoaded', () => {
             const minWithSettings = Admin.getSetting('minWithdraw');
             if (minWithSettings) {
-                minWithdraw = parseFloat(minWithSettings);
-                document.getElementById('pub-min-with').innerText = minWithdraw;
-                document.getElementById('with-amount').min = minWithdraw;
-                document.getElementById('with-amount').placeholder = `Min ${minWithdraw.toFixed(2)}`;
+                document.getElementById('pub-min-with').innerText = minWithSettings;
+                document.getElementById('with-amount').min = minWithSettings;
             }
-            renderWithdrawHistory();
+
+            renderWithdrawalHistory();
+
+            document.getElementById('withdraw-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const amount = parseFloat(document.getElementById('with-amount').value);
+                const address = document.getElementById('with-address').value.trim();
+                const currentUser = Auth.getCurrentUser();
+
+                if (!currentUser) {
+                    alert('You must be logged in.');
+                    return;
+                }
+
+                if (amount < (parseFloat(Admin.getSetting('minWithdraw')) || 20)) {
+                    alert('Minimum withdrawal is $' + (Admin.getSetting('minWithdraw') || 20));
+                    return;
+                }
+
+                if (currentUser.balance < amount) {
+                    alert('Insufficient balance.');
+                    return;
+                }
+
+                const res = Admin.requestTransaction(currentUser.id, 'withdraw', amount, address);
+                if (res.success) {
+                    alert('Withdrawal request submitted successfully!');
+                    document.getElementById('withdraw-form').reset();
+                    renderWithdrawalHistory();
+                    // Update header balance immediately
+                    const balHeader = document.querySelector('.user-balance-value');
+                    if (balHeader) balHeader.innerText = `$${(currentUser.balance - amount).toFixed(2)} USDT`;
+                } else {
+                    alert('Error: ' + res.message);
+                }
+            });
         });
 
-        function renderWithdrawHistory() {
+        function renderWithdrawalHistory() {
             const currentUser = Auth.getCurrentUser();
             if (!currentUser) return;
             const txs = Admin.getTransactions('withdraw').filter(t => t.userId === currentUser.id);
-            const tbody = document.getElementById('user-withdraw-history');
+            const tbody = document.getElementById('user-withdrawal-history');
             tbody.innerHTML = '';
 
             if (txs.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No withdrawal history</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No withdrawals found</td></tr>`;
                 return;
             }
 
-            txs.forEach(t => {
+            txs.reverse().forEach(t => {
                 let statusColor = t.status === 'approved' ? 'var(--primary-neon)' : (t.status === 'rejected' ? '#ff4d4d' : '#ffcc00');
                 tbody.innerHTML += `
                     <tr>
-                        <td>$${t.amount.toFixed(2)}</td>
-                        <td style="font-family: monospace; font-size: 0.8rem;">${t.address.substring(0, 15)}...</td>
-                        <td>${new Date(t.date).toLocaleDateString()}</td>
-                        <td style="color: ${statusColor}; text-transform: capitalize;">${t.status}</td>
+                        <td style="font-weight: 600;">$${t.amount.toFixed(2)}</td>
+                        <td style="font-size: 0.85rem; font-family: monospace;">${t.note || 'USDT TRC20'}</td>
+                        <td style="font-size: 0.85rem; color: var(--text-muted);">${new Date(t.date).toLocaleDateString()}</td>
+                        <td style="color: ${statusColor}; text-transform: capitalize; font-weight: 600;">${t.status}</td>
                     </tr>
                 `;
             });
         }
-
-        document.getElementById('withdraw-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const amount = parseFloat(document.getElementById('with-amount').value);
-            const address = document.getElementById('with-address').value;
-            const user = Auth.getCurrentUser();
-
-            if (amount < minWithdraw) {
-                alert(`The minimum withdrawal amount is $${minWithdraw} USDT.`);
-                return;
-            }
-
-            // Check if user has sufficient, non-pending balance
-            // We need to calculate how much is already pending so they don't double spend
-            const pendingCurrent = Admin.getTransactions('withdraw')
-                .filter(t => t.userId === user.id && t.status === 'pending')
-                .reduce((sum, t) => sum + t.amount, 0);
-
-            const availableBalance = user.balance - pendingCurrent;
-
-            if (user && availableBalance >= amount) {
-                Admin.requestTransaction(user.id, 'withdraw', amount, address);
-                alert('Withdrawal request submitted! It is now pending Admin approval.');
-                renderWithdrawHistory();
-                e.target.reset(); // clear form
-            } else {
-                alert(`Insufficient available balance. You have $${availableBalance.toFixed(2)} available ($${pendingCurrent.toFixed(2)} currently locked in pending withdrawals).`);
-            }
-        });
     </script>
-    <!-- ========== MOBILE NAVIGATION DRAWER ========== -->
-    <div class="mob-nav-overlay" id="mob-nav-overlay"></div>
-    <div class="mob-nav-drawer" id="mob-nav-drawer">
-        <!-- Header -->
-        <div class="mob-nav-header">
-            <div class="mob-nav-title">
-                <div class="mob-nav-avatar" id="mob-nav-avatar">??</div>
-                <div>
-                    <div class="mob-nav-username" id="mob-nav-username">Welcome!</div>
-                    <div class="mob-nav-subtitle">SpinTask Member</div>
-                </div>
-            </div>
-            <button class="mob-nav-close" id="mob-nav-close" aria-label="Close menu">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- Balance strip -->
-        <div class="mob-nav-balance">
-            <div class="mob-nav-bal-item">
-                <span class="mob-nav-bal-label">?? Balance</span>
-                <span class="mob-nav-bal-value user-balance-value">$0.00</span>
-            </div>
-            <a href="deposit.html" class="mob-nav-dep-btn">+ Deposit</a>
-        </div>
-
-        <!-- Nav Grid -->
-        <div class="mob-nav-section-label">Navigation</div>
-        <div class="mob-nav-grid">
-            <a href="dashboard.html" class="mob-nav-item active">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Home</div>
-            </a>
-            <a href="tasks.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Tasks</div>
-            </a>
-            <a href="spin.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Spin Wheel</div>
-            </a>
-            <a href="luckydraw.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Lucky Draw</div>
-            </a>
-            <a href="pool.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Community Pool</div>
-            </a>
-            <a href="plans.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Trading Plans</div>
-            </a>
-            <a href="referral.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Referrals</div>
-            </a>
-            <a href="deposit.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Deposit</div>
-            </a>
-            <a href="withdraw.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Withdraw</div>
-            </a>
-            <a href="profile.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
-                <div class="mob-nav-label">Profile</div>
-            </a>
-        </div>
-
-        <!-- Footer Actions -->
-        <div class="mob-nav-footer">
-            <a href="support.html" class="mob-nav-support-btn">?? Support</a>
-            <button class="mob-nav-logout-btn" onclick="Auth.logout()">?? Logout</button>
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
-
-            // Welcome message
-            const wm = document.getElementById('welcome-msg');
-            if (wm) wm.innerText = `Welcome back, ${user.name.split(' ')[0]}! ??`;
-
-            // Earnings
-            const totalEarningsEl = document.getElementById('user-total-earnings');
-            if (totalEarningsEl) totalEarningsEl.innerText = `${(user.earnings || 0).toFixed(2)} USDT`;
-
-            // Status badge in stats grid
-            const badgeDash = document.getElementById('status-badge-dash');
-            const statusSub = document.getElementById('status-sub-dash');
-            if (user.verified) {
-                badgeDash.innerHTML = `<span class="verified-badge">? Verified</span>`;
-                statusSub.innerText = '1 free spin daily';
-            } else {
-                badgeDash.innerHTML = `<span class="unverified-badge">?? Unverified</span>`;
-                statusSub.innerText = 'Verify for $1 to unlock spins';
-            }
-
-            // Verification Banner
-            const bannerContainer = document.getElementById('verify-banner-container');
-            if (!user.verified && bannerContainer) {
-                bannerContainer.innerHTML = `
-                    <div class="verify-banner">
-                        <div class="vb-icon">??</div>
-                        <div class="vb-text">
-                            <h4>Your account is not verified</h4>
-                            <p>Pay $1.00 USDT to unlock the Spin Wheel and earn 1 free daily spin for life.</p>
-                        </div>
-                        <button class="btn-verify" onclick="doVerify()">Verify Now � $1</button>
-                    </div>
-                `;
-            }
-
-            // Profile Card
-            const profileBadge = document.getElementById('profile-badge');
-            if (profileBadge) {
-                profileBadge.innerHTML = user.verified
-                    ? `<span class="verified-badge">? Verified Account</span>`
-                    : `<span class="unverified-badge">?? Unverified</span>`;
-            }
-
-            const profileCard = document.getElementById('profile-card');
-            if (profileCard) {
-                const regDate = user.registeredAt || user.createdAt
-                    ? new Date(user.registeredAt || user.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : 'N/A';
-                const verDate = user.verificationDate
-                    ? new Date(user.verificationDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                    : '�';
-                profileCard.innerHTML = `
-                    <div class="profile-field">
-                        <label>Username</label>
-                        <div class="pf-value">${user.name}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Email Address</label>
-                        <div class="pf-value">${user.email}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Account Balance</label>
-                        <div class="pf-value" style="color: var(--primary-neon);">$${(user.balance || 0).toFixed(2)} USDT</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Total Earned</label>
-                        <div class="pf-value">$${(user.earnings || 0).toFixed(2)} USDT</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Member Since</label>
-                        <div class="pf-value">${regDate}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Verification Date</label>
-                        <div class="pf-value">${verDate}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Referral Code</label>
-                        <div class="pf-value" style="font-family: monospace; color: var(--accent-blue);">${user.referralCode || '�'}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Account ID</label>
-                        <div class="pf-value" style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">${user.id}</div>
-                    </div>
-                `;
-            }
-
-            // Trading Investment Section population
-            renderDashboardTrading(user);
-        });
-
-        function renderDashboardTrading(user) {
-            const container = document.getElementById('dashboard-trading-section');
-            if (!container || !user) return;
-
-            if (typeof Trading === 'undefined') return;
-
-            const investments = Trading.getUserInvestments().filter(i => i.userId === user.id && i.status === 'active');
-
-            if (investments.length > 0) {
-                // Update the small side block
-                const pName = document.getElementById('dash-plan-basic-name');
-                const pDesc = document.getElementById('dash-plan-basic-desc');
-                if (pName && pDesc) {
-                    pName.innerText = investments.length + ' Active Plan(s)';
-                    pDesc.innerText = 'You are earning daily passive profit!';
-                }
-            }
-
-            if (investments.length === 0) {
-                container.innerHTML = `
-                    <div class="glass" style="padding: 30px; border-radius: 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.2);">
-                        <h3 style="margin-bottom: 10px;">?? Trading & Investment</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 20px;">You do not have any active trading plans. Start earning daily passive income today!</p>
-                        <a href="plans.html" class="btn btn-primary">Explore Trading Plans</a>
-                    </div>
-                 `;
-                return;
-            }
-
-            let html = '<div class="glass" style="padding: 30px; border-radius: 20px;"><h3 style="margin-bottom: 20px;">?? Active Trading Plans</h3><div style="display: flex; flex-direction: column; gap: 20px;">';
-
-            investments.forEach(inv => {
-                const plan = Trading.PLANS_DEF.find(p => p.id === inv.planId);
-                if (!plan) return;
-
-                const baseRate = Trading.getRate(plan);
-                const rate = parseFloat((baseRate + (inv.reinvestBonus || 0)).toFixed(2));
-                const dailyProfit = parseFloat(((inv.amount * rate) / 100).toFixed(2));
-                const earnedAmount = parseFloat((inv.totalCredited || 0).toFixed(2));
-
-                const since = new Date(inv.startDate);
-                const daysElapsed = Math.floor((new Date() - since) / (1000 * 60 * 60 * 24));
-                const remainingDays = Math.max(0, 60 - daysElapsed);
-
-                html += `
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; position: relative;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                            <div>
-                                <h4 style="color: var(--primary-neon); font-size: 1.1rem; margin-bottom: 5px;">${plan.name} Plan</h4>
-                                <span style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 4px;">Since ${since.toLocaleDateString()}</span>
-                            </div>
-                            <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="border-color: #39ff14; color: #39ff14; padding: 6px 15px; font-size: 0.85rem;" ${earnedAmount <= 0 ? 'disabled title="Earn some profit first to reinvest"' : ''}>?? Reinvest Profits</button>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px;">
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Total Invested</div>
-                                <div style="font-weight: 700;">$${inv.amount.toFixed(2)}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Daily Rate</div>
-                                <div style="font-weight: 700;">${rate}% ${inv.reinvestBonus ? '<span style="color:#ffaa00; font-size: 0.8em;">(Bonus)</span>' : ''}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Daily Earnings</div>
-                                <div style="font-weight: 700; color: #39ff14;">+$${dailyProfit}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Total Earned</div>
-                                <div style="font-weight: 700; color: #ffaa00;">$${earnedAmount}</div>
-                            </div>
-                            <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 3px;">Remaining Days</div>
-                                <div style="font-weight: 700;">${remainingDays} Days</div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            html += '</div></div>';
-            container.innerHTML = html;
-        }
-
-        window.handleReinvest = function (investmentId) {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
-
-            if (!confirm('?? Are you sure you want to reinvest your accrued profits?\nThis will deduct the earned amount from your balance, add it to your investment, and give you a +0.5% daily rate bonus!')) {
-                return;
-            }
-
-            const res = Trading.reinvestProfits(user.id, investmentId);
-            if (res.success) {
-                alert(res.message);
-                location.reload();
-            } else {
-                alert('? ' + res.message);
-            }
-        };
-
-        function doVerify() {
-            const user = Auth.getCurrentUser();
-            if (!user) return;
-            if ((user.balance || 0) < 1) {
-                alert('? Insufficient balance. Please deposit at least $1.00 USDT to verify your account.');
-                return;
-            }
-            if (confirm('Verify your account for $1.00 USDT? This will unlock the daily Spin Wheel.')) {
-                const result = Auth.verifyAccount();
-                if (result.success) {
-                    alert('? Account verified! You now get 1 free daily spin. Refreshing...');
-                    location.reload();
-                } else {
-                    alert('? ' + result.message);
-                }
-            }
-        }
-    </script>
-    <!-- Mobile Navigation JS -->
-    <script>
-        (function () {
-            const dotsBtn = document.getElementById('mob-dots-btn');
-            const drawer = document.getElementById('mob-nav-drawer');
-            const overlay = document.getElementById('mob-nav-overlay');
-            const closeBtn = document.getElementById('mob-nav-close');
-
-            function openDrawer() {
-                drawer.classList.add('open');
-                overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                // Fill user info
-                const user = (typeof Auth !== 'undefined') ? Auth.getCurrentUser() : null;
-                if (user) {
-                    const uname = document.getElementById('mob-nav-username');
-                    if (uname) uname.textContent = user.name ? user.name.split(' ')[0] : 'User';
-                }
-            }
-            function closeDrawer() {
-                drawer.classList.remove('open');
-                overlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            if (dotsBtn) dotsBtn.addEventListener('click', openDrawer);
-            if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
-            if (overlay) overlay.addEventListener('click', closeDrawer);
-
-            // Swipe down to close
-            let startY = 0;
-            if (drawer) {
-                drawer.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; }, { passive: true });
-                drawer.addEventListener('touchend', (e) => {
-                    if (e.changedTouches[0].clientY - startY > 80) closeDrawer();
-                }, { passive: true });
-            }
-        })();
-    </script>
-
 </body>
-
 </html>
