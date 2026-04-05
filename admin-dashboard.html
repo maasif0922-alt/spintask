@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1606,31 +1606,53 @@
             var hist = Admin.getAllTransfers().slice(0, 15);
             document.getElementById('sp-history').innerHTML = hist.length ? hist.map(t => `<div class="sp-history-item"><span>${t.toName || t.toId}</span><span style="color:var(--primary-neon)">${fmt(t.amount)}</span><span style="color:var(--text-muted);font-size:0.78rem">${new Date(t.date).toLocaleString()}</span></div>`).join('') : '<p style="color:var(--text-muted)">No transfers yet.</p>';
         }
-        function sendPoints() {
-            var emailVal = (document.getElementById('sp-user').value || '').trim();
+        async function sendPoints() {
+            var emailVal = (document.getElementById('sp-user').value || '').trim().toLowerCase();
             var amt = parseFloat(document.getElementById('sp-amount').value);
             var note = document.getElementById('sp-note').value;
             if (!emailVal || !amt || amt <= 0) { alert('Select a valid user email and enter amount.'); return; }
             
             var users = (JSON.parse(localStorage.getItem('spintask_users')) || []);
-            var idx = users.findIndex(u => u.email === emailVal);
+            var idx = users.findIndex(u => (u.email || '').toLowerCase() === emailVal);
             
-            if (idx === -1) {
+            let targetUser = idx !== -1 ? users[idx] : null;
+
+            // If not found locally, query Firebase directly
+            if (!targetUser && typeof db !== 'undefined' && db !== null) {
+                try {
+                    const snap = await db.ref('users').orderByChild('email').equalTo(emailVal).once('value');
+                    if (snap.exists()) {
+                        const vals = snap.val();
+                        targetUser = Object.values(vals)[0];
+                        // Add to local cache
+                        users.push(targetUser);
+                        idx = users.length - 1;
+                        localStorage.setItem('spintask_users', JSON.stringify(users));
+                    }
+                } catch (e) {
+                    console.warn('[RealtimeDB] Fallback user search failed:', e.message);
+                }
+            }
+
+            if (!targetUser) {
                 alert('ERROR: This email (' + emailVal + ') is NOT registered. You can only share points with registered users.');
                 return;
             }
 
-            if (confirm('Are you sure you want to send ' + fmt(amt) + ' to ' + users[idx].name + ' (' + emailVal + ')?')) {
-                var uid = users[idx].id;
-                users[idx].balance = parseFloat(((parseFloat(users[idx].balance) || 0) + amt).toFixed(2));
-                users[idx].earnings = parseFloat(((parseFloat(users[idx].earnings) || 0) + amt).toFixed(2));
+            if (confirm('Are you sure you want to send ' + fmt(amt) + ' to ' + targetUser.name + ' (' + emailVal + ')?')) {
+                var uid = targetUser.id;
+                targetUser.balance = parseFloat(((parseFloat(targetUser.balance) || 0) + amt).toFixed(2));
+                targetUser.earnings = parseFloat(((parseFloat(targetUser.earnings) || 0) + amt).toFixed(2));
+                
+                // Save locally
+                users[idx] = targetUser;
                 localStorage.setItem('spintask_users', JSON.stringify(users));
                 
-                // Sync balance to Firebase Realtime DB (so user sees it on their device)
+                // Sync balance to Firebase Realtime DB
                 if (typeof db !== 'undefined' && db !== null) {
                     db.ref('users/' + uid).update({ 
-                        balance: users[idx].balance,
-                        earnings: users[idx].earnings
+                        balance: targetUser.balance,
+                        earnings: targetUser.earnings
                     }).then(() => {
                         console.log('[RealtimeDB] Balance synced to cloud for user:', emailVal);
                     }).catch(e => {
@@ -1638,10 +1660,10 @@
                     });
                 }
 
-                Admin.addTransferRecord({ toId: uid, toName: users[idx].name, amount: amt, note: note, by: 'admin' });
-                Admin.logAction('Admin sent ' + fmt(amt) + ' to ' + users[idx].email + '. Note: ' + note);
+                Admin.addTransferRecord({ toId: uid, toName: targetUser.name, amount: amt, note: note, by: 'admin' });
+                Admin.logAction('Admin sent ' + fmt(amt) + ' to ' + emailVal + '. Note: ' + note);
                 
-                alert('SUCCESS: Sent ' + fmt(amt) + ' to ' + users[idx].name + '!');
+                alert('SUCCESS: Sent ' + fmt(amt) + ' to ' + targetUser.name + '!');
                 document.getElementById('sp-amount').value = ''; 
                 document.getElementById('sp-note').value = '';
                 renderSendPoints();
