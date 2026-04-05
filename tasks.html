@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -232,6 +232,16 @@
                     // Update real balance
                     Auth.updateBalance(reward);
                     Auth.updateEarnings(reward);
+
+                    // Record in history for dashboard
+                    const history = JSON.parse(localStorage.getItem('spintask_tasks_history') || '[]');
+                    history.push({
+                        userId: user.id,
+                        title: btn.closest('.task-item').querySelector('h3').innerText,
+                        reward: reward,
+                        timestamp: new Date().toISOString()
+                    });
+                    localStorage.setItem('spintask_tasks_history', JSON.stringify(history));
 
                     // Fire admin alert
                     if (typeof Admin !== 'undefined') {

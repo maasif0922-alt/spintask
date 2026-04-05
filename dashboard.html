@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -192,7 +192,8 @@
                     <h2 id="welcome-msg" style="font-size: 1.8rem;">Welcome! 👋</h2>
                     <p style="color: var(--text-muted);">Here's what's happening today.</p>
                 </div>
-                <div style="display: flex; gap: 20px;">
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <a href="deposit.html" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">+ Deposit</a>
                     <div class="glass"
                         style="padding: 10px 20px; border-radius: 10px; display: flex; align-items: center; gap: 10px;">
                         <span style="color: var(--primary-neon);">USDT</span>
@@ -240,53 +241,13 @@
 
             <!-- Dashboard Row 1 -->
             <div
-                style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 30px; align-items: start;">
-                <!-- Profile Section -->
-                <div class="glass" style="padding: 30px; border-radius: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                        <h3 style="font-size: 1.3rem;">Personal Information</h3>
-                        <a href="profile.html"
-                            style="font-size: 0.85rem; color: var(--primary-neon); text-decoration: underline;">Edit
-                            Profile</a>
-                    </div>
-
-                    <div class="profile-card">
-                        <div class="profile-field">
-                            <label>Full Name</label>
-                            <div class="pf-value" id="prof-name">Loading...</div>
-                        </div>
-                        <div class="profile-field">
-                            <label>Email Address</label>
-                            <div class="pf-value" id="prof-email">Loading...</div>
-                        </div>
-                        <div class="profile-field">
-                            <label>Account Status</label>
-                            <div id="prof-status-badge">Loading...</div>
-                        </div>
-                        <div class="profile-field">
-                            <label>Member Since</label>
-                            <div class="pf-value" id="prof-date">Loading...</div>
-                        </div>
-                    </div>
-
-                    <div
-                        style="margin-top: 30px; padding: 20px; background: rgba(57, 255, 20, 0.05); border-radius: 16px; display: flex; align-items: center; gap: 15px;">
-                        <div
-                            style="width: 45px; height: 45px; border-radius: 12px; background: rgba(57, 255, 20, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
-                            🚀</div>
-                        <div>
-                            <h4 style="font-size: 0.95rem; margin-bottom: 2px;">Ready to grow?</h4>
-                            <p style="font-size: 0.82rem; color: var(--text-muted);">Upgrade to a Trading Plan to
-                                multiply your daily earnings.</p>
-                        </div>
-                        <a href="plans.html" class="btn btn-primary"
-                            style="margin-left: auto; padding: 8px 16px; font-size: 0.85rem;">View Plans</a>
-                    </div>
-                </div>
-
+                style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px; align-items: start;">
                 <!-- Recent Activities -->
                 <div class="glass" style="padding: 30px; border-radius: 20px;">
-                    <h3 style="margin-bottom: 25px; font-size: 1.3rem;">Recent Tasks</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <h3 style="font-size: 1.3rem;">Recent Completed Tasks</h3>
+                        <a href="tasks.html" style="font-size: 0.85rem; color: var(--primary-neon); text-decoration: none;">View All Tasks →</a>
+                    </div>
                     <div id="recent-tasks-list">
                         <!-- Populated by JS -->
                         <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
@@ -352,26 +313,17 @@
             // Welcome msg
             document.getElementById('welcome-msg').innerText = `Welcome, ${user.name.split(' ')[0]}! 👋`;
 
-            // Profile info
-            document.getElementById('prof-name').innerText = user.name;
-            document.getElementById('prof-email').innerText = user.email;
-            document.getElementById('prof-date').innerText = new Date(user.joinedDate).toLocaleDateString();
-
             // Status Badge
-            const statusArea = document.getElementById('prof-status-badge');
-            if (user.verified) {
-                statusArea.innerHTML = `<span class="verified-badge"><span>✅</span> Verified</span>`;
-            } else {
-                statusArea.innerHTML = `<span class="unverified-badge"><span>⚠️</span> Unverified</span>`;
+            if (!user.verified) {
                 // Show banner
                 document.getElementById('verify-banner-area').innerHTML = `
                     <div class="verify-banner">
                         <div class="vb-icon">🚀</div>
                         <div class="vb-text">
                             <h4>Account Verification Required</h4>
-                            <p>Verify your account to enable withdrawals and access premium trading plans.</p>
+                            <p>Verify your account for $1.00 USDT to unlock withdrawals and premium trading plans.</p>
                         </div>
-                        <button class="btn-verify" onclick="location.href='profile.html'">Verify Now</button>
+                        <button class="btn-verify" onclick="doVerify()">Verify Now ($1)</button>
                     </div>
                 `;
             }
@@ -381,7 +333,55 @@
             document.getElementById('stats-referrals').innerText = user.referrals || 0;
             // Spins - default is 5 per day unless plan
             document.getElementById('stats-spins').innerText = `${user.spinsToday || 0}/5`;
+
+            renderRecentTasks(user.id);
         });
+
+        function doVerify() {
+            const user = Auth.getCurrentUser();
+            if (!user) return;
+            if ((user.balance || 0) < 1) {
+                if (confirm('❌ Insufficient balance. You need $1.00 USDT. Go to deposit?')) {
+                    window.location.href = 'deposit.html';
+                }
+                return;
+            }
+            if (confirm('Verify your account for $1.00 USDT?')) {
+                const res = Auth.verifyAccount();
+                if (res.success) {
+                    alert('✅ Account verified successfully!');
+                    location.reload();
+                } else {
+                    alert('❌ ' + res.message);
+                }
+            }
+        }
+
+        function renderRecentTasks(userId) {
+            const container = document.getElementById('recent-tasks-list');
+            const history = JSON.parse(localStorage.getItem('spintask_tasks_history') || '[]');
+            const userHistory = history.filter(h => h.userId === userId).reverse().slice(0, 5);
+
+            if (userHistory.length === 0) return;
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            userHistory.forEach(task => {
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 1.2rem;">✅</span>
+                            <div>
+                                <div style="font-size: 0.9rem; font-weight: 600;">${task.title}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">${new Date(task.timestamp).toLocaleTimeString()}</div>
+                            </div>
+                        </div>
+                        <div style="color: var(--primary-neon); font-weight: 700;">+$${task.reward.toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
     </script>
     <!-- ========== MOBILE NAVIGATION DRAWER ========== -->
     <div class="mob-nav-overlay" id="mob-nav-overlay"></div>
