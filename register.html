@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -64,7 +64,12 @@
                         style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Confirm
                         Password</label>
                     <input type="password" id="confirm-password" required placeholder="Re-enter password"
-                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
+                        style="width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
+                        
+                    <label
+                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Referral Code (Optional)</label>
+                    <input type="text" id="ref-code-input" placeholder="e.g. REF-ABCDE" autocomplete="off"
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px dashed rgba(57, 255, 20, 0.3); border-radius: 8px; color: #39ff14; font-weight: 600; outline: none; transition: var(--transition);">
                 </div>
 
                 <div style="margin-bottom: 25px; display: flex; align-items: flex-start; gap: 10px;">
@@ -143,6 +148,14 @@
     <script src="js/admin.js"></script>
     <script src="js/auth.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            if (refCode) {
+                document.getElementById('ref-code-input').value = refCode;
+            }
+        });
+
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('name').value;
@@ -169,11 +182,10 @@
                 // Delay for UX
                 await new Promise(r => setTimeout(r, 800));
 
-                const urlParams = new URLSearchParams(window.location.search);
-                const refCode = urlParams.get('ref');
+                const refCodeInput = document.getElementById('ref-code-input').value.trim();
 
                 // Perform registration
-                await Auth.register(name, email, password, refCode);
+                await Auth.register(name, email, password, refCodeInput);
 
                 // Send Welcome Email (runs in background, non-blocking)
                 Auth.sendWelcomeEmail(name, email);

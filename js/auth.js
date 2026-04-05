@@ -652,10 +652,10 @@ const Auth = {
         const currentUser = this.getCurrentUser();
         const path = window.location.pathname;
 
-        const isAdminAuthPage = path.includes('admin-login.html');
-        // Make sure 'admin-login.html' doesn't falsely trigger as a user auth page
-        const isUserAuthPage = (path.includes('login.html') && !isAdminAuthPage) || path.includes('register.html');
-        const isAdminDashboard = path.includes('admin-dashboard.html') || path.includes('admin.html');
+        const isAdminAuthPage = path.includes('admin-login');
+        // Make sure 'admin-login' doesn't falsely trigger as a user auth page
+        const isUserAuthPage = (path.includes('login') && !isAdminAuthPage) || path.includes('register');
+        const isAdminDashboard = path.includes('admin-dashboard') || path.includes('admin');
 
         if (!currentUser) {
             if (isAdminDashboard) {
