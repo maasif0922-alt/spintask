@@ -8,6 +8,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyABlI1bnZb4EDuMm3LN0cXVGZyTHWFqCUo",
     authDomain: "spin-54ba6.firebaseapp.com",
     projectId: "spin-54ba6",
+    databaseURL: "https://spin-54ba6-default-rtdb.firebaseio.com",
     storageBucket: "spin-54ba6.firebasestorage.app",
     messagingSenderId: "670887738809",
     appId: "1:670887738809:web:b54e788b6e909460d24a68",
