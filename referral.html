@@ -350,9 +350,16 @@
 
         function updateReferralUI(user) {
             const allUsers = Auth.getUsers();
-            const level1 = allUsers.filter(u => u.referredBy === user.referralCode);
-            const level1Codes = level1.map(u => u.referralCode);
-            const level2 = allUsers.filter(u => level1Codes.includes(u.referredBy));
+            // Get referrals who used my exact ID, my referral code, or my ADMIN_ alias (if I'm admin)
+            const level1 = allUsers.filter(u => {
+                if (!u.referredBy) return false;
+                const ref = u.referredBy.toUpperCase();
+                const myCode = (user.referralCode || '').toUpperCase();
+                const myId = user.id.toUpperCase();
+                return ref === myCode || ref === myId || (user.role === 'admin' && ref === 'ADMIN_');
+            });
+            const level1Codes = level1.map(u => (u.referralCode || u.id).toUpperCase());
+            const level2 = allUsers.filter(u => u.referredBy && level1Codes.includes(u.referredBy.toUpperCase()));
 
             // Stats
             const cards = document.querySelectorAll('.dash-card .value');

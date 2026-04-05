@@ -120,7 +120,8 @@ const Auth = {
             const cleanRef = newUser.referredBy.replace('REF-', '').toUpperCase();
             const inviter = allUsers.find(u => 
                 u.id === newUser.referredBy || 
-                (u.referralCode && u.referralCode.replace('REF-', '').toUpperCase() === cleanRef)
+                (u.referralCode && u.referralCode.replace('REF-', '').toUpperCase() === cleanRef) ||
+                (u.role === 'admin' && cleanRef === 'ADMIN_')
             );
 
             if (inviter) {
@@ -260,14 +261,20 @@ const Auth = {
             
             // --- HARDCODED ADMIN SESSION HANDLE ---
             if (session.userId === 'admin_master') {
+                const allUsers = this.getUsers();
+                const realAdmin = allUsers.find(u => u.id === 'admin_master' || u.role === 'admin');
+                
                 return {
                     id: 'admin_master',
                     email: 'admin@spintask.com',
                     name: 'Administrator',
                     role: 'admin',
                     verified: true,
-                    balance: 999999,
-                    earnings: 0
+                    balance: realAdmin ? (realAdmin.balance || 999999) : 999999,
+                    earnings: realAdmin ? (realAdmin.earnings || 0) : 0,
+                    referralCount: realAdmin ? (realAdmin.referralCount || 0) : 0,
+                    referralEarnings: realAdmin ? (realAdmin.referralEarnings || 0) : 0,
+                    referralCode: realAdmin ? (realAdmin.referralCode || 'ADMIN_MASTER') : 'ADMIN_MASTER'
                 };
             }
             // --------------------------------------
@@ -550,7 +557,8 @@ const Auth = {
         // Find the inviter using exact ID or stripped referral code
         const inviterIndex = users.findIndex(u => 
             u.id === buyer.referredBy || 
-            (u.referralCode && u.referralCode.replace('REF-', '') === cleanRefCode)
+            (u.referralCode && u.referralCode.replace('REF-', '').toUpperCase() === cleanRefCode.toUpperCase()) ||
+            (u.role === 'admin' && cleanRefCode.toUpperCase() === 'ADMIN_')
         );
         
         if (inviterIndex !== -1) {
