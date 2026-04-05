@@ -1,386 +1,386 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE❌ html>
+<html❌ lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Login | SpinTask</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .error-toast {
-            background: #ff4d4d;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideIn 0.3s ease;
-        }
+❌ ❌ ❌ ❌ <meta❌ charset="UTF-8">
+❌ ❌ ❌ ❌ <meta❌ name="viewport"❌ content="width=device-width,❌ initial-scale=1.0,❌ shrink-to-fit=no">
+❌ ❌ ❌ ❌ <title>Login❌ |❌ SpinTask</title>
+❌ ❌ ❌ ❌ <link❌ href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"❌ rel="stylesheet">
+❌ ❌ ❌ ❌ <link❌ rel="stylesheet"❌ href="css/style.css">
+❌ ❌ ❌ ❌ <style>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ .error-toast❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ background:❌ #ff4d4d;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ color:❌ #fff;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ padding:❌ 10px❌ 20px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ border-radius:❌ 8px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ margin-bottom:❌ 20px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ display:❌ none;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ animation:❌ slideIn❌ 0.3s❌ ease;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        .success-toast {
-            background: #39ff14;
-            color: #1a1a1a;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideIn 0.3s ease;
-            font-weight: 600;
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ .success-toast❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ background:❌ #39ff14;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ color:❌ #1a1a1a;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ padding:❌ 10px❌ 20px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ border-radius:❌ 8px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ margin-bottom:❌ 20px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ display:❌ none;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ animation:❌ slideIn❌ 0.3s❌ ease;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ font-weight:❌ 600;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        .loading-spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin: 0 auto;
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ .loading-spinner❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ display:❌ none;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ width:❌ 20px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ height:❌ 20px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ border:❌ 3px❌ solid❌ rgba(255,❌ 255,❌ 255,❌ 0.3);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ border-radius:❌ 50%;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ border-top-color:❌ #fff;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ animation:❌ spin❌ 1s❌ ease-in-out❌ infinite;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ margin:❌ 0❌ auto;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ @keyframes❌ spin❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ to❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ transform:❌ rotate(360deg);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ @keyframes❌ slideIn❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ from❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ transform:❌ translateY(-20px);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ opacity:❌ 0;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ to❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ transform:❌ translateY(0);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ opacity:❌ 1;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        .password-container {
-            position: relative;
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ .password-container❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ position:❌ relative;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: var(--text-muted);
-            font-size: 1.2rem;
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ .toggle-password❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ position:❌ absolute;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ right:❌ 12px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ top:❌ 50%;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ transform:❌ translateY(-50%);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ cursor:❌ pointer;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ color:❌ var(--text-muted);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ font-size:❌ 1.2rem;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        .captcha-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ .captcha-box❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ background:❌ rgba(255,❌ 255,❌ 255,❌ 0.05);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ padding:❌ 10px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ border-radius:❌ 8px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ margin-bottom:❌ 15px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ display:❌ flex;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ align-items:❌ center;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ justify-content:❌ space-between;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ border:❌ 1px❌ solid❌ rgba(255,❌ 255,❌ 255,❌ 0.1);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        .captcha-text {
-            font-weight: 700;
-            color: var(--primary-neon);
-            letter-spacing: 2px;
-            user-select: none;
-        }
-    </style>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ .captcha-text❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ font-weight:❌ 700;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ color:❌ var(--primary-neon);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ letter-spacing:❌ 2px;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ user-select:❌ none;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ </style>
 </head>
 
-<body class="auth-page">
-    <!-- Back Button -->
-    <a href="index.html" class="glass"
-        style="position: absolute; top: 20px; left: 20px; padding: 10px 20px; border-radius: 10px; display: flex; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-size: 0.9rem; z-index: 10; transition: background 0.3s ease;">
-        <span style="font-size: 1.2rem;">←</span> Back to Home
-    </a>
+<body❌ class="auth-page">
+❌ ❌ ❌ ❌ <!--❌ Back❌ Button❌ -->
+❌ ❌ ❌ ❌ <a❌ href="index.html"❌ class="glass"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="position:❌ absolute;❌ top:❌ 20px;❌ left:❌ 20px;❌ padding:❌ 10px❌ 20px;❌ border-radius:❌ 10px;❌ display:❌ flex;❌ align-items:❌ center;❌ gap:❌ 8px;❌ color:❌ #fff;❌ text-decoration:❌ none;❌ font-size:❌ 0.9rem;❌ z-index:❌ 10;❌ transition:❌ background❌ 0.3s❌ ease;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <span❌ style="font-size:❌ 1.2rem;">←</span>❌ Back❌ to❌ Home
+❌ ❌ ❌ ❌ </a>
 
-    <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
-        <div class="glass"
-            style="width: 100%; max-width: 400px; padding: 40px; border-radius: 20px; animation: slideIn 0.5s ease;">
+❌ ❌ ❌ ❌ <div❌ class="container"❌ style="display:❌ flex;❌ justify-content:❌ center;❌ align-items:❌ center;❌ min-height:❌ 100vh;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ class="glass"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:❌ 100%;❌ max-width:❌ 400px;❌ padding:❌ 40px;❌ border-radius:❌ 20px;❌ animation:❌ slideIn❌ 0.5s❌ ease;">
 
-            <div id="error-msg" class="error-toast"></div>
-            <div id="success-msg" class="success-toast"></div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ id="error-msg"❌ class="error-toast"></div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ id="success-msg"❌ class="success-toast"></div>
 
-            <div style="text-align: center; margin-bottom: 30px;">
-                <a href="index.html" class="logo" style="justify-content: center; margin-bottom: 10px;">
-                    <svg width="30" height="30" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="20" cy="20" r="18" stroke="#39ff14" stroke-width="2" />
-                        <circle cx="20" cy="20" r="4" fill="#39ff14" />
-                    </svg>
-                    SpinTask<span>.</span>
-                </a>
-                <h2 style="font-size: 1.5rem;">Welcome Back</h2>
-                <p style="color: var(--text-muted);">Enter your credentials to access your account</p>
-            </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="text-align:❌ center;❌ margin-bottom:❌ 30px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <a❌ href="index.html"❌ class="logo"❌ style="justify-content:❌ center;❌ margin-bottom:❌ 10px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <svg❌ width="30"❌ height="30"❌ viewBox="0❌ 0❌ 40❌ 40"❌ fill="none"❌ xmlns="http://www.w3.org/2000/svg">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <circle❌ cx="20"❌ cy="20"❌ r="18"❌ stroke="#39ff14"❌ stroke-width="2"❌ />
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <circle❌ cx="20"❌ cy="20"❌ r="4"❌ fill="#39ff14"❌ />
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </svg>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ SpinTask<span>.</span>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </a>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <h2❌ style="font-size:❌ 1.5rem;">Welcome❌ Back</h2>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <p❌ style="color:❌ var(--text-muted);">Enter❌ your❌ credentials❌ to❌ access❌ your❌ account</p>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-            <form id="login-form">
-                <div style="margin-bottom: 20px;">
-                    <label
-                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted);">Email
-                        Address</label>
-                    <input type="email" id="email" required autocapitalize="none" autocorrect="off" placeholder="name@example.com"
-                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
-                </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <form❌ id="login-form">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="margin-bottom:❌ 20px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <label
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="display:❌ block;❌ margin-bottom:❌ 8px;❌ font-size:❌ 0.9rem;❌ color:❌ var(--text-muted);">Email
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ Address</label>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <input❌ type="email"❌ id="email"❌ required❌ autocapitalize="none"❌ autocorrect="off"❌ placeholder="name@example.com"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:❌ 100%;❌ padding:❌ 12px;❌ background:❌ rgba(255,255,255,0.05);❌ border:❌ 1px❌ solid❌ rgba(255,255,255,0.1);❌ border-radius:❌ 8px;❌ color:❌ #fff;❌ outline:❌ none;❌ transition:❌ var(--transition);">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-                <div style="margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <label style="font-size: 0.9rem; color: var(--text-muted);">Password</label>
-                        <a href="#" style="font-size: 0.8rem; color: var(--primary-neon);"
-                            onclick="alert('Password recovery coming soon!'); return false;">Forgot Password?</a>
-                    </div>
-                    <div class="password-container">
-                        <input type="password" id="password" required placeholder="••••••••"
-                            style="width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff; outline: none; transition: var(--transition);">
-                        <span class="toggle-password" onclick="togglePassword()">👁️</span>
-                    </div>
-                </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="margin-bottom:❌ 25px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="display:❌ flex;❌ justify-content:❌ space-between;❌ margin-bottom:❌ 8px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <label❌ style="font-size:❌ 0.9rem;❌ color:❌ var(--text-muted);">Password</label>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <a❌ href="#"❌ style="font-size:❌ 0.8rem;❌ color:❌ var(--primary-neon);"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ onclick="alert('Password❌ recovery❌ coming❌ soon!');❌ return❌ false;">Forgot❌ Password?</a>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ class="password-container">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <input❌ type="password"❌ id="password"❌ required❌ placeholder="••••••••"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:❌ 100%;❌ padding:❌ 12px;❌ background:❌ rgba(255,255,255,0.05);❌ border:❌ 1px❌ solid❌ rgba(255,255,255,0.1);❌ border-radius:❌ 8px;❌ color:❌ #fff;❌ outline:❌ none;❌ transition:❌ var(--transition);">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <span❌ class="toggle-password"❌ onclick="togglePassword()">👁️</span>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-                <!-- CAPTCHA -->
-                <div class="captcha-box">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 0.8rem; color: var(--text-muted);">Verify: </span>
-                        <span id="captcha-code" class="captcha-text"></span>
-                        <span onclick="refreshCaptcha()" style="cursor: pointer; font-size: 1.1rem;"
-                            title="Refresh CAPTCHA">🔄</span>
-                    </div>
-                    <input type="text" id="captcha-input" required placeholder="Enter code"
-                        style="width: 100px; padding: 5px 10px; background: transparent; border: 1px solid rgba(255,255,255,0.2); border-radius: 5px; color: #fff; font-size: 0.9rem;">
-                </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <!--❌ CAPTCHA❌ -->
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ class="captcha-box">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="display:❌ flex;❌ align-items:❌ center;❌ gap:❌ 8px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <span❌ style="font-size:❌ 0.8rem;❌ color:❌ var(--text-muted);">Verify:❌ </span>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <span❌ id="captcha-code"❌ class="captcha-text"></span>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <span❌ onclick="refreshCaptcha()"❌ style="cursor:❌ pointer;❌ font-size:❌ 1.1rem;"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ title="Refresh❌ CAPTCHA">🔄</span>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <input❌ type="text"❌ id="captcha-input"❌ required❌ placeholder="Enter❌ code"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:❌ 100px;❌ padding:❌ 5px❌ 10px;❌ background:❌ transparent;❌ border:❌ 1px❌ solid❌ rgba(255,255,255,0.2);❌ border-radius:❌ 5px;❌ color:❌ #fff;❌ font-size:❌ 0.9rem;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-                <div style="margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between;">
-                    <label
-                        style="display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.9rem; cursor: pointer;">
-                        <input type="checkbox" id="rememberMe"> Remember me
-                    </label>
-                </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="margin-bottom:❌ 25px;❌ display:❌ flex;❌ align-items:❌ center;❌ justify-content:❌ space-between;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <label
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="display:❌ flex;❌ align-items:❌ center;❌ gap:❌ 8px;❌ color:❌ var(--text-muted);❌ font-size:❌ 0.9rem;❌ cursor:❌ pointer;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <input❌ type="checkbox"❌ id="rememberMe">❌ Remember❌ me
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </label>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-                <button type="submit" class="btn btn-primary" id="login-btn">
-                <span class="btn-text">Sign In</span>
-                <div class="loading-spinner"></div>
-            </button>
-            
-            <div style="text-align: center; margin-top: 15px;">
-                <a href="forgot-password.html" style="color: var(--primary-neon); font-size: 0.9rem; text-decoration: none;">Forgot Password?</a>
-            </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <button❌ type="submit"❌ class="btn❌ btn-primary"❌ id="login-btn">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <span❌ class="btn-text">Sign❌ In</span>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ class="loading-spinner"></div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </button>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ 
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="text-align:❌ center;❌ margin-top:❌ 15px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <a❌ href="forgot-password.html"❌ style="color:❌ var(--primary-neon);❌ font-size:❌ 0.9rem;❌ text-decoration:❌ none;">Forgot❌ Password?</a>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-                <div
-                    style="text-align: center; margin: 20px 0; color: var(--text-muted); font-size: 0.8rem; position: relative;">
-                    <span style="background: var(--bg-dark); padding: 0 10px; position: relative; z-index: 1;">OR
-                        CONTINUE WITH</span>
-                    <div
-                        style="position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1);">
-                    </div>
-                </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="text-align:❌ center;❌ margin:❌ 20px❌ 0;❌ color:❌ var(--text-muted);❌ font-size:❌ 0.8rem;❌ position:❌ relative;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <span❌ style="background:❌ var(--bg-dark);❌ padding:❌ 0❌ 10px;❌ position:❌ relative;❌ z-index:❌ 1;">OR
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ CONTINUE❌ WITH</span>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="position:❌ absolute;❌ top:❌ 50%;❌ left:❌ 0;❌ width:❌ 100%;❌ height:❌ 1px;❌ background:❌ rgba(255,255,255,0.1);">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-                <button type="button" id="google-login-btn" class="btn btn-outline" onclick="showGoogleLogin()"
-                    style="width: 100%; border-color: rgba(255,255,255,0.15); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s ease;">
-                    <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="18"> Continue
-                    with Google
-                </button>
-            </form>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <button❌ type="button"❌ id="google-login-btn"❌ class="btn❌ btn-outline"❌ onclick="showGoogleLogin()"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:❌ 100%;❌ border-color:❌ rgba(255,255,255,0.15);❌ color:❌ #fff;❌ display:❌ flex;❌ align-items:❌ center;❌ justify-content:❌ center;❌ gap:❌ 10px;❌ transition:❌ all❌ 0.3s❌ ease;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <img❌ src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png"❌ width="18">❌ Continue
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ with❌ Google
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </button>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </form>
 
-            <!-- Google Login Modal -->
-            <div id="google-modal"
-                style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; display:none; align-items:center; justify-content:center;">
-                <div class="glass"
-                    style="width:100%; max-width:380px; padding:35px; border-radius:20px; border:1px solid rgba(255,255,255,0.15); animation:slideIn 0.3s ease;">
-                    <div style="text-align:center; margin-bottom:25px;">
-                        <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" width="40"
-                            style="margin-bottom:10px;">
-                        <h3 style="font-size:1.2rem;">Sign in with Google</h3>
-                        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:6px;">Enter your Google account
-                            details</p>
-                    </div>
-                    <div id="google-modal-error"
-                        style="background:#ff4d4d; color:#fff; padding:8px 15px; border-radius:8px; margin-bottom:15px; display:none; font-size:0.85rem;">
-                    </div>
-                    <div style="margin-bottom:15px;">
-                        <label
-                            style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Full
-                            Name</label>
-                        <input type="text" id="g-name" placeholder="Your full name"
-                            style="width:100%; padding:11px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#fff; outline:none;">
-                    </div>
-                    <div style="margin-bottom:20px;">
-                        <label
-                            style="display:block; margin-bottom:6px; font-size:0.85rem; color:var(--text-muted);">Gmail
-                            Address</label>
-                        <input type="email" id="g-email" placeholder="yourname@gmail.com"
-                            style="width:100%; padding:11px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:#fff; outline:none;">
-                    </div>
-                    <button onclick="googleSignIn()" class="btn btn-primary"
-                        style="width:100%; margin-bottom:12px;">Sign In / Create Account</button>
-                    <button onclick="closeGoogleModal()" class="btn btn-outline"
-                        style="width:100%; font-size:0.85rem;">Cancel</button>
-                </div>
-            </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <!--❌ Google❌ Login❌ Modal❌ -->
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ id="google-modal"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="display:none;❌ position:fixed;❌ inset:0;❌ background:rgba(0,0,0,0.7);❌ z-index:9999;❌ display:none;❌ align-items:center;❌ justify-content:center;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ class="glass"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:100%;❌ max-width:380px;❌ padding:35px;❌ border-radius:20px;❌ border:1px❌ solid❌ rgba(255,255,255,0.15);❌ animation:slideIn❌ 0.3s❌ ease;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="text-align:center;❌ margin-bottom:25px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <img❌ src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png"❌ width="40"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="margin-bottom:10px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <h3❌ style="font-size:1.2rem;">Sign❌ in❌ with❌ Google</h3>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <p❌ style="color:var(--text-muted);❌ font-size:0.85rem;❌ margin-top:6px;">Enter❌ your❌ Google❌ account
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ details</p>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ id="google-modal-error"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="background:#ff4d4d;❌ color:#fff;❌ padding:8px❌ 15px;❌ border-radius:8px;❌ margin-bottom:15px;❌ display:none;❌ font-size:0.85rem;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="margin-bottom:15px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <label
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="display:block;❌ margin-bottom:6px;❌ font-size:0.85rem;❌ color:var(--text-muted);">Full
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ Name</label>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <input❌ type="text"❌ id="g-name"❌ placeholder="Your❌ full❌ name"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:100%;❌ padding:11px;❌ background:rgba(255,255,255,0.05);❌ border:1px❌ solid❌ rgba(255,255,255,0.12);❌ border-radius:8px;❌ color:#fff;❌ outline:none;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="margin-bottom:20px;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <label
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="display:block;❌ margin-bottom:6px;❌ font-size:0.85rem;❌ color:var(--text-muted);">Gmail
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ Address</label>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <input❌ type="email"❌ id="g-email"❌ placeholder="yourname@gmail.com"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:100%;❌ padding:11px;❌ background:rgba(255,255,255,0.05);❌ border:1px❌ solid❌ rgba(255,255,255,0.12);❌ border-radius:8px;❌ color:#fff;❌ outline:none;">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <button❌ onclick="googleSignIn()"❌ class="btn❌ btn-primary"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:100%;❌ margin-bottom:12px;">Sign❌ In❌ /❌ Create❌ Account</button>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <button❌ onclick="closeGoogleModal()"❌ class="btn❌ btn-outline"
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ style="width:100%;❌ font-size:0.85rem;">Cancel</button>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
 
-            <div style="text-align: center; margin-top: 30px; font-size: 0.9rem; color: var(--text-muted);">
-                Don't have an account? <a href="register.html" style="color: var(--primary-neon);">Register here</a>
-            </div>
-        </div>
-    </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ <div❌ style="text-align:❌ center;❌ margin-top:❌ 30px;❌ font-size:❌ 0.9rem;❌ color:❌ var(--text-muted);">
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ Don't❌ have❌ an❌ account?❌ <a❌ href="register.html"❌ style="color:❌ var(--primary-neon);">Register❌ here</a>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ </div>
+❌ ❌ ❌ ❌ </div>
 
-    <!-- Auth Scripts -->
-    <!-- Firebase SDK (V8) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="js/firebase-config.js"></script>
-    <script src="js/admin.js"></script>
-    <script src="js/auth.js"></script>
-    <script>
-        // Init CAPTCHA
-        let captchaCode = '';
+❌ ❌ ❌ ❌ <!--❌ Auth❌ Scripts❌ -->
+❌ ❌ ❌ ❌ <!--❌ Firebase❌ SDK❌ (V8)❌ -->
+❌ ❌ ❌ ❌ <script❌ src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+❌ ❌ ❌ ❌ <script❌ src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+❌ ❌ ❌ ❌ <script❌ src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+❌ ❌ ❌ ❌ <script❌ src="js/firebase-config.js"></script>
+❌ ❌ ❌ ❌ <script❌ src="js/admin.js"></script>
+❌ ❌ ❌ ❌ <script❌ src="js/auth.js"></script>
+❌ ❌ ❌ ❌ <script>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ Init❌ CAPTCHA
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ let❌ captchaCode❌ =❌ '';
 
-        function generateCaptcha() {
-            captchaCode = Math.random().toString(36).substring(2, 7).toUpperCase();
-            document.getElementById('captcha-code').innerText = captchaCode;
-            document.getElementById('captcha-input').value = '';
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ function❌ generateCaptcha()❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ captchaCode❌ =❌ Math.random().toString(36).substring(2,❌ 7).toUpperCase();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('captcha-code').innerText❌ =❌ captchaCode;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('captcha-input').value❌ =❌ '';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        function refreshCaptcha() {
-            generateCaptcha();
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ function❌ refreshCaptcha()❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ generateCaptcha();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        generateCaptcha();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ generateCaptcha();
 
-        function quickLogin(email, password) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = password;
-            document.getElementById('captcha-input').value = captchaCode;
-            document.getElementById('login-btn').click();
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ function❌ quickLogin(email,❌ password)❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('email').value❌ =❌ email;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('password').value❌ =❌ password;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('captcha-input').value❌ =❌ captchaCode;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('login-btn').click();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        function togglePassword() {
-            const pass = document.getElementById('password');
-            pass.type = pass.type === 'password' ? 'text' : 'password';
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ function❌ togglePassword()❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ pass❌ =❌ document.getElementById('password');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ pass.type❌ =❌ pass.type❌ ===❌ 'password'❌ ?❌ 'text'❌ :❌ 'password';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        // Google Modal
-        function showGoogleModal() {
-            const m = document.getElementById('google-modal');
-            m.style.display = 'flex';
-            setTimeout(() => document.getElementById('g-name').focus(), 100);
-        }
-        // backward compat alias used by onclick
-        function showGoogleLogin() { showGoogleModal(); }
-        function closeGoogleModal() {
-            document.getElementById('google-modal').style.display = 'none';
-            document.getElementById('google-modal-error').style.display = 'none';
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ Google❌ Modal
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ function❌ showGoogleModal()❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ m❌ =❌ document.getElementById('google-modal');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ m.style.display❌ =❌ 'flex';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ setTimeout(()❌ =>❌ document.getElementById('g-name').focus(),❌ 100);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ backward❌ compat❌ alias❌ used❌ by❌ onclick
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ function❌ showGoogleLogin()❌ {❌ showGoogleModal();❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ function❌ closeGoogleModal()❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('google-modal').style.display❌ =❌ 'none';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('google-modal-error').style.display❌ =❌ 'none';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        async function googleSignIn() {
-            const name = document.getElementById('g-name').value.trim();
-            const email = document.getElementById('g-email').value.trim().toLowerCase();
-            const errEl = document.getElementById('google-modal-error');
-            errEl.style.display = 'none';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ async❌ function❌ googleSignIn()❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ name❌ =❌ document.getElementById('g-name').value.trim();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ email❌ =❌ document.getElementById('g-email').value.trim().toLowerCase();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ errEl❌ =❌ document.getElementById('google-modal-error');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errEl.style.display❌ =❌ 'none';
 
-            if (!name || !email) {
-                errEl.innerText = 'Please fill in your name and Gmail address.';
-                errEl.style.display = 'block';
-                return;
-            }
-            if (!email.includes('@')) {
-                errEl.innerText = 'Please enter a valid email address.';
-                errEl.style.display = 'block';
-                return;
-            }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ if❌ (!name❌ ||❌ !email)❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errEl.innerText❌ =❌ 'Please❌ fill❌ in❌ your❌ name❌ and❌ Gmail❌ address.';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errEl.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ return;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ if❌ (!email.includes('@'))❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errEl.innerText❌ =❌ 'Please❌ enter❌ a❌ valid❌ email❌ address.';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errEl.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ return;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-            // Check if user already exists → login; otherwise → auto-register
-            const users = Auth.getUsers();
-            let user = users.find(u => u.email === email);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ Check❌ if❌ user❌ already❌ exists❌ →❌ login;❌ otherwise❌ →❌ auto-register
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ users❌ =❌ Auth.getUsers();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ let❌ user❌ =❌ users.find(u❌ =>❌ u.email❌ ===❌ email);
 
-            if (!user) {
-                // Auto-register with a random secure password (Google handles real auth)
-                const tempPass = 'google_' + Date.now() + Math.random().toString(36);
-                try {
-                    await Auth.register(name, email, tempPass);
-                } catch (e) {
-                    errEl.innerText = 'Could not create account: ' + e.message;
-                    errEl.style.display = 'block';
-                    return;
-                }
-                // Now log them in
-                const freshUsers = Auth.getUsers();
-                user = freshUsers.find(u => u.email === email);
-            }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ if❌ (!user)❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ Auto-register❌ with❌ a❌ random❌ secure❌ password❌ (Google❌ handles❌ real❌ auth)
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ tempPass❌ =❌ 'google_'❌ +❌ Date.now()❌ +❌ Math.random().toString(36);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ try❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ await❌ Auth.register(name,❌ email,❌ tempPass);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }❌ catch❌ (e)❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errEl.innerText❌ =❌ 'Could❌ not❌ create❌ account:❌ '❌ +❌ e.message;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errEl.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ return;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ Now❌ log❌ them❌ in
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ freshUsers❌ =❌ Auth.getUsers();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ user❌ =❌ freshUsers.find(u❌ =>❌ u.email❌ ===❌ email);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-            // Create session directly (no password check needed – trusted Google identity)
-            if (user) {
-                const sessionData = {
-                    userId: user.id,
-                    email: user.email,
-                    name: user.name,
-                    role: user.role || 'user',
-                    lastLogin: Date.now()
-                };
-                localStorage.setItem(Auth.SESSION_KEY, JSON.stringify(sessionData));
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ Create❌ session❌ directly❌ (no❌ password❌ check❌ needed❌ –❌ trusted❌ Google❌ identity)
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ if❌ (user)❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ sessionData❌ =❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ userId:❌ user.id,
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ email:❌ user.email,
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ name:❌ user.name,
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ role:❌ user.role❌ ||❌ 'user',
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ lastLogin:❌ Date.now()
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ };
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ localStorage.setItem(Auth.SESSION_KEY,❌ JSON.stringify(sessionData));
 
-                closeGoogleModal();
-                const s = document.getElementById('success-msg');
-                s.innerText = '✅ Google sign-in successful! Redirecting...';
-                s.style.display = 'block';
-                setTimeout(() => window.location.href = 'dashboard.html', 1000);
-            }
-        }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ closeGoogleModal();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ s❌ =❌ document.getElementById('success-msg');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ s.innerText❌ =❌ '✅❌ Google❌ sign-in❌ successful!❌ Redirecting...';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ s.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ setTimeout(()❌ =>❌ window.location.href❌ =❌ 'dashboard.html',❌ 1000);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value.trim().toLowerCase();
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-            const captchaInput = document.getElementById('captcha-input').value;
-            const errorMsg = document.getElementById('error-msg');
-            const successMsg = document.getElementById('success-msg');
-            const btnText = document.querySelector('.btn-text');
-            const btnLoader = document.querySelector('.loading-spinner');
-            const loginBtn = document.getElementById('login-btn');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('login-form').addEventListener('submit',❌ async❌ (e)❌ =>❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ e.preventDefault();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ email❌ =❌ document.getElementById('email').value.trim().toLowerCase();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ password❌ =❌ document.getElementById('password').value;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ rememberMe❌ =❌ document.getElementById('rememberMe').checked;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ captchaInput❌ =❌ document.getElementById('captcha-input').value;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ errorMsg❌ =❌ document.getElementById('error-msg');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ successMsg❌ =❌ document.getElementById('success-msg');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ btnText❌ =❌ document.querySelector('.btn-text');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ btnLoader❌ =❌ document.querySelector('.loading-spinner');
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ const❌ loginBtn❌ =❌ document.getElementById('login-btn');
 
-            errorMsg.style.display = 'none';
-            successMsg.style.display = 'none';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errorMsg.style.display❌ =❌ 'none';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ successMsg.style.display❌ =❌ 'none';
 
-            // CAPTCHA check
-            if (captchaInput.toUpperCase() !== captchaCode) {
-                errorMsg.innerText = 'Invalid CAPTCHA code.';
-                errorMsg.style.display = 'block';
-                refreshCaptcha();
-                return;
-            }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ CAPTCHA❌ check
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ if❌ (captchaInput.toUpperCase()❌ !==❌ captchaCode)❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errorMsg.innerText❌ =❌ 'Invalid❌ CAPTCHA❌ code.';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errorMsg.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ refreshCaptcha();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ return;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
 
-            // Show Loading
-            btnText.style.display = 'none';
-            btnLoader.style.display = 'block';
-            loginBtn.disabled = true;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ //❌ Show❌ Loading
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ btnText.style.display❌ =❌ 'none';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ btnLoader.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ loginBtn.disabled❌ =❌ true;
 
-            try {
-                await new Promise(r => setTimeout(r, 1000));
-                await Auth.login(email, password, rememberMe);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ try❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ await❌ new❌ Promise(r❌ =>❌ setTimeout(r,❌ 1000));
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ await❌ Auth.login(email,❌ password,❌ rememberMe);
 
-                successMsg.innerText = 'Login successful! Redirecting...';
-                successMsg.style.display = 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ successMsg.innerText❌ =❌ 'Login❌ successful!❌ Redirecting...';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ successMsg.style.display❌ =❌ 'block';
 
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1000);
-            } catch (err) {
-                errorMsg.innerText = err.message;
-                errorMsg.style.display = 'block';
-                btnText.style.display = 'block';
-                btnLoader.style.display = 'none';
-                loginBtn.disabled = false;
-                if (err.message.toLowerCase().includes('password') || err.message.toLowerCase().includes('email')) {
-                    document.getElementById('password').value = '';
-                }
-                refreshCaptcha();
-            }
-        });
-    </script>
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ setTimeout(()❌ =>❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ window.location.href❌ =❌ 'dashboard.html';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ },❌ 1000);
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }❌ catch❌ (err)❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errorMsg.innerText❌ =❌ err.message;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ errorMsg.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ btnText.style.display❌ =❌ 'block';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ btnLoader.style.display❌ =❌ 'none';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ loginBtn.disabled❌ =❌ false;
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ if❌ (err.message.toLowerCase().includes('password')❌ ||❌ err.message.toLowerCase().includes('email'))❌ {
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ document.getElementById('password').value❌ =❌ '';
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ refreshCaptcha();
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ }
+❌ ❌ ❌ ❌ ❌ ❌ ❌ ❌ });
+❌ ❌ ❌ ❌ </script>
 </body>
 
 </html>
