@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -717,16 +717,18 @@
 
             if (!confirm(`🚀 Activate ${plan.name} Plan?\n\n💰 Investment: $${plan.price} USDT\n📈 Daily Rate: ${rate}%\n💵 Daily Profit: +$${dailyProfit}\n\nFunds will be deducted from your balance immediately.`)) return;
 
-            // Deduct balance
-            const users = Auth.getUsers();
-            const idx = users.findIndex(u => u.id === user.id);
-            if (idx === -1) return;
-            users[idx].balance = parseFloat(((users[idx].balance || 0) - plan.price).toFixed(2));
-            localStorage.setItem('spintask_users', JSON.stringify(users));
+            // Deduct balance using Auth.updateBalance (works with both local and cloud users)
+            const newBal = Auth.updateBalance(-plan.price);
 
-            // Create investment record
+            // Sync balance to Firebase cloud as well
+            if (typeof db !== 'undefined' && db !== null) {
+                db.ref('users/' + user.id).update({ balance: newBal !== undefined ? newBal : (user.balance - plan.price) })
+                  .catch(e => console.warn('[DB] Balance cloud sync failed:', e.message));
+            }
+
+            // Create investment record — always save, guaranteed
             const investments = Trading.getUserInvestments();
-            investments.push({
+            const newInvestment = {
                 id: 'ti_' + Date.now(),
                 userId: user.id,
                 planId: plan.id,
@@ -736,7 +738,8 @@
                 lastCreditDate: new Date().toISOString(),
                 totalCredited: 0,
                 status: 'active'
-            });
+            };
+            investments.push(newInvestment);
             Trading.saveUserInvestments(investments);
 
             // Admin alert
@@ -760,7 +763,6 @@
                 localStorage.setItem('spintask_platform_income', JSON.stringify(incomeLogs));
             }
 
-            window.dispatchEvent(new CustomEvent('auth:balanceUpdated', { detail: { balance: users[idx].balance } }));
             alert(`✅ ${plan.name} Plan activated! You will earn $${dailyProfit} USDT daily.`);
             location.reload();
         }

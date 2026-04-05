@@ -306,22 +306,31 @@ const Auth = {
 
         const users = this.getUsers();
         const userIndex = users.findIndex(u => u.id === currentUser.id);
-        if (userIndex === -1) return;
 
-        users[userIndex].balance = parseFloat((users[userIndex].balance + amount).toFixed(2));
-        localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+        let newBalance;
 
-        // Sync to cloud
+        if (userIndex !== -1) {
+            // User found in localStorage
+            users[userIndex].balance = parseFloat(((users[userIndex].balance || 0) + amount).toFixed(2));
+            newBalance = users[userIndex].balance;
+            localStorage.setItem(this.DB_KEY, JSON.stringify(users));
+        } else {
+            // User only in Firebase (cloud-registered) — update session cache balance
+            newBalance = parseFloat(((currentUser.balance || 0) + amount).toFixed(2));
+            console.warn('[Auth] updateBalance: user not in localStorage, syncing to cloud only.');
+        }
+
+        // Always sync to Firebase cloud
         if (typeof db !== 'undefined' && db !== null) {
-            db.ref('users/' + currentUser.id).update({ balance: users[userIndex].balance })
+            db.ref('users/' + currentUser.id).update({ balance: newBalance })
               .catch(e => console.warn('[RealtimeDB] Balance update failed:', e.message));
         }
 
         window.dispatchEvent(new CustomEvent('auth:balanceUpdated', {
-            detail: { balance: users[userIndex].balance }
+            detail: { balance: newBalance }
         }));
 
-        return users[userIndex].balance;
+        return newBalance;
     },
 
     /**
