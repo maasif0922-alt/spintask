@@ -127,7 +127,7 @@
         <!-- Header -->
         <div class="mob-nav-header">
             <div class="mob-nav-title">
-                <div class="mob-nav-avatar" id="mob-nav-avatar">??</div>
+                <div class="mob-nav-avatar" id="mob-nav-avatar">👤</div>
                 <div>
                     <div class="mob-nav-username" id="mob-nav-username">Welcome!</div>
                     <div class="mob-nav-subtitle">SpinTask Member</div>
@@ -145,7 +145,7 @@
         <!-- Balance strip -->
         <div class="mob-nav-balance">
             <div class="mob-nav-bal-item">
-                <span class="mob-nav-bal-label">?? Balance</span>
+                <span class="mob-nav-bal-label">💰 Balance</span>
                 <span class="mob-nav-bal-value user-balance-value">$0.00</span>
             </div>
             <a href="deposit.html" class="mob-nav-dep-btn">+ Deposit</a>
@@ -155,51 +155,51 @@
         <div class="mob-nav-section-label">Navigation</div>
         <div class="mob-nav-grid">
             <a href="dashboard.html" class="mob-nav-item active">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Home</div>
             </a>
             <a href="tasks.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Tasks</div>
             </a>
             <a href="spin.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Spin Wheel</div>
             </a>
             <a href="luckydraw.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Lucky Draw</div>
             </a>
             <a href="pool.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Community Pool</div>
             </a>
             <a href="plans.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Trading Plans</div>
             </a>
             <a href="referral.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Referrals</div>
             </a>
             <a href="deposit.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Deposit</div>
             </a>
             <a href="withdraw.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Withdraw</div>
             </a>
             <a href="profile.html" class="mob-nav-item">
-                <div class="mob-nav-icon">??</div>
+                <div class="mob-nav-icon">🏠</div>
                 <div class="mob-nav-label">Profile</div>
             </a>
         </div>
 
         <!-- Footer Actions -->
         <div class="mob-nav-footer">
-            <a href="support.html" class="mob-nav-support-btn">?? Support</a>
-            <button class="mob-nav-logout-btn" onclick="Auth.logout()">?? Logout</button>
+            <a href="support.html" class="mob-nav-support-btn">💬 Support</a>
+            <button class="mob-nav-logout-btn" onclick="Auth.logout()">🚪 Logout</button>
         </div>
     </div>
     <script>
@@ -209,7 +209,7 @@
 
             // Welcome message
             const wm = document.getElementById('welcome-msg');
-            if (wm) wm.innerText = `Welcome back, ${user.name.split(' ')[0]}! ??`;
+            if (wm) wm.innerText = `Welcome back, ${user.name.split(' ')[0]}! 👋`;
 
             // Earnings
             const totalEarningsEl = document.getElementById('user-total-earnings');
@@ -222,7 +222,7 @@
                 badgeDash.innerHTML = `<span class="verified-badge">? Verified</span>`;
                 statusSub.innerText = '1 free spin daily';
             } else {
-                badgeDash.innerHTML = `<span class="unverified-badge">?? Unverified</span>`;
+                badgeDash.innerHTML = `<span class="unverified-badge">⚠️ Unverified</span>`;
                 statusSub.innerText = 'Verify for $1 to unlock spins';
             }
 
@@ -231,7 +231,7 @@
             if (!user.verified && bannerContainer) {
                 bannerContainer.innerHTML = `
                     <div class="verify-banner">
-                        <div class="vb-icon">??</div>
+                        <div class="vb-icon">🚀</div>
                         <div class="vb-text">
                             <h4>Your account is not verified</h4>
                             <p>Pay $1.00 USDT to unlock the Spin Wheel and earn 1 free daily spin for life.</p>
@@ -246,7 +246,7 @@
             if (profileBadge) {
                 profileBadge.innerHTML = user.verified
                     ? `<span class="verified-badge">? Verified Account</span>`
-                    : `<span class="unverified-badge">?? Unverified</span>`;
+                    : `<span class="unverified-badge">⚠️ Unverified</span>`;
             }
 
             const profileCard = document.getElementById('profile-card');
@@ -318,7 +318,7 @@
             if (investments.length === 0) {
                 container.innerHTML = `
                     <div class="glass" style="padding: 30px; border-radius: 20px; text-align: center; border: 1px dashed rgba(255,255,255,0.2);">
-                        <h3 style="margin-bottom: 10px;">?? Trading & Investment</h3>
+                        <h3 style="margin-bottom: 10px;">📈 Trading & Investment</h3>
                         <p style="color: var(--text-muted); margin-bottom: 20px;">You do not have any active trading plans. Start earning daily passive income today!</p>
                         <a href="plans.html" class="btn btn-primary">Explore Trading Plans</a>
                     </div>
@@ -326,7 +326,7 @@
                 return;
             }
 
-            let html = '<div class="glass" style="padding: 30px; border-radius: 20px;"><h3 style="margin-bottom: 20px;">?? Active Trading Plans</h3><div style="display: flex; flex-direction: column; gap: 20px;">';
+            let html = '<div class="glass" style="padding: 30px; border-radius: 20px;"><h3 style="margin-bottom: 20px;">🚀 Active Trading Plans</h3><div style="display: flex; flex-direction: column; gap: 20px;">';
 
             investments.forEach(inv => {
                 const plan = Trading.PLANS_DEF.find(p => p.id === inv.planId);
@@ -348,7 +348,7 @@
                                 <h4 style="color: var(--primary-neon); font-size: 1.1rem; margin-bottom: 5px;">${plan.name} Plan</h4>
                                 <span style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.1); padding: 3px 8px; border-radius: 4px;">Since ${since.toLocaleDateString()}</span>
                             </div>
-                            <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="border-color: #39ff14; color: #39ff14; padding: 6px 15px; font-size: 0.85rem;" ${earnedAmount <= 0 ? 'disabled title="Earn some profit first to reinvest"' : ''}>?? Reinvest Profits</button>
+                            <button onclick="handleReinvest('${inv.id}')" class="btn btn-outline" style="border-color: #39ff14; color: #39ff14; padding: 6px 15px; font-size: 0.85rem;" ${earnedAmount <= 0 ? 'disabled title="Earn some profit first to reinvest"' : ''}>♻️ Reinvest Profits</button>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px;">
                             <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">
@@ -384,7 +384,7 @@
             const user = Auth.getCurrentUser();
             if (!user) return;
 
-            if (!confirm('?? Are you sure you want to reinvest your accrued profits?\nThis will deduct the earned amount from your balance, add it to your investment, and give you a +0.5% daily rate bonus!')) {
+            if (!confirm('❓ Are you sure you want to reinvest your accrued profits?\nThis will deduct the earned amount from your balance, add it to your investment, and give you a +0.5% daily rate bonus!')) {
                 return;
             }
 
