@@ -689,7 +689,7 @@
             const refEl = document.getElementById('referral-code-display');
             if (refEl) {
                 const code = user.referralCode || user.id.substring(0, 8).toUpperCase();
-                const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', 'register.html');
+                const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/') + '/register.html';
                 refEl.textContent = `${baseUrl}?ref=${code}`;
             }
 
