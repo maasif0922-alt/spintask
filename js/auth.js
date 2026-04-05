@@ -63,6 +63,9 @@ const Auth = {
         }
 
         const hashedPassword = await this.hashPassword(password);
+        const cleanName = name.split(' ')[0].replace(/[^a-z0-9]/gi, '').toUpperCase();
+        const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
+        
         const newUser = {
             id: 'user_' + Date.now(),
             name,
@@ -74,7 +77,7 @@ const Auth = {
             verificationDate: null,
             role: 'user',
             registeredAt: new Date().toISOString(),
-            referralCode: 'REF' + Math.random().toString(36).substring(2, 7).toUpperCase(),
+            referralCode: `${cleanName}_${randomStr}`,
             referredBy: referredByCode || null,
             referralCount: 0,
             createdAt: new Date().toISOString()

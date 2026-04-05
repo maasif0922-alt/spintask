@@ -151,8 +151,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const refCode = urlParams.get('ref');
-            if (refCode) {
-                document.getElementById('ref-code-input').value = refCode;
+            
+            // Safer pre-fill: Ignore empty, null, or "undefined" strings
+            if (refCode && refCode !== 'undefined' && refCode !== 'null' && refCode.trim() !== '') {
+                const refInput = document.getElementById('ref-code-input');
+                if (refInput) refInput.value = refCode;
             }
         });
 

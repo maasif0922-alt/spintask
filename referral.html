@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -339,8 +339,9 @@
             // Sync referral code to link
             const refLinkInput = document.getElementById('ref-link');
             if (refLinkInput) {
+                const code = user.referralCode || user.id.substring(0, 8).toUpperCase();
                 const baseUrl = window.location.origin + window.location.pathname.replace('referral.html', 'register.html');
-                refLinkInput.value = `${baseUrl}?ref=${user.referralCode}`;
+                refLinkInput.value = `${baseUrl}?ref=${code}`;
             }
 
             // Render Referral Stats & List

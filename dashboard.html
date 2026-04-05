@@ -688,12 +688,9 @@
             // Referral code
             const refEl = document.getElementById('referral-code-display');
             if (refEl) {
-                const code = user.referralCode || user.id.substring(0, 6).toUpperCase();
-                refEl.textContent = 'https://spintask.vercel.app/register.html?ref=' + code;
-                refEl.style.fontSize = '0.75rem';
-                refEl.style.whiteSpace = 'nowrap';
-                refEl.style.overflow = 'hidden';
-                refEl.style.textOverflow = 'ellipsis';
+                const code = user.referralCode || user.id.substring(0, 8).toUpperCase();
+                const baseUrl = window.location.origin + window.location.pathname.replace('dashboard.html', 'register.html');
+                refEl.textContent = `${baseUrl}?ref=${code}`;
             }
 
             const refEarnEl = document.getElementById('user-ref-earnings');
