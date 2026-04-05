@@ -1714,16 +1714,45 @@
         <td>${t.status === 'pending' ? `<div class="tr-actions"><button class="btn btn-primary" onclick="approveTx('${t.id}')">Approve</button><button class="btn btn-outline" style="color:#ff4d4d" onclick="rejectTx('${t.id}')">Reject</button></div>` : '-'}</td>
     </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No withdrawals</td></tr>';
         }
-        function approveTx(id) { if (confirm('Approve this transaction?')) { Admin.resolveTransaction(id, 'approved'); renderDeposits(); renderWithdrawals(); renderDashboard(); } }
-        function rejectTx(id) { if (confirm('Reject this transaction?')) { Admin.resolveTransaction(id, 'rejected'); renderDeposits(); renderWithdrawals(); } }
+        function approveTx(id) { if (confirm('Approve this transaction?')) { Admin.resolveTransaction(id, 'approved'); renderDeposits(); renderWithdrawals(); renderDashboard(); renderAlerts(); } }
+        function rejectTx(id) { if (confirm('Reject this transaction?')) { Admin.resolveTransaction(id, 'rejected'); renderDeposits(); renderWithdrawals(); renderAlerts(); } }
 
         // ── Admin Alerts ─────────────────────────────────────────────────────────────
         function renderAlerts() {
             var alerts = Admin.getAdminAlerts();
-            document.getElementById('alerts-list').innerHTML = alerts.length ? alerts.map(a => `<div class="sp-history-item" style="${a.read ? '' : 'border-color:var(--primary-neon)'}">
-        <span>${a.read ? '' : ' 🔵 '} ${a.message}</span>
-        <span style="color:var(--text-muted);font-size:0.78rem">${new Date(a.time).toLocaleString()}</span>
-    </div>`).join('') : '<p style="color:var(--text-muted)">No alerts.</p>';
+            document.getElementById('alerts-list').innerHTML = alerts.length ? alerts.map(a => {
+                let actions = '';
+                if (a.data && a.data.txId) {
+                    const tx = Admin.getTransactions().find(t => t.id === a.data.txId);
+                    if (tx && tx.status === 'pending') {
+                        actions = `
+                            <div style="margin-top:10px; display:flex; gap:8px;">
+                                ${tx.proof && tx.proof.screenshotData ? `<button class="btn btn-outline" style="font-size:0.75rem; padding:5px 10px;" onclick="viewProof('${tx.id}')">👁️ View Proof</button>` : ''}
+                                <button class="btn btn-primary" style="font-size:0.75rem; padding:5px 10px;" onclick="approveTx('${tx.id}')">✅ Approve</button>
+                                <button class="btn btn-outline" style="font-size:0.75rem; padding:5px 10px; color:#ff4d4d; border-color:#ff4d4d;" onclick="rejectTx('${tx.id}')">❌ Reject</button>
+                            </div>
+                        `;
+                    }
+                }
+
+                return `<div class="sp-history-item" style="${a.read ? '' : 'border-color:var(--primary-neon)'}">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; width:100%;">
+                        <span>${a.read ? '' : ' 🔵 '} ${a.message}</span>
+                        <span style="color:var(--text-muted);font-size:0.78rem">${new Date(a.time).toLocaleString()}</span>
+                    </div>
+                    ${actions}
+                </div>`;
+            }).join('') : '<p style="color:var(--text-muted)">No alerts.</p>';
+        }
+
+        function viewProof(txId) {
+            const tx = Admin.getTransactions().find(t => t.id === txId);
+            if (tx && tx.proof && tx.proof.screenshotData) {
+                document.getElementById('sc-img').src = tx.proof.screenshotData;
+                document.getElementById('sc-modal').style.display = 'flex';
+            } else {
+                alert('No proof screenshot found for this transaction.');
+            }
         }
         function updateAlertBadge() {
             var cnt = Admin.getUnreadAdminAlertCount();

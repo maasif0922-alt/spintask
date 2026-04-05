@@ -513,7 +513,7 @@ const Admin = {
         const users = this.getAllUsers();
         const user = users.find(u => u.id === userId);
         const userName = user ? user.name : userId;
-        this.addAdminAlert(type, `${type === 'deposit' ? '💰 Deposit' : '💸 Withdrawal'} request: ${userName} — $${parseFloat(amount).toFixed(2)} USDT`);
+        this.addAdminAlert(type, `${type === 'deposit' ? '💰 Deposit' : '💸 Withdrawal'} request: ${userName} — $${parseFloat(amount).toFixed(2)} USDT`, { txId: tx.id });
 
         return tx;
     },
@@ -1168,12 +1168,13 @@ const DEPLOYMENT_DATA = ${jsonString};
 
     // ─── Admin Alerts ─────────────────────────────────────────────────────
 
-    addAdminAlert(type, message) {
+    addAdminAlert(type, message, data = null) {
         const alerts = this.getDb(this.DB_ADMIN_ALERTS);
         const newAlert = {
             id: 'alert_' + Date.now(),
             type,
             message,
+            data,
             time: new Date().toISOString(),
             read: false
         };
