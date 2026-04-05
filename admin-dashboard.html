@@ -1582,35 +1582,30 @@
             var alerts = Admin.getAdminAlerts();
             var txs = getTxs();
 
-            // Helper: try to find matching tx for old alerts that have no txId stored
             function findTxForAlert(a) {
                 if (a.txId) return txs.find(function(t){ return t.id === a.txId; }) || null;
-                // Parse name and amount from message: "💰 Deposit request: NAME — $50.00 USDT"
                 var type = (a.type === 'deposit') ? 'deposit' : 'withdraw';
-                var msgMatch = a.message.match(/request:\s*(.+?)\s*[—-]\s*\$?([\d.]+)/);
-                if (!msgMatch) return null;
-                var msgName = msgMatch[1].trim().toLowerCase();
-                var msgAmt = parseFloat(msgMatch[2]);
-                var alertTime = new Date(a.time).getTime();
-                // Find deposit txs that match name+amount within ±60s of alert
+                var amtMatch = a.message.match(/\$([\d.]+)/);
+                var msgAmt = amtMatch ? parseFloat(amtMatch[1]) : -1;
+                
                 var candidates = txs.filter(function(t) {
                     if (t.type !== type) return false;
-                    if (Math.abs(parseFloat(t.amount) - msgAmt) > 0.01) return false;
-                    var tTime = new Date(t.date).getTime();
-                    if (Math.abs(tTime - alertTime) > 60000) return false; // within 60s
-                    var uName = userName(t.userId).toLowerCase();
-                    return uName.includes(msgName) || msgName.includes(uName);
+                    var uName = (userName(t.userId) || '').toLowerCase().trim();
+                    var nameInMsg = uName && uName.length > 2 && a.message.toLowerCase().indexOf(uName) !== -1;
+                    var isAmtMatch = msgAmt !== -1 && Math.abs(parseFloat(t.amount) - msgAmt) < 0.01;
+                    return nameInMsg || isAmtMatch;
                 });
-                // Also try by amount only if no name match (wider window: 5min)
-                if (!candidates.length) {
-                    candidates = txs.filter(function(t) {
-                        if (t.type !== type) return false;
-                        if (Math.abs(parseFloat(t.amount) - msgAmt) > 0.01) return false;
-                        var tTime = new Date(t.date).getTime();
-                        return Math.abs(tTime - alertTime) < 300000;
+                
+                var pending = candidates.filter(function(t) { return t.status === 'pending'; });
+                if (pending.length) {
+                    var perfect = pending.find(function(t) {
+                        var uName = (userName(t.userId) || '').toLowerCase().trim();
+                        return uName && a.message.toLowerCase().indexOf(uName) !== -1 && msgAmt !== -1 && Math.abs(parseFloat(t.amount) - msgAmt) < 0.01;
                     });
+                    return perfect || pending[0];
                 }
-                return candidates.length ? candidates[0] : null;
+                if (candidates.length) return candidates[0];
+                return null;
             }
 
             document.getElementById('alerts-list').innerHTML = alerts.length ? alerts.map(function(a) {
