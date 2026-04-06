@@ -927,6 +927,12 @@
                         Segment</button>
                     <button class="btn btn-primary" onclick="saveSpinSettings()"
                         style="margin-top:12px;margin-left:10px;">Save Settings</button>
+
+                    <hr style="margin: 30px 0; border: 0; border-top: 1px solid var(--border);">
+                    <h3 style="margin-bottom:14px;">Spin Packages (Buy Extra Spins)</h3>
+                    <div id="packages-list"></div>
+                    <button class="btn btn-outline" onclick="addSpinPackage()" style="margin-top:12px;">+ Add Package</button>
+                    <button class="btn btn-primary" onclick="saveSpinSettings()" style="margin-top:12px;margin-left:10px;">Save All Settings</button>
                 </div>
             </div>
 
@@ -1752,6 +1758,15 @@
                 value: parseFloat(document.getElementById('seg-val-' + i).value) || 0,
                 type: document.getElementById('seg-type-' + i).value
             }));
+            ss.packages = (ss.packages || []).map((pkg, i) => {
+                var elPrice = document.getElementById('pkg-price-' + i);
+                var elSpins = document.getElementById('pkg-spins-' + i);
+                return {
+                    id: pkg.id || ('pkg_' + i),
+                    price: elPrice ? (parseFloat(elPrice.value) || 0) : pkg.price,
+                    spins: elSpins ? (parseInt(elSpins.value) || 1) : pkg.spins
+                };
+            });
             Admin.saveSpinSettings(ss); alert('Spin settings saved!');
         }
 
