@@ -207,51 +207,53 @@ const Admin = {
     syncFromConfig() {
         if (typeof GLOBAL_CONFIG === 'undefined') return;
 
-        console.log('Syncing from GLOBAL_CONFIG (v' + (GLOBAL_CONFIG.version || 'unknown') + ')...');
+        console.log('Syncing from GLOBAL_CONFIG (v' + (GLOBAL_CONFIG._version || GLOBAL_CONFIG.version || 'unknown') + ')...');
 
-        if (GLOBAL_CONFIG.settings) {
+        const conf = GLOBAL_CONFIG;
+
+        if (conf.spintask_settings || conf.settings) {
             const current = this.getObjDb(this.DB_SETTINGS);
-            this.saveDb(this.DB_SETTINGS, { ...current, ...GLOBAL_CONFIG.settings });
+            this.saveDb(this.DB_SETTINGS, { ...current, ...conf.settings, ...conf.spintask_settings });
         }
 
-        if (GLOBAL_CONFIG.tasks) {
-            this.saveDb(this.DB_TASKS, GLOBAL_CONFIG.tasks);
+        if (conf.spintask_tasks || conf.tasks) {
+            this.saveDb(this.DB_TASKS, conf.spintask_tasks || conf.tasks);
         }
 
-        if (GLOBAL_CONFIG.announcement) {
-            this.saveDb(this.DB_ANNOUNCEMENTS, GLOBAL_CONFIG.announcement);
+        if (conf.spintask_announcements || conf.announcement) {
+            this.saveDb(this.DB_ANNOUNCEMENTS, conf.spintask_announcements || conf.announcement);
         }
 
-        if (GLOBAL_CONFIG.luckydraws) {
-            this.saveDb(this.DB_LUCKYDRAWS, GLOBAL_CONFIG.luckydraws);
+        if (conf.spintask_luckydraws || conf.luckydraws) {
+            this.saveDb(this.DB_LUCKYDRAWS, conf.spintask_luckydraws || conf.luckydraws);
         }
 
-        if (GLOBAL_CONFIG.signal) {
-            this.saveDb(this.DB_SIGNAL, GLOBAL_CONFIG.signal);
+        if (conf.spintask_signal_button || conf.signal) {
+            this.saveDb(this.DB_SIGNAL, conf.spintask_signal_button || conf.signal);
         }
 
-        if (GLOBAL_CONFIG.community_links) {
-            this.saveDb(this.DB_COMMUNITY_LINKS, GLOBAL_CONFIG.community_links);
+        if (conf.spintask_community_links || conf.community_links) {
+            this.saveDb(this.DB_COMMUNITY_LINKS, conf.spintask_community_links || conf.community_links);
         }
 
-        if (GLOBAL_CONFIG.social_media) {
-            this.saveDb(this.DB_SOCIAL_MEDIA, GLOBAL_CONFIG.social_media);
+        if (conf.spintask_social_media || conf.social_media) {
+            this.saveDb(this.DB_SOCIAL_MEDIA, conf.spintask_social_media || conf.social_media);
         }
 
-        if (GLOBAL_CONFIG.spin_settings) {
-            this.saveDb(this.DB_SPIN_SETTINGS, GLOBAL_CONFIG.spin_settings);
+        if (conf.spintask_spin_settings || conf.spin_settings) {
+            this.saveDb(this.DB_SPIN_SETTINGS, conf.spintask_spin_settings || conf.spin_settings);
         }
 
-        if (GLOBAL_CONFIG.content) {
+        if (conf.spintask_content || conf.content) {
             const current = this.getObjDb(this.DB_CONTENT);
-            this.saveDb(this.DB_CONTENT, { ...current, ...GLOBAL_CONFIG.content });
+            this.saveDb(this.DB_CONTENT, { ...current, ...conf.content, ...conf.spintask_content });
         }
 
-        if (GLOBAL_CONFIG.methods) {
-            this.saveDb(this.DB_METHODS, GLOBAL_CONFIG.methods);
+        if (conf.spintask_methods || conf.methods) {
+            this.saveDb(this.DB_METHODS, conf.spintask_methods || conf.methods);
         }
 
-        localStorage.setItem('spintask_config_version', GLOBAL_CONFIG.version || Date.now());
+        localStorage.setItem('spintask_config_version', conf._version || conf.version || Date.now());
         localStorage.setItem('spintask_last_sync', new Date().toISOString());
     },
 

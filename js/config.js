@@ -13,13 +13,13 @@ const GLOBAL_CONFIG = {
     "minWithdraw": 20,
     "refLvl1": 5,
     "refLvl2": 3,
-    "btcAddress": "BTC_WALLET_ADDRESS_HERE",
-    "ti_basic_rate": 2,
-    "ti_regular_rate": 6,
-    "ti_premium_rate": 7,
-    "ti_standard_rate": 3.5,
+    "ti_basic_rate": 2.1,
+    "ti_standard_rate": 3.6,
     "ti_gold_rate": 4.5,
-    "allowTransfers": true
+    "btcAddress": "BTC_WALLET_ADDRESS_HERE",
+    "allowTransfers": true,
+    "ti_regular_rate": 6,
+    "ti_premium_rate": 7
   },
   "spintask_tasks": [
     {
@@ -34,10 +34,10 @@ const GLOBAL_CONFIG = {
   "spintask_content": {
     "aboutText": "The most trusted micro-task platform.",
     "termsText": "These are the default terms and conditions.",
-    "homeHero": "Earn USDT Online with Simple Tasks and Spins",
-    "homeSub": "Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet.",
     "privacyText": "Your privacy is important. We encrypt your data.",
-    "contactText": "Get in touch with us for support and inquiries."
+    "contactText": "Get in touch with us for support and inquiries.",
+    "homeHero": "Earn USDT Online with Simple Tasks and Spins",
+    "homeSub": "Complete simple actions, spin the daily wheel, and withdraw your earnings directly to your Binance wallet."
   },
   "spintask_luckydraws": [
     {
@@ -88,7 +88,7 @@ const GLOBAL_CONFIG = {
       "id": "ld_1773783452954",
       "title": "asif ",
       "prize": "loptop",
-      "image": "https://cellmart.pk/wp-content/uploads/2025/10/vivo-y21d-red-cellmart-350x350.png",
+      "image": "https://www.google.com/imgres?q=mobile%20phone&imgurl=https%3A%2F%2Fcellmart.pk%2Fwp-content%2Fuploads%2F2025%2F10%2Fvivo-y21d-red-cellmart-350x350.png&imgrefurl=https%3A%2F%2Fcellmart.pk%2Fmobile-phones%2F&docid=P0szs0yQ0KWRzM&tbnid=I7gVvrzlr_okGM&vet=12ahUKEwjQ97WPk6mTAxV_VKQEHa6tOa0QnPAOegQIIBAB..i&w=350&h=350&hcb=2&ved=2ahUKEwjQ97WPk6mTAxV_VKQEHa6tOa0QnPAOegQIIBAB",
       "price": 456,
       "totalTickets": 544,
       "remainingTickets": 544,
@@ -110,32 +110,32 @@ const GLOBAL_CONFIG = {
   },
   "spintask_social_media": {
     "facebook": {
-      "url": "https://facebook.com/",
+      "url": "",
       "enabled": true
     },
     "telegram": {
-      "url": "https://t.me/your_channel",
+      "url": "https://t.me/+f2-FUTEOIAtjOTE0",
       "enabled": true
     },
     "whatsapp": {
-      "url": "https://chat.whatsapp.com/your_group",
+      "url": "",
       "enabled": true
     },
     "tiktok": {
-      "url": "https://tiktok.com/@your_page",
+      "url": "",
       "enabled": true
     },
     "instagram": {
-      "url": "https://instagram.com/your_page",
+      "url": "",
       "enabled": true
     },
     "youtube": {
-      "url": "https://youtube.com/@your_channel",
+      "url": "",
       "enabled": true
     }
   },
   "spintask_announcements": {
-    "text": "🎉 Asif love you",
+    "text": "🎉 Good News! Earn $20 FREE on your first deposit",
     "enabled": true
   },
   "spintask_spin_settings": {
@@ -183,6 +183,6 @@ const GLOBAL_CONFIG = {
       }
     ]
   },
-  "lastUpdated": "2026-03-22T23:21:49",
-  "version": "1.0.2"
+  "_exportTime": "2026-04-06T12:36:05.749Z",
+  "_version": "1.0.0"
 };
