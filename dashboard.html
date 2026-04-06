@@ -741,6 +741,17 @@
                     }
                 });
             }
+
+            // --- Transaction Verification Group Hub Link ---
+            const cl = Admin.getCommunityLinks();
+            const vipBtn = document.getElementById('vip-signal-btn-dash');
+            if (vipBtn && cl) {
+                let targetUrl = cl.telegramLink || '#';
+                if (cl.activeLink === 'whatsappGroup') targetUrl = cl.whatsappGroupLink || '#';
+                else if (cl.activeLink === 'whatsappCommunity') targetUrl = cl.whatsappCommunityLink || '#';
+                vipBtn.href = targetUrl && targetUrl !== '#' ? targetUrl : '#';
+                if (!targetUrl || targetUrl === '#') vipBtn.removeAttribute('target');
+            }
         });
 
         function doVerify() {
