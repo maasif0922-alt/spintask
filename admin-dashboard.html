@@ -1690,7 +1690,7 @@
                 walletHtml = '<br><strong>TRC20 Wallet:</strong>' +
                     '<div style="display:flex;align-items:center;gap:8px;margin-top:6px;margin-bottom:4px;">' +
                         '<code style="flex:1;background:rgba(57,255,20,0.08);border:1px dashed rgba(57,255,20,0.3);border-radius:8px;padding:8px 12px;font-size:0.82rem;color:#39ff14;word-break:break-all;">' + walletAddr + '</code>' +
-                        '<button onclick="navigator.clipboard.writeText(\'' + walletAddr.replace(/'/g, "\\'") + '\').then(function(){this.textContent=\'✅ Copied!\'}.bind(this)).catch(function(){prompt(\'Copy this address:\',\'' + walletAddr.replace(/'/g, "\\'") + '\')})" style="background:#39ff14;color:#000;border:none;border-radius:8px;padding:7px 14px;font-weight:700;font-size:0.78rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">📋 Copy</button>' +
+                        '<button onclick="navigator.clipboard.writeText(\'' + walletAddr.replace(/'/g, "\\'") + '\').then(function(){this.textContent=\'✅ Copied!\'}.bind(this)).catch(function(){prompt(\'Copy this address:\',\'' + walletAddr.replace(/'/g, "\\'") + '\')})" style="background:#39ff14;color:#000;border:none;border-radius:8px;padding:7px 14px;font-weight:700;font-size:0.78rem;cursor:pointer;white-space:nowrap;flex-shrink:0;">&#x1F4CB; Copy</button>' +
                     '</div>';
             } else {
                 walletHtml = '<br><strong>TRC20 Wallet:</strong> <em style="color:#888">Not provided by user</em>';
