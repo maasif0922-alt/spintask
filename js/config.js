@@ -21,16 +21,7 @@ const GLOBAL_CONFIG = {
     "ti_regular_rate": 6,
     "ti_premium_rate": 7
   },
-  "spintask_tasks": [
-    {
-      "id": "t_1775479369553",
-      "title": "Invite your friends to our Telegram group and get 1 USDT reward",
-      "desc": "Simply refer a friend, have them create an account, and join our Telegram group. Once they complete these steps, you will receive 1 USDT as a reward.  Start inviting today and grow your earnings!",
-      "reward": 1,
-      "type": "social",
-      "active": true
-    }
-  ],
+  "spintask_tasks": [],
   "spintask_content": {
     "aboutText": "The most trusted micro-task platform.",
     "termsText": "These are the default terms and conditions.",
@@ -111,7 +102,7 @@ const GLOBAL_CONFIG = {
   "spintask_social_media": {
     "facebook": {
       "url": "",
-      "enabled": true
+      "enabled": false
     },
     "telegram": {
       "url": "https://t.me/+f2-FUTEOIAtjOTE0",
@@ -119,19 +110,19 @@ const GLOBAL_CONFIG = {
     },
     "whatsapp": {
       "url": "",
-      "enabled": true
+      "enabled": false
     },
     "tiktok": {
       "url": "",
-      "enabled": true
+      "enabled": false
     },
     "instagram": {
       "url": "",
-      "enabled": true
+      "enabled": false
     },
     "youtube": {
       "url": "",
-      "enabled": true
+      "enabled": false
     }
   },
   "spintask_announcements": {
@@ -183,6 +174,7 @@ const GLOBAL_CONFIG = {
       }
     ]
   },
-  "_exportTime": "2026-04-06T12:45:37.361Z",
+  "spintask_task_submissions": [],
+  "_exportTime": "2026-04-06T15:19:38.635Z",
   "_version": "1.0.0"
 };
