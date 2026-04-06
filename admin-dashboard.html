@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1709,11 +1709,11 @@
             modal.style.display = 'flex';
         }
 
-        // â”€â”€ Tasks â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Tasks ────────────────────────────────────────────────────────────────────────────────────
         function renderTasks() {
             var tasks = Admin.getDb(Admin.DB_TASKS);
             document.getElementById('tasks-list').innerHTML = tasks.map(t => `<div class="task-row">
-        <div><strong>${t.title}</strong><div class="tr-meta">${t.desc} â€¢ ${fmt(t.reward)} â€¢ ${t.type}</div></div>
+        <div><strong>${t.title}</strong><div class="tr-meta">${t.desc} • ${fmt(t.reward)} • ${t.type}</div></div>
         <div class="tr-actions">
             <span class="badge ${t.active ? 'badge-approved' : 'badge-rejected'}">${t.active ? 'Active' : 'Inactive'}</span>
             <button class="btn btn-outline" onclick="toggleTask('${t.id}')">${t.active ? 'Disable' : 'Enable'}</button>
@@ -1731,7 +1731,7 @@
         function toggleTask(id) { Admin.toggleTaskStatus(id); renderTasks(); }
         function deleteTask(id) { if (confirm('Delete this task?')) { Admin.deleteTask(id); renderTasks(); } }
 
-        // â”€â”€ Spin Settings â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Spin Settings ────────────────────────────────────────────────────────────────────────────
         function renderSpinSettings() {
             var ss = Admin.getSpinSettings();
             document.getElementById('spin-enabled').checked = ss.enabled !== false;
@@ -1743,7 +1743,7 @@
             <option value="none" ${seg.type === 'none' ? 'selected' : ''}>No Prize</option>
             <option value="bonus" ${seg.type === 'bonus' ? 'selected' : ''}>Bonus</option>
         </select>
-        <button class="btn btn-outline" style="color:#ff4d4d" onclick="removeSegment(${i})">âœ•</button>
+        <button class="btn btn-outline" style="color:#ff4d4d" onclick="removeSegment(${i})">✖</button>
     </div>`).join('');
         }
         function addSegment() {
@@ -1772,7 +1772,7 @@
             Admin.saveSpinSettings(ss); alert('Spin settings saved!');
         }
 
-        // â”€â”€ Trading Investment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Trading Investment ───────────────────────────────────────────────────────────────────────
         function renderTrading() {
             var allData = Admin.getTradingByPlan();
             var grid = document.getElementById('trading-management-grid');
@@ -1799,7 +1799,7 @@
                         </div>
                     </div>
                     <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-                        <button class="btn btn-outline" style="width: 100%; font-size: 0.85rem;" onclick="forceCreditTrading('${p.id}')">âš¡ Force Credit Profit Now</button>
+                        <button class="btn btn-outline" style="width: 100%; font-size: 0.85rem;" onclick="forceCreditTrading('${p.id}')">⚡ Force Credit Profit Now</button>
                     </div>
                 </div>`;
             }).join('');
@@ -1824,6 +1824,7 @@
                 </tr>`;
             }).join('') || '<tr><td colspan="7" style="text-align:center;color:var(--text-muted)">No active trading investments</td></tr>';
         }
+
 
         function updateTradingRate(planId) {
             var val = document.getElementById('tr-rate-' + planId).value;

@@ -753,6 +753,13 @@ const Admin = {
         this.logAction(`Admin created new lucky draw: ${title}`);
     },
 
+    deleteLuckyDraw(drawId) {
+        let draws = this.getDb(this.DB_LUCKYDRAWS);
+        draws = draws.filter(d => d.id !== drawId);
+        this.saveDb(this.DB_LUCKYDRAWS, draws);
+        this.logAction(`Admin deleted lucky draw ID: ${drawId}`);
+    },
+
     // ─── Broadcast / Notifications ────────────────────────────────────────
 
     sendBroadcast(target, subject, message) {
