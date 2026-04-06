@@ -64,7 +64,7 @@ const Notifications = {
         const user = Auth.getCurrentUser();
         if (!user) return;
 
-        const topBar = document.querySelector('.top-bar');
+        const topBar = document.querySelector('.top-bar') || document.querySelector('.welcome-section');
         if (!topBar) return;
 
         // Check if bell already exists
@@ -72,7 +72,7 @@ const Notifications = {
 
         const container = document.createElement('div');
         container.id = 'notif-bell-container';
-        container.style.cssText = 'position: relative; cursor: pointer; margin-right: 20px;';
+        container.style.cssText = 'position: relative; cursor: pointer; margin-left: 10px; display:flex; align-items:center; justify-content:center;';
 
         const unreadCount = this.getUnreadCount(user.id);
 
@@ -81,8 +81,13 @@ const Notifications = {
             ${unreadCount > 0 ? `<span id="notif-badge" style="position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold;">${unreadCount}</span>` : ''}
         `;
 
-        // Insert before the balance or user info in top-bar
-        topBar.appendChild(container);
+        // Insert cleverly to avoid breaking flex flow 
+        const glassBox = topBar.querySelector('.glass');
+        if (glassBox && topBar.classList.contains('top-bar')) {
+            glassBox.appendChild(container); // Put inside the Balance box!
+        } else {
+            topBar.appendChild(container);
+        }
 
         container.onclick = () => this.showNotificationModal(user.id);
     },
