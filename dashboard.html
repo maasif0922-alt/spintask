@@ -176,20 +176,23 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="top-bar" style="flex-wrap: wrap; gap: 20px; margin-bottom: 30px;">
-                <div style="flex: 1; min-width: 250px;">
-                    <h2 id="welcome-msg" style="font-size: 1.8rem;">Welcome! 👋</h2>
-                    <p style="color: var(--text-muted);">Here's what's happening today.</p>
-                </div>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
-                    <div class="glass"
-                        style="padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px;">
-                        <span style="color: var(--primary-neon); font-weight: 600;">USDT</span>
-                        <span class="user-balance-value" style="font-weight: 700; font-size: 1.1rem;">$0.00</span>
+            <div class="top-bar" style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h2 id="welcome-msg" style="font-size: 1.8rem; margin: 0 0 5px 0;">Welcome! 👋</h2>
+                        <p style="color: var(--text-muted); margin: 0;">Here's what's happening today.</p>
                     </div>
-                    <a href="deposit.html" class="btn btn-primary"
-                        style="background: var(--accent-blue); border-color: var(--accent-blue); box-shadow: 0 0 15px rgba(44, 165, 224, 0.3); padding: 10px 20px; white-space: nowrap;">💰 Deposit</a>
-                    <a href="spin.html" class="btn btn-primary" style="padding: 10px 20px; white-space: nowrap;">Daily Spin</a>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary-neon); font-size: 0.9rem; font-weight: 600;">Balance:</span>
+                            <span class="user-balance-value" style="font-weight: 700; font-size: 1.1rem; color: #fff;">$0.00 USDT</span>
+                            <span style="font-size: 1.2rem; cursor: pointer;" title="Notifications">🔔</span>
+                        </div>
+                        <div style="display: flex; gap: 10px; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 15px; height: 100%; align-items: center;">
+                            <a href="deposit.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; white-space: nowrap; border-radius: 8px; background: var(--accent-blue); border-color: var(--accent-blue); box-shadow: 0 4px 10px rgba(44, 165, 224, 0.2);">Deposit</a>
+                            <a href="withdraw.html" class="btn btn-outline" style="padding: 8px 16px; font-size: 0.85rem; white-space: nowrap; border-radius: 8px;">Withdraw</a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
