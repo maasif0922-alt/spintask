@@ -70,15 +70,35 @@
                 <!-- Dynamically populated via JS -->
             </div>
 
-            <!-- Task Overlay / Timer -->
-            <div id="task-overlay"
-                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; flex-direction: column; justify-content: center; align-items: center;">
-                <h2 id="timer-display" style="font-size: 4rem; color: var(--primary-neon); margin-bottom: 20px;">00s
-                </h2>
-                <p style="color: var(--text-white); font-size: 1.2rem;">Do not close this window...</p>
-                <div class="glass"
-                    style="margin-top: 40px; padding: 20px; border-radius: 10px; width: 80%; max-width: 800px; height: 400px; display: flex; align-items: center; justify-content: center;">
-                    <p style="color: var(--text-muted);">Website Content Loading...</p>
+            </div>
+
+            <!-- Task Proof Submission Overlay -->
+            <div id="proof-overlay"
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1100; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+                <div class="glass" style="width: 100%; max-width: 500px; padding: 30px; border-radius: 20px; position: relative;">
+                    <button onclick="closeProofOverlay()" style="position: absolute; top: 15px; right: 20px; background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;">&times;</button>
+                    <h3 id="proof-task-title" style="margin-bottom: 10px; color: var(--primary-neon);">Submit Proof</h3>
+                    <p id="proof-task-desc" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Please upload a screenshot or enter details as proof of completion.</p>
+                    
+                    <div id="referral-link-box" style="display: none; margin-bottom: 25px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                        <label style="display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">Your Referral Link:</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="ref-link-display" readonly style="flex: 1; background: none; border: none; color: var(--primary-neon); font-family: monospace; font-size: 0.85rem;">
+                            <button onclick="copyRefLink()" style="background: var(--primary-neon); border: none; color: #000; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">Copy</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600;">Proof (Screenshot)</label>
+                        <input type="file" id="proof-file" accept="image/*" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;">
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600;">Additional Details (Optional)</label>
+                        <textarea id="proof-note" placeholder="Enter username or transaction ID if applicable..." style="width: 100%; height: 80px; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #fff;"></textarea>
+                    </div>
+
+                    <button id="submit-proof-btn" class="btn btn-primary" style="width: 100%;" onclick="submitFinalProof()">SUBMIT FOR REVIEW</button>
                 </div>
             </div>
         </main>
@@ -142,9 +162,28 @@
                 if (titleLower.includes('video') || titleLower.includes('watch')) icon = '▶️';
                 if (titleLower.includes('website') || titleLower.includes('visit')) icon = '🌐';
                 if (titleLower.includes('twitter') || titleLower.includes('follow') || titleLower.includes('social')) icon = '📱';
+                if (titleLower.includes('referral') || titleLower.includes('invite')) icon = '🤝';
 
                 const duration = task.duration || 0;
                 const reward = task.reward || parseFloat(task.rewardAmount) || 0;
+                const type = task.type || 'timer'; // Default to timer if not specified
+
+                // Check for existing submissions
+                const submissions = Admin.getDb(Admin.DB_TASK_SUBMISSIONS);
+                const user = Auth.getCurrentUser();
+                const sub = submissions.find(s => s.userId === user.id && s.taskId === task.id);
+                
+                let btnHtml = '';
+                if (sub) {
+                    const statusText = sub.status === 'pending' ? 'Pending Approval' : (sub.status === 'approved' ? 'Completed' : 'Rejected - Try Again');
+                    const btnClass = sub.status === 'pending' ? 'btn-outline' : (sub.status === 'approved' ? 'btn-outline' : 'btn-primary');
+                    btnHtml = `<button class="btn ${btnClass}" disabled>${statusText}</button>`;
+                    if (sub.status === 'rejected') {
+                        btnHtml = `<button class="btn btn-primary" onclick="startTask(this, ${duration}, ${reward}, '${task.id}', '${type}', '${encodeURIComponent(task.title)}', '${encodeURIComponent(task.desc)}')">Resubmit Proof</button>`;
+                    }
+                } else {
+                    btnHtml = `<button class="btn btn-primary btn-task" onclick="startTask(this, ${duration}, ${reward}, '${task.id}', '${type}', '${encodeURIComponent(task.title)}', '${encodeURIComponent(task.desc)}')">Start Task</button>`;
+                }
 
                 const taskHtml = `
                     <div class="task-item glass" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 20px; margin-bottom: 15px; border-radius: 15px; gap: 15px;">
@@ -153,14 +192,19 @@
                             <div style="flex: 1; word-break: break-word;">
                                 <h3 style="font-size: 1.1rem; margin: 0 0 5px 0;">${task.title}</h3>
                                 <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">${task.desc}</p>
+                                ${type === 'proof' && (titleLower.includes('referral') || titleLower.includes('invite')) ? `
+                                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--primary-neon); background: rgba(57,255,20,0.05); padding: 5px 10px; border-radius: 6px; display: inline-block;">
+                                        ? Referral Link Required
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                         <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
                             <div style="text-align: right;">
                                 <div style="color: var(--primary-neon); font-weight: 700; font-size: 1.2rem;">+$${reward.toFixed(2)}</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted);">Time: ${duration}s</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">${type === 'timer' ? 'Time: ' + duration + 's' : 'Manual Review'}</div>
                             </div>
-                            <button class="btn btn-primary btn-task" style="white-space: nowrap; padding: 10px 20px;" onclick="startTask(this, ${duration}, ${reward})">Start Task</button>
+                            ${btnHtml}
                         </div>
                     </div>
                 `;
@@ -168,12 +212,23 @@
             });
         }
 
-        function startTask(btn, seconds, reward) {
+        let currentTaskId = null;
+        let currentTaskReward = 0;
+
+        function startTask(btn, seconds, reward, taskId, type, title, desc) {
+            currentTaskId = taskId;
+            currentTaskReward = reward;
+            
+            if (type === 'proof') {
+                openProofOverlay(decodeURIComponent(title), decodeURIComponent(desc));
+                return;
+            }
+
             const overlay = document.getElementById('task-overlay');
             const timerDisplay = document.getElementById('timer-display');
             overlay.style.display = 'flex';
 
-            let remaining = seconds;
+            let remaining = seconds || 10;
             timerDisplay.innerText = remaining + 's';
 
             const interval = setInterval(() => {
@@ -198,6 +253,75 @@
                     location.reload();
                 }
             }, 1000);
+        }
+
+        function openProofOverlay(title, desc) {
+            document.getElementById('proof-overlay').style.display = 'flex';
+            document.getElementById('proof-task-title').innerText = title;
+            document.getElementById('proof-task-desc').innerText = desc;
+            
+            const user = Auth.getCurrentUser();
+            const refBox = document.getElementById('referral-link-box');
+            if (title.toLowerCase().includes('referral') || title.toLowerCase().includes('invite')) {
+                refBox.style.display = 'block';
+                const code = user.referralCode || user.id.substring(0, 8).toUpperCase();
+                const baseUrl = window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/') + '/register.html';
+                document.getElementById('ref-link-display').value = `${baseUrl}?ref=${code}`;
+            } else {
+                refBox.style.display = 'none';
+            }
+        }
+
+        function closeProofOverlay() {
+            document.getElementById('proof-overlay').style.display = 'none';
+        }
+
+        function copyRefLink() {
+            const input = document.getElementById('ref-link-display');
+            input.select();
+            document.execCommand('copy');
+            alert('Referral link copied!');
+        }
+
+        async function submitFinalProof() {
+            const fileInput = document.getElementById('proof-file');
+            const noteInput = document.getElementById('proof-note');
+            const btn = document.getElementById('submit-proof-btn');
+            
+            if (!fileInput.files[0] && !noteInput.value.trim()) {
+                alert('Please provide some proof (screenshot or details).');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'SUBMITTING...';
+
+            let proofData = noteInput.value.trim();
+            
+            if (fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64 = e.target.result;
+                    sendSubmission(base64 + (noteInput.value ? ' | Note: ' + noteInput.value : ''));
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                sendSubmission(proofData);
+            }
+        }
+
+        function sendSubmission(data) {
+            const user = Auth.getCurrentUser();
+            const res = Admin.submitTaskProof(user.id, currentTaskId, data);
+            
+            if (res.success) {
+                alert(res.message);
+                location.reload();
+            } else {
+                alert('❌ ' + res.message);
+                document.getElementById('submit-proof-btn').disabled = false;
+                document.getElementById('submit-proof-btn').innerText = 'SUBMIT FOR REVIEW';
+            }
         }
     </script>
 <!-- ========== MOBILE NAVIGATION DRAWER ========== -->

@@ -21,6 +21,7 @@ const Admin = {
     DB_TRANSFERS: 'spintask_transfers',
     DB_TRADING_SETTINGS: 'spintask_trading_settings',
     DB_METHODS: 'spintask_methods',
+    DB_TASK_SUBMISSIONS: 'spintask_task_submissions',
 
     // Default Settings Initialization
     init() {
@@ -147,6 +148,10 @@ const Admin = {
 
         if (!localStorage.getItem(this.DB_ADMIN_ALERTS)) {
             localStorage.setItem(this.DB_ADMIN_ALERTS, JSON.stringify([]));
+        }
+
+        if (!localStorage.getItem(this.DB_TASK_SUBMISSIONS)) {
+            localStorage.setItem(this.DB_TASK_SUBMISSIONS, JSON.stringify([]));
         }
 
         if (!localStorage.getItem(this.DB_COMMUNITY_LINKS)) {
@@ -489,6 +494,92 @@ const Admin = {
         tasks = tasks.filter(t => t.id !== taskId);
         this.saveDb(this.DB_TASKS, tasks);
         this.logAction(`Admin deleted task ID: ${taskId}`);
+    },
+
+    // ─── Task Submissions (Proof-based) ───────────────────────────────────
+
+    getTaskSubmissions() {
+        return this.getDb(this.DB_TASK_SUBMISSIONS);
+    },
+
+    submitTaskProof(userId, taskId, proofData) {
+        const subs = this.getTaskSubmissions();
+        const existing = subs.find(s => s.userId === userId && s.taskId === taskId && s.status === 'pending');
+        if (existing) return { success: false, message: 'You already have a pending submission for this task.' };
+
+        const tasks = this.getDb(this.DB_TASKS);
+        const task = tasks.find(t => t.id === taskId);
+        if (!task) return { success: false, message: 'Task not found.' };
+
+        const submission = {
+            id: 'tsub_' + Date.now(),
+            userId,
+            taskId,
+            taskTitle: task.title,
+            reward: task.reward,
+            proof: proofData, // Base64 image or text
+            status: 'pending',
+            date: new Date().toISOString()
+        };
+
+        subs.unshift(submission);
+        this.saveDb(this.DB_TASK_SUBMISSIONS, subs);
+
+        // Sync to cloud
+        if (typeof db !== 'undefined' && db !== null) {
+            db.ref('task_submissions/' + submission.id).set(submission);
+        }
+
+        // Fire admin alert
+        const users = this.getAllUsers();
+        const user = users.find(u => u.id === userId);
+        const userName = user ? user.name : userId;
+        this.addAdminAlert('task', `📝 New Task Proof: ${userName} submitted proof for "${task.title}"`, submission.id);
+
+        return { success: true, message: 'Proof submitted successfully! Please wait up to 12 hours for manual verification.' };
+    },
+
+    resolveTaskSubmission(submissionId, newStatus) {
+        const subs = this.getTaskSubmissions();
+        const index = subs.findIndex(s => s.id === submissionId);
+        if (index !== -1 && subs[index].status === 'pending') {
+            subs[index].status = newStatus;
+
+            if (newStatus === 'approved') {
+                const users = this.getAllUsers();
+                const uIndex = users.findIndex(u => u.id === subs[index].userId);
+                if (uIndex !== -1) {
+                    const reward = parseFloat(subs[index].reward) || 0;
+                    users[uIndex].balance = parseFloat((users[uIndex].balance + reward).toFixed(2));
+                    users[uIndex].earnings = parseFloat(((users[uIndex].earnings || 0) + reward).toFixed(2));
+                    localStorage.setItem('spintask_users', JSON.stringify(users));
+
+                    // Sync user to Cloud
+                    if (typeof db !== 'undefined' && db !== null) {
+                        db.ref('users/' + subs[index].userId).update({
+                            balance: users[uIndex].balance,
+                            earnings: users[uIndex].earnings
+                        });
+                    }
+                    
+                    // Add a notification for the user
+                    this.addUserNotification(subs[index].userId, '✅ Task Approved', `Your proof for "${subs[index].taskTitle}" was approved. ${reward} USDT added to your balance.`);
+                }
+            } else if (newStatus === 'rejected') {
+                this.addUserNotification(subs[index].userId, '❌ Task Rejected', `Your proof for "${subs[index].taskTitle}" was rejected. Please try again with valid proof.`);
+            }
+
+            this.saveDb(this.DB_TASK_SUBMISSIONS, subs);
+            
+            // Sync submission result to cloud
+            if (typeof db !== 'undefined' && db !== null) {
+                db.ref('task_submissions/' + submissionId).update({ status: newStatus });
+            }
+
+            this.logAction(`Admin ${newStatus} task submission ${submissionId}`);
+            return { success: true };
+        }
+        return { success: false, message: 'Submission not found or already resolved.' };
     },
 
     // ─── Transactions ─────────────────────────────────────────────────────
@@ -1109,7 +1200,8 @@ const Admin = {
             'spintask_announcements',
             'spintask_spin_settings',
             'spintask_trading_settings',
-            'spintask_sportxbet_matches'
+            'spintask_sportxbet_matches',
+            'spintask_task_submissions'
         ];
 
         let exportData = {};
@@ -1306,6 +1398,15 @@ const DEPLOYMENT_DATA = ${jsonString};
             localStorage.setItem(this.DB_TRANSACTIONS, JSON.stringify(transactions));
             console.log('[RealtimeDB] Transactions synced.');
             window.dispatchEvent(new Event('admin:transactionsSynced'));
+        });
+
+        // 6. Sync Task Submissions
+        db.ref('task_submissions').limitToLast(500).on('value', snap => {
+            const data = snap.val() || {};
+            const submissions = Object.values(data).sort((a, b) => new Date(b.date) - new Date(a.date));
+            localStorage.setItem(this.DB_TASK_SUBMISSIONS, JSON.stringify(submissions));
+            console.log('[RealtimeDB] Task submissions synced.');
+            window.dispatchEvent(new Event('admin:taskSubmissionsSynced'));
         });
     }
 };
