@@ -186,31 +186,38 @@
             gap: 12px;
         }
         .earn-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            padding: 18px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px 15px;
             text-align: center;
             text-decoration: none;
             color: #fff;
-            transition: all 0.25s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
+            min-height: 155px;
         }
         .earn-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
             border-color: var(--neon);
+            background: rgba(57, 255, 20, 0.04);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
-        .earn-card .ec-icon { font-size: 1.8rem; }
-        .earn-card .ec-title { font-size: 0.9rem; font-weight: 700; }
-        .earn-card .ec-sub { font-size: 0.75rem; color: var(--muted); }
+        .earn-card .ec-icon { font-size: 2.2rem; margin-bottom: 4px; }
+        .earn-card .ec-title { font-size: 0.95rem; font-weight: 700; color: #fff; }
+        .earn-card .ec-sub { font-size: 0.78rem; color: var(--muted); }
         .earn-card .ec-reward {
-            font-size: 0.82rem;
-            font-weight: 700;
+            font-size: 0.85rem;
+            font-weight: 800;
             color: var(--neon);
-            margin-top: 4px;
+            margin-top: 5px;
+            padding: 4px 12px;
+            background: var(--neon-dim);
+            border-radius: 20px;
         }
 
         /* ─── Trading Plans Mini ─── */
@@ -394,20 +401,24 @@
             .dash-row { grid-template-columns: 1fr; }
         }
         @media (max-width: 768px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
             .quick-actions { grid-template-columns: repeat(5, 1fr); gap: 8px; }
             .qa-btn { padding: 12px 8px; font-size: 0.7rem; }
             .qa-btn .qa-icon { width: 38px; height: 38px; font-size: 1.2rem; }
-            .earn-grid { grid-template-columns: 1fr 1fr; }
-            .referral-promo { flex-direction: column; align-items: flex-start; }
-            .referral-promo .rp-btns { margin-left: 0; }
+            .panel { padding: 20px 15px; }
+            .earn-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .earn-card { padding: 16px 12px; }
+            .referral-promo { flex-direction: column; align-items: flex-start; padding: 20px; }
+            .referral-promo .rp-btns { margin-left: 0; width: 100%; position: relative; }
+            .verify-banner { padding: 15px; gap: 12px; }
             .verify-banner .btn-verify { margin-left: 0; width: 100%; }
             .top-bar-right { width: 100%; }
             .balance-pill { flex: 1; }
             .btn-deposit { flex: 1; justify-content: center; }
         }
-        @media (max-width: 480px) {
-            .quick-actions { grid-template-columns: repeat(5, 1fr); }
+        @media (max-width: 400px) {
+            .earn-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
