@@ -670,9 +670,14 @@
                 `;
             }
 
-            // Stats
-            document.getElementById('stats-tasks').innerText = user.tasksCompleted || 0;
-            document.getElementById('stats-spins').innerText = `${user.spinsToday || 0}/5`;
+            // Stats - Dynamically calculated from action histories
+            const tasksHistory = JSON.parse(localStorage.getItem('spintask_tasks_history') || '[]');
+            const userTasksCount = tasksHistory.filter(t => t.userId === user.id).length;
+            document.getElementById('stats-tasks').innerText = userTasksCount;
+
+            const spinKey = 'spintask_last_spin_' + user.id;
+            const spunToday = localStorage.getItem(spinKey) === new Date().toDateString() ? 1 : 0;
+            document.getElementById('stats-spins').innerText = `${spunToday}/1`;
 
             let refCount = user.referralCount || 0;
             if (refCount === 0) {
