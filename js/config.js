@@ -23,11 +23,11 @@ const GLOBAL_CONFIG = {
   },
   "spintask_tasks": [
     {
-      "id": "t_1773782243127",
-      "title": "earn money",
-      "desc": "visit and like vedio",
-      "reward": 3,
-      "type": "visit",
+      "id": "t_1775479369553",
+      "title": "Invite your friends to our Telegram group and get 1 USDT reward",
+      "desc": "Simply refer a friend, have them create an account, and join our Telegram group. Once they complete these steps, you will receive 1 USDT as a reward.  Start inviting today and grow your earnings!",
+      "reward": 1,
+      "type": "social",
       "active": true
     }
   ],
@@ -183,6 +183,6 @@ const GLOBAL_CONFIG = {
       }
     ]
   },
-  "_exportTime": "2026-04-06T12:36:05.749Z",
+  "_exportTime": "2026-04-06T12:45:37.361Z",
   "_version": "1.0.0"
 };
