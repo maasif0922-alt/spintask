@@ -1855,7 +1855,9 @@
             var draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
             document.getElementById('draws-list').innerHTML = draws.map(d => `<div class="task-row">
         <div><strong>${d.title}</strong> — ${d.prize}<div class="tr-meta">Tickets: ${d.totalTickets - d.remainingTickets}/${d.totalTickets} • ${fmt(d.price)} each • <span class="badge ${d.status === 'active' ? 'badge-approved' : 'badge-rejected'}">${d.status}</span></div></div>
-        <div class="tr-actions">${d.status === 'active' ? `<button class="btn btn-primary" onclick="runDraw('${d.id}')">Run Draw</button>` : ''}
+        <div class="tr-actions">
+            ${d.status === 'active' ? `<button class="btn btn-primary" onclick="runDraw('${d.id}')">Run Draw</button>` : ''}
+            <button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d;" onclick="deleteDraw('${d.id}')">Delete</button>
         </div>
     </div>`).join('') || '<p style="color:var(--text-muted)">No draws yet.</p>';
         }
@@ -1879,6 +1881,16 @@
             var ann = Admin.getAnnouncement();
             document.getElementById('ann-text').value = ann.text || '';
             document.getElementById('ann-enabled').checked = ann.enabled || false;
+        }
+        function deleteDraw(id) {
+            if (confirm('Delete this lucky draw?')) {
+                var draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
+                var updated = draws.filter(d => d.id !== id);
+                Admin.saveDb(Admin.DB_LUCKYDRAWS, updated);
+                Admin.logAction('Admin deleted lucky draw: ' + id);
+                renderDraws();
+                alert('Lucky draw deleted successfully!');
+            }
         }
         function sendBroadcast() {
             var target = document.getElementById('bc-target').value, sub = document.getElementById('bc-subject').value, msg = document.getElementById('bc-message').value;

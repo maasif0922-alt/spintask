@@ -1880,6 +1880,16 @@
             else alert(r.message);
             renderDraws();
         }
+        function deleteDraw(id) {
+            if (confirm('Delete this lucky draw?')) {
+                var draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
+                var updated = draws.filter(d => d.id !== id);
+                Admin.saveDb(Admin.DB_LUCKYDRAWS, updated);
+                Admin.logAction('Admin deleted lucky draw: ' + id);
+                renderDraws();
+                alert('Lucky draw deleted successfully!');
+            }
+        }
 
         // â”€â”€ Broadcast â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function renderBroadcast() {
