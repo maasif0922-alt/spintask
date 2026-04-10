@@ -40,7 +40,12 @@ const GLOBAL_CONFIG = {
       "totalTickets": 500,
       "remainingTickets": 498,
       "drawDate": "2026-03-13T08:28:27.417Z",
-      "status": "active"
+      "status": "completed",
+      "winner": {
+        "name": "Admin Manager",
+        "ticketNumber": 1002,
+        "userId": "user_1772785707415"
+      }
     },
     {
       "id": "ld2",
@@ -51,7 +56,12 @@ const GLOBAL_CONFIG = {
       "totalTickets": 1000,
       "remainingTickets": 998,
       "drawDate": "2026-03-20T08:28:27.417Z",
-      "status": "active"
+      "status": "completed",
+      "winner": {
+        "name": "Admin Manager",
+        "ticketNumber": 1002,
+        "userId": "user_1772785707415"
+      }
     },
     {
       "id": "ld3",
@@ -62,7 +72,12 @@ const GLOBAL_CONFIG = {
       "totalTickets": 2000,
       "remainingTickets": 1999,
       "drawDate": "2026-04-05T08:28:27.417Z",
-      "status": "active"
+      "status": "completed",
+      "winner": {
+        "name": "Admin Manager",
+        "ticketNumber": 1001,
+        "userId": "user_1772785707415"
+      }
     },
     {
       "id": "ld_1772860827799",
@@ -73,7 +88,8 @@ const GLOBAL_CONFIG = {
       "totalTickets": 100,
       "remainingTickets": 100,
       "drawDate": "2016-04-01T00:00:00.000Z",
-      "status": "active"
+      "status": "completed",
+      "winner": "No participants"
     },
     {
       "id": "ld_1773783452954",
@@ -84,7 +100,8 @@ const GLOBAL_CONFIG = {
       "totalTickets": 544,
       "remainingTickets": 544,
       "drawDate": "2026-03-03T00:00:00.000Z",
-      "status": "active"
+      "status": "completed",
+      "winner": "No participants"
     }
   ],
   "spintask_signal_button": {
@@ -175,6 +192,6 @@ const GLOBAL_CONFIG = {
     ]
   },
   "spintask_task_submissions": [],
-  "_exportTime": "2026-04-06T15:19:38.635Z",
+  "_exportTime": "2026-04-10T18:18:39.299Z",
   "_version": "1.0.0"
 };
