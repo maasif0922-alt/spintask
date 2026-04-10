@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Admin logic and Mock Databases
  */
 
@@ -347,6 +347,99 @@ const Admin = {
     },
 
     // ─── Transfers ────────────────────────────────────────────────────────
+
+
+    // ── Community Pool ────────────────────────────────────────────────────────────
+
+    DB_POOLS: 'spintask_pools',
+
+    getPools() {
+        return this.getDb(this.DB_POOLS);
+    },
+
+    createPool(title, fee, targetUsers, prize) {
+        const pools = this.getDb(this.DB_POOLS);
+        const newPool = {
+            id: 'pool_' + Date.now(),
+            title: title || 'Community Pool',
+            fee: parseFloat(fee) || 5,
+            targetUsers: parseInt(targetUsers) || 10,
+            prize: parseFloat(prize) || 50,
+            queue: [], // array of { userId, userName }
+            status: 'active', // 'active' or 'completed'
+            createdAt: new Date().toISOString()
+        };
+        pools.push(newPool);
+        this.saveDb(this.DB_POOLS, pools);
+        this.logAction(Admin created new community pool:  + title);
+    },
+
+    deletePool(id) {
+        let pools = this.getDb(this.DB_POOLS);
+        pools = pools.filter(p => p.id !== id);
+        this.saveDb(this.DB_POOLS, pools);
+        this.logAction(Admin deleted community pool:  + id);
+    },
+
+    joinPool(userId, userName, poolId) {
+        const pools = this.getDb(this.DB_POOLS);
+        const pool = pools.find(p => p.id === poolId);
+
+        if (!pool || pool.status !== 'active') return { success: false, message: 'Pool not active or found.' };
+        if (pool.queue.some(u => u.userId === userId)) return { success: false, message: 'You have already joined this pool.' };
+        
+        const users = this.getAllUsers();
+        const userIndex = users.findIndex(u => u.id === userId);
+        if (userIndex === -1) return { success: false, message: 'User not found.' };
+
+        if ((users[userIndex].balance || 0) < pool.fee) {
+            return { success: false, message: 'Insufficient balance to join pool.' };
+        }
+
+        // Deduct fee and add to queue
+        users[userIndex].balance -= pool.fee;
+        localStorage.setItem('spintask_users', JSON.stringify(users));
+
+        pool.queue.push({ userId, userName, date: new Date().toISOString() });
+        this.saveDb(this.DB_POOLS, pools);
+
+        this.logAction(User  + userName +  joined Community Pool  + pool.id);
+        return { success: true, message: 'Successfully joined the pool!' };
+    },
+
+    runPoolDraw(id) {
+        const pools = this.getDb(this.DB_POOLS);
+        const pool = pools.find(p => p.id === id);
+
+        if (!pool) return { success: false, message: 'Pool not found.' };
+        if (pool.status === 'completed') return { success: false, message: 'Pool already completed.' };
+        if (pool.queue.length === 0) return { success: false, message: 'No users in this pool yet.' };
+
+        // Select winner randomly
+        const winnerIndex = Math.floor(Math.random() * pool.queue.length);
+        const winner = pool.queue[winnerIndex];
+
+        // Process Payout
+        const users = this.getAllUsers();
+        const uIndex = users.findIndex(u => u.id === winner.userId);
+        if (uIndex !== -1) {
+            users[uIndex].balance = (users[uIndex].balance || 0) + pool.prize;
+            users[uIndex].earnings = (users[uIndex].earnings || 0) + pool.prize;
+            localStorage.setItem('spintask_users', JSON.stringify(users));
+        }
+
+        pool.status = 'completed';
+        pool.winner = {
+            userId: winner.userId,
+            userName: winner.userName,
+            date: new Date().toISOString()
+        };
+
+        this.saveDb(this.DB_POOLS, pools);
+        this.logAction(Community Pool  + pool.id +  drawn! Winner:  + winner.userName);
+
+        return { success: true, winner: pool.winner };
+    },
 
     getAllTransfers() {
         return this.getDb(this.DB_TRANSFERS) || [];
@@ -1349,6 +1442,99 @@ const DEPLOYMENT_DATA = ${jsonString};
         if (typeof db !== 'undefined' && db !== null) {
             db.ref('transfers/' + newRecord.id).set(newRecord);
         }
+    },
+
+
+    // ── Community Pool ────────────────────────────────────────────────────────────
+
+    DB_POOLS: 'spintask_pools',
+
+    getPools() {
+        return this.getDb(this.DB_POOLS);
+    },
+
+    createPool(title, fee, targetUsers, prize) {
+        const pools = this.getDb(this.DB_POOLS);
+        const newPool = {
+            id: 'pool_' + Date.now(),
+            title: title || 'Community Pool',
+            fee: parseFloat(fee) || 5,
+            targetUsers: parseInt(targetUsers) || 10,
+            prize: parseFloat(prize) || 50,
+            queue: [], // array of { userId, userName }
+            status: 'active', // 'active' or 'completed'
+            createdAt: new Date().toISOString()
+        };
+        pools.push(newPool);
+        this.saveDb(this.DB_POOLS, pools);
+        this.logAction(Admin created new community pool:  + title);
+    },
+
+    deletePool(id) {
+        let pools = this.getDb(this.DB_POOLS);
+        pools = pools.filter(p => p.id !== id);
+        this.saveDb(this.DB_POOLS, pools);
+        this.logAction(Admin deleted community pool:  + id);
+    },
+
+    joinPool(userId, userName, poolId) {
+        const pools = this.getDb(this.DB_POOLS);
+        const pool = pools.find(p => p.id === poolId);
+
+        if (!pool || pool.status !== 'active') return { success: false, message: 'Pool not active or found.' };
+        if (pool.queue.some(u => u.userId === userId)) return { success: false, message: 'You have already joined this pool.' };
+        
+        const users = this.getAllUsers();
+        const userIndex = users.findIndex(u => u.id === userId);
+        if (userIndex === -1) return { success: false, message: 'User not found.' };
+
+        if ((users[userIndex].balance || 0) < pool.fee) {
+            return { success: false, message: 'Insufficient balance to join pool.' };
+        }
+
+        // Deduct fee and add to queue
+        users[userIndex].balance -= pool.fee;
+        localStorage.setItem('spintask_users', JSON.stringify(users));
+
+        pool.queue.push({ userId, userName, date: new Date().toISOString() });
+        this.saveDb(this.DB_POOLS, pools);
+
+        this.logAction(User  + userName +  joined Community Pool  + pool.id);
+        return { success: true, message: 'Successfully joined the pool!' };
+    },
+
+    runPoolDraw(id) {
+        const pools = this.getDb(this.DB_POOLS);
+        const pool = pools.find(p => p.id === id);
+
+        if (!pool) return { success: false, message: 'Pool not found.' };
+        if (pool.status === 'completed') return { success: false, message: 'Pool already completed.' };
+        if (pool.queue.length === 0) return { success: false, message: 'No users in this pool yet.' };
+
+        // Select winner randomly
+        const winnerIndex = Math.floor(Math.random() * pool.queue.length);
+        const winner = pool.queue[winnerIndex];
+
+        // Process Payout
+        const users = this.getAllUsers();
+        const uIndex = users.findIndex(u => u.id === winner.userId);
+        if (uIndex !== -1) {
+            users[uIndex].balance = (users[uIndex].balance || 0) + pool.prize;
+            users[uIndex].earnings = (users[uIndex].earnings || 0) + pool.prize;
+            localStorage.setItem('spintask_users', JSON.stringify(users));
+        }
+
+        pool.status = 'completed';
+        pool.winner = {
+            userId: winner.userId,
+            userName: winner.userName,
+            date: new Date().toISOString()
+        };
+
+        this.saveDb(this.DB_POOLS, pools);
+        this.logAction(Community Pool  + pool.id +  drawn! Winner:  + winner.userName);
+
+        return { success: true, winner: pool.winner };
     },
 
     getAllTransfers() {

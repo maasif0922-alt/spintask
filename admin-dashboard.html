@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -571,6 +571,7 @@
                     <li><a href="#" onclick="switchTab('sportscms',event)">&#x1F3C6; Sports CMS</a></li>
                     <li><a href="#" onclick="switchTab('trading',event)">&#x1F4C8; Trading Investment</a></li>
                     <li><a href="#" onclick="switchTab('luckydraw',event)">&#x1F389; Lucky Draw</a></li>
+                    <li><a href="#" onclick="switchTab('communitypool',event)">&#x1F465; Community Pool</a></li>
                     <li><a href="#" onclick="switchTab('notifications',event)">&#x1F4E3; Broadcast</a></li>
                     <li><a href="#" onclick="switchTab('communitylinks',event)">&#x1F680; Community Links</a></li>
                     <li><a href="#" onclick="switchTab('socialmedia',event)">&#x1F4F1; Social Media</a></li>
@@ -972,6 +973,23 @@
                 </div>
             </div>
 
+                        <!-- COMMUNITY POOL -->
+            <div id="tab-communitypool" class="admin-section" style="display:none;">
+                <div class="page-title">&#x1F465; Community Pool</div>
+                <div class="card" style="margin-bottom:20px;">
+                    <h3>Create New Pool</h3>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+                        <div class="form-group"><label>Pool Title</label><input type="text" id="cp-title" class="form-input" placeholder="e.g. Mega Pool"></div>
+                        <div class="form-group"><label>Entry Fee (USDT)</label><input type="number" id="cp-fee" class="form-input" placeholder="5"></div>
+                        <div class="form-group"><label>Target Users</label><input type="number" id="cp-users" class="form-input" placeholder="10"></div>
+                        <div class="form-group"><label>Total Prize (USDT)</label><input type="number" id="cp-prize" class="form-input" placeholder="50"></div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:14px;width:100%;" onclick="createPoolFromUI()">Create Pool</button>
+                </div>
+                <h3>Active & Completed Pools</h3>
+                <div id="pools-list" style="margin-top:10px;display:flex;flex-direction:column;gap:10px;"></div>
+            </div>
+
             <!-- LUCKY DRAW -->
             <div id="tab-luckydraw" class="admin-section">
                 <div class="page-title">ðŸŽ‰ Lucky Draw</div>
@@ -1276,6 +1294,7 @@
             if (id === 'spinsettings') renderSpinSettings();
             if (id === 'trading') renderTrading();
             if (id === 'luckydraw') renderDraws();
+            renderPools();
             if (id === 'notifications') renderBroadcast();
             if (id === 'communitylinks') renderCommunityLinks();
             if (id === 'socialmedia') renderSocialMedia();
@@ -1873,6 +1892,7 @@
             if (!t || !p || !pr || !tk || !dt) { alert('Please fill all required fields.'); return; }
             Admin.createLuckyDraw(t, p, img, pr, tk, dt);
             alert('Lucky Draw created!'); renderDraws();
+            renderPools();
             ['ld-title', 'ld-prize', 'ld-price', 'ld-tickets', 'ld-date', 'ld-image'].forEach(id => { document.getElementById(id).value = ''; });
         }
         function runDraw(id) {
@@ -1881,6 +1901,7 @@
             if (r.success) alert('Winner: ' + r.winner.name + ' (Ticket #' + r.winner.ticketNumber + ')');
             else alert(r.message);
             renderDraws();
+            renderPools();
         }
         function deleteDraw(id) {
             if (confirm('Delete this lucky draw?')) {
@@ -1889,7 +1910,49 @@
                 Admin.saveDb(Admin.DB_LUCKYDRAWS, updated);
                 Admin.logAction('Admin deleted lucky draw: ' + id);
                 renderDraws();
+            renderPools();
                 alert('Lucky draw deleted successfully!');
+            }
+        }
+
+        // ── Community Pool ────────────────────────────────────────────────────────
+
+        function renderPools() {
+            var pools = Admin.getDb(Admin.DB_POOLS);
+            document.getElementById('pools-list').innerHTML = pools.map(p => 
+            <div class="task-row">
+                <div>
+                    <strong> + p.title + </strong> — Win $ + p.prize + 
+                    <div class="tr-meta">Fee: $ + p.fee +  • Users:  + p.queue.length + / + p.targetUsers +  • <span class="badge  + (p.status === 'active' ? 'badge-approved' : 'badge-rejected') + "> + p.status.toUpperCase() + </span></div>
+                </div>
+                <div class="tr-actions">
+                     + (p.status === 'active' ? <button class="btn btn-primary" onclick="runPoolUI(' + p.id + ')">Run Draw</button> : '') + 
+                    <button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d;" onclick="deletePoolUI(' + p.id + ')">Delete</button>
+                </div>
+            </div>).join('') || '<p style="color:var(--text-muted)">No pools yet.</p>';
+        }
+
+        function createPoolFromUI() {
+            var t = document.getElementById('cp-title').value, f = document.getElementById('cp-fee').value, u = document.getElementById('cp-users').value, p = document.getElementById('cp-prize').value;
+            if (!t || !f || !u || !p) { alert('Please fill all required fields.'); return; }
+            Admin.createPool(t, f, u, p);
+            alert('Community Pool created!'); renderPools();
+            ['cp-title', 'cp-fee', 'cp-users', 'cp-prize'].forEach(id => { document.getElementById(id).value = ''; });
+        }
+
+        function runPoolUI(id) {
+            if (!confirm('Run the draw now? This will randomly select a winner from the queue and credit the prize to their balance.')) return;
+            var r = Admin.runPoolDraw(id);
+            if (r.success) alert('Winner: ' + r.winner.userName + '!');
+            else alert(r.message);
+            renderPools();
+        }
+
+        function deletePoolUI(id) {
+            if (confirm('Delete this community pool?')) {
+                Admin.deletePool(id);
+                renderPools();
+                alert('Community pool deleted!');
             }
         }
 
