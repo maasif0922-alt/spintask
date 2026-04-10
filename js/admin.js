@@ -1532,7 +1532,7 @@ const DEPLOYMENT_DATA = ${jsonString};
         };
 
         this.saveDb(this.DB_POOLS, pools);
-        this.logAction(Community Pool  + pool.id +  drawn! Winner:  + winner.userName);
+        this.logAction(`Community Pool ` + id + ` drawn! Winner: ` + winner.userName);
 
         return { success: true, winner: pool.winner };
     },

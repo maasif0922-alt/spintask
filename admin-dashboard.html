@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -769,7 +769,7 @@
                         style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
                         <input class="form-input" id="user-search" placeholder="Search by email..."
                             oninput="filterUsers()" style="max-width:280px;">
-                        <button class="btn btn-primary" onclick="exportCSV()">â¬‡ Export CSV</button>
+                        <button class="btn btn-primary" onclick="exportCSV()">⬇ Export CSV</button>
                     </div>
                     <div style="overflow-x:auto;">
                         <table>
@@ -992,7 +992,7 @@
 
             <!-- LUCKY DRAW -->
             <div id="tab-luckydraw" class="admin-section">
-                <div class="page-title">ðŸŽ‰ Lucky Draw</div>
+                <div class="page-title">🎉 Lucky Draw</div>
                 <div class="card" style="margin-bottom:20px;">
                     <h3>Create New Draw</h3>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
@@ -1305,7 +1305,7 @@
             updateAlertBadge();
         }
 
-        // â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Helpers ───────────────────────────────────────────────────────────────────
         function getUsers() { return JSON.parse(localStorage.getItem('spintask_users') || '[]'); }
         function saveUsers(u) { localStorage.setItem('spintask_users', JSON.stringify(u)); }
         function getTxs() { return Admin.getDb(Admin.DB_TRANSACTIONS); }
@@ -1316,7 +1316,7 @@
         // â”€â”€ Dashboard Charts Instance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let financeChartInstance = null;
 
-        // â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── Dashboard ───────────────────────────────────────────────────────────────────
         function renderDashboard() {
             var users = getUsers().filter(u => u.role !== 'admin');
             var txs = getTxs();
