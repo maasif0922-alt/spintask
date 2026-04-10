@@ -221,15 +221,13 @@ const Admin = {
             this.saveDb(this.DB_SETTINGS, { ...current, ...conf.settings, ...conf.spintask_settings });
         }
 
-        if (conf.spintask_tasks || conf.tasks) {
-            this.saveDb(this.DB_TASKS, conf.spintask_tasks || conf.tasks);
-        }
+        if ((conf.spintask_tasks || conf.tasks) && (conf.spintask_tasks || conf.tasks).length > 0) { this.saveDb(this.DB_TASKS, conf.spintask_tasks || conf.tasks); }
 
         if (conf.spintask_announcements || conf.announcement) {
             this.saveDb(this.DB_ANNOUNCEMENTS, conf.spintask_announcements || conf.announcement);
         }
 
-        if (conf.spintask_luckydraws || conf.luckydraws) {
+        if ((conf.spintask_luckydraws || conf.luckydraws) && (conf.spintask_luckydraws || conf.luckydraws).length > 0) {
             this.saveDb(this.DB_LUCKYDRAWS, conf.spintask_luckydraws || conf.luckydraws);
         }
 
@@ -371,14 +369,14 @@ const Admin = {
         };
         pools.push(newPool);
         this.saveDb(this.DB_POOLS, pools);
-        this.logAction(Admin created new community pool:  + title);
+        this.logAction(`Admin created new community pool: ` + title);
     },
 
     deletePool(id) {
         let pools = this.getDb(this.DB_POOLS);
         pools = pools.filter(p => p.id !== id);
         this.saveDb(this.DB_POOLS, pools);
-        this.logAction(Admin deleted community pool:  + id);
+        this.logAction(`Admin deleted community pool: ` + id);
     },
 
     joinPool(userId, userName, poolId) {
