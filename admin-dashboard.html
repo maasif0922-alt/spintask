@@ -1919,17 +1919,17 @@
 
         function renderPools() {
             var pools = Admin.getDb(Admin.DB_POOLS);
-            document.getElementById('pools-list').innerHTML = pools.map(p => 
+            document.getElementById('pools-list').innerHTML = pools.map(p => `
             <div class="task-row">
                 <div>
-                    <strong> + p.title + </strong> — Win $ + p.prize + 
-                    <div class="tr-meta">Fee: $ + p.fee +  • Users:  + p.queue.length + / + p.targetUsers +  • <span class="badge  + (p.status === 'active' ? 'badge-approved' : 'badge-rejected') + "> + p.status.toUpperCase() + </span></div>
+                    <strong>${p.title}</strong> — Win ${p.prize}
+                    <div class="tr-meta">Fee: ${p.fee} • Users: ${p.queue.length}/${p.targetUsers} • <span class="badge ${p.status === 'active' ? 'badge-approved' : 'badge-rejected'}">${p.status.toUpperCase()}</span></div>
                 </div>
                 <div class="tr-actions">
-                     + (p.status === 'active' ? <button class="btn btn-primary" onclick="runPoolUI(' + p.id + ')">Run Draw</button> : '') + 
-                    <button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d;" onclick="deletePoolUI(' + p.id + ')">Delete</button>
+                    ${p.status === 'active' ? `<button class="btn btn-primary" onclick="runPoolUI('${p.id}')">Run Draw</button>` : ''}
+                    <button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d;" onclick="deletePoolUI('${p.id}')">Delete</button>
                 </div>
-            </div>).join('') || '<p style="color:var(--text-muted)">No pools yet.</p>';
+            </div>`).join('') || '<p style="color:var(--text-muted)">No pools yet.</p>';
         }
 
         function createPoolFromUI() {
