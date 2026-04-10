@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Admin logic and Mock Databases
  */
 
@@ -1467,14 +1467,14 @@ const DEPLOYMENT_DATA = ${jsonString};
         };
         pools.push(newPool);
         this.saveDb(this.DB_POOLS, pools);
-        this.logAction(Admin created new community pool:  + title);
+        this.logAction(`Admin created new community pool: ` + title);
     },
 
     deletePool(id) {
         let pools = this.getDb(this.DB_POOLS);
         pools = pools.filter(p => p.id !== id);
         this.saveDb(this.DB_POOLS, pools);
-        this.logAction(Admin deleted community pool:  + id);
+        this.logAction(`Admin deleted community pool: ` + id);
     },
 
     joinPool(userId, userName, poolId) {
@@ -1499,7 +1499,7 @@ const DEPLOYMENT_DATA = ${jsonString};
         pool.queue.push({ userId, userName, date: new Date().toISOString() });
         this.saveDb(this.DB_POOLS, pools);
 
-        this.logAction(User  + userName +  joined Community Pool  + pool.id);
+        this.logAction(`User ` + userName + ` joined Community Pool ` + poolId);
         return { success: true, message: 'Successfully joined the pool!' };
     },
 
