@@ -819,6 +819,11 @@
             const tbody = document.getElementById('draw-list-body');
             tbody.innerHTML = '';
 
+            if (draws.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:40px; color:var(--text-muted);">No lucky draws found.</td></tr>';
+                return;
+            }
+
             draws.forEach(d => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -828,11 +833,24 @@
                     <td>${d.totalTickets - d.remainingTickets} / ${d.totalTickets}</td>
                     <td><span class="status-badge status-${d.status === 'active' ? 'approved' : 'rejected'}">${d.status}</span></td>
                     <td>
-                        <button class="btn glass" onclick="alert('Function coming in next update')" style="padding: 5px 10px; font-size: 0.7rem;">Manage</button>
+                        <div class="action-btns">
+                            <button class="btn btn-primary" onclick="alert('Run Draw feature coming soon!')" style="padding: 5px 10px; font-size: 0.7rem;">🎰 Run Draw</button>
+                            <button class="btn glass" onclick="deleteDraw('${d.id}')" style="padding: 5px 10px; font-size: 0.7rem; color: #ff4d4d;">🗑️ Delete</button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function deleteDraw(drawId) {
+            if (!confirm('Kya aap is Lucky Draw ko delete karna chahte hain? Yeh action undo nahi hoga.')) return;
+            const draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
+            const updated = draws.filter(d => d.id !== drawId);
+            Admin.saveDb(Admin.DB_LUCKYDRAWS, updated);
+            Admin.logAction(`Admin deleted lucky draw: ${drawId}`);
+            renderDraws();
+            alert('Lucky Draw successfully delete ho gaya!');
         }
 
         function renderTaskSubmissions() {
