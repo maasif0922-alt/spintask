@@ -1857,15 +1857,17 @@
         }
 
         // â”€â”€ Lucky Draw â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
         function renderDraws() {
             var draws = Admin.getDb(Admin.DB_LUCKYDRAWS);
             document.getElementById('draws-list').innerHTML = draws.map(d => `<div class="task-row">
-        <div><strong>${d.title}</strong> â€” ${d.prize}<div class="tr-meta">Tickets: ${d.totalTickets - d.remainingTickets}/${d.totalTickets} â€¢ ${fmt(d.price)} each â€¢ <span class="badge ${d.status === 'active' ? 'badge-approved' : 'badge-rejected'}">${d.status}</span></div></div>
-        <div class="tr-actions">${d.status === 'active' ? `<button class="btn btn-primary" onclick="runDraw('${d.id}')">Run Draw</button>` : ''}
+        <div><strong>${d.title}</strong> — ${d.prize}<div class="tr-meta">Tickets: ${d.totalTickets - d.remainingTickets}/${d.totalTickets} • ${fmt(d.price)} each • <span class="badge ${d.status === 'active' ? 'badge-approved' : 'badge-rejected'}">${d.status}</span></div></div>
+        <div class="tr-actions">
+            ${d.status === 'active' ? `<button class="btn btn-primary" onclick="runDraw('${d.id}')">Run Draw</button>` : ''}
+            <button class="btn btn-outline" style="color:#ff4d4d; border-color:#ff4d4d;" onclick="deleteDraw('${d.id}')">Delete</button>
         </div>
     </div>`).join('') || '<p style="color:var(--text-muted)">No draws yet.</p>';
         }
+
         function createDraw() {
             var t = document.getElementById('ld-title').value, p = document.getElementById('ld-prize').value, pr = document.getElementById('ld-price').value, tk = document.getElementById('ld-tickets').value, dt = document.getElementById('ld-date').value, img = document.getElementById('ld-image').value;
             if (!t || !p || !pr || !tk || !dt) { alert('Please fill all required fields.'); return; }
